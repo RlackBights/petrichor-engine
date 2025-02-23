@@ -13,7 +13,15 @@ There are some, not much for now, will edit this as soon as I get farther :D
 - CMake
 - C++ Compiler (GCC/Clang/MSVC)
 - OpenGL
+- Ninja build
 ### Dependencies
+**!! Currently I haven't found a way to download the following dependencies automatically !!**
+- zlib
+- libpng
+- bzip2
+- brotli
+*I am quite sure most linux distros come with these preinstalled, or can be easily installed as a dependency of Freetype, I've run into the problem on windows only*
+
 The engine has some dependencies, but they should be downloaded upon the first launch in case your system doesn't have them already
 - SDL3
 - Freetype
