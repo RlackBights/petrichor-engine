@@ -1,3 +1,4 @@
+#include <string>
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <SDL3/SDL.h>
@@ -100,6 +101,8 @@ bool init()
 	light3.AddComponent<Light>(Spot, glm::vec3(0.8f));
 	light3.transform.scale = glm::vec3(0.2f);
 
+	root.transform.AddChild(&light3.transform);
+
 	test_billboard.AddComponent<Mesh>("plane.obj");
 	test_billboard.GetComponent<Mesh>()->isBillboard = true;
 	test_billboard.AddComponent<Material>(Texture::loadTexture("house.png"));
@@ -174,6 +177,8 @@ bool update()
 
 	test_billboard.GetComponent<Mesh>()->drawInstance();
 	TextManager::renderText(std::to_string((int)glm::round(1 + Time::timeScale / Time::deltaTime)) + " FPS", 25.0f, 25.0f, 0.5f, Renderer::screenWidth, Renderer::screenHeight, glm::vec3(1.0f));
+	TextManager::renderText(Console::FormatString("%p", root.transform.parent), 25.0f, 50.0f, 0.5f, Renderer::screenWidth, Renderer::screenHeight, glm::vec3(1.0f));
+	TextManager::renderText(Console::FormatString("%p", Transform::GetRoot()), 25.0f, 75.0f, 0.5f, Renderer::screenWidth, Renderer::screenHeight, glm::vec3(1.0f));
 
 	// Frame cleanup
 	Time::wrapTime();

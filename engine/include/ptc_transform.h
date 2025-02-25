@@ -18,13 +18,11 @@ public:
 	Transform* parent;
 	std::vector<Transform*> children;
 	int childCount;
-    Object* parentObject = nullptr;
+    Object* object;
 
-	Transform();
-	Transform(glm::vec3 _position, glm::quat _rotation, glm::vec3 _scale);
+	Transform(Object* _object = nullptr);
 	static void SetRoot(Transform* _root);
 	static Transform* GetRoot();
-	void SetParent(Transform* _parent);
 	void AddChild(Transform* _child);
 	void RemoveChild(Transform* _child);
 };

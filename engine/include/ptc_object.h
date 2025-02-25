@@ -24,10 +24,7 @@ public:
 	template <class T>
 	T* GetComponent()
 	{
-		for (auto& component : components)
-		{
-			if (T* comp = dynamic_cast<T*>(component.get())) return comp;
-		}
+		for (auto& component : components) if (T* comp = dynamic_cast<T*>(component.get())) return comp;
 		return nullptr;
 	}
 
