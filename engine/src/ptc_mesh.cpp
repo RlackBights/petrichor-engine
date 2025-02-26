@@ -138,7 +138,7 @@ Mesh::Mesh(int inVertexCount, float* inVertices, int inIndexCount, int* inIndice
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
-void Mesh::FixedUpdate()
+void Mesh::Update()
 {
 	this->drawInstance();
 }

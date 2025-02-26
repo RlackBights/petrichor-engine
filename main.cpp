@@ -155,28 +155,39 @@ bool update()
 	// Initialize stuff for the frame
 	Time::updateTime();
 	Input::updateInputUnscaled();
-	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) comp->Update(); } );
-	if (!Time::isNextFrameReady(Renderer::FPSLimit)) return true;
-
-	// These all could now be moved to their respective update functions, but I am, in fact, quite lazy
-	static float time = 0;
-	time += Time::deltaTime * 2;
-	cube.transform.rotation = glm::quat(glm::radians(glm::vec3(0.0f, time * 100.0f, 0.0f)));
-	light.transform.position = glm::vec3(cos(time) * 7, 0.0f, sin(time) *7);
-	Transform camTrans = Camera::getMainCamera()->parentObject->transform;
-	light3.transform.position = camTrans.position;
-	light3.transform.rotation = camTrans.rotation;
-
 	Renderer::prepareFrame(camera.GetComponent<Camera>());
-	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) comp->FixedUpdate(); } );
-	
+
+	// static float time = 0;
+	// time += Time::deltaTime * 2;
+	// cube.transform.rotation = glm::quat(glm::radians(glm::vec3(0.0f, time * 100.0f, 0.0f)));
+	// light.transform.position = glm::vec3(cos(time) * 7, 0.0f, sin(time) *7);
+	// Transform camTrans = Camera::getMainCamera()->parentObject->transform;
+	// light3.transform.position = camTrans.position;
+	// light3.transform.rotation = camTrans.rotation;
 	TextManager::renderText(std::to_string((int)glm::round(1 + Time::timeScale / Time::deltaTime)) + " FPS", 25.0f, 25.0f, 0.5f, Renderer::screenWidth, Renderer::screenHeight, glm::vec3(1.0f));
 
-	// Frame cleanup
-	Time::wrapTime();
-	Input::wrapInput();
-	Renderer::wrapFrame();
 
+
+	Time::fixedTimeAccumulator += Time::deltaTime;
+	int fixedUpdateCount = 0;
+
+	while (Time::fixedTimeAccumulator >= Time::fixedDeltaTime)
+	{
+		fixedUpdateCount++;
+		Time::fixedTimeAccumulator -= Time::fixedDeltaTime;
+	}
+
+	Transform::GetRoot()->PreorderTraversal([&](Transform* node) {
+		for (const auto& comp : *node->object->GetComponents())
+		{
+			for (int i = 0; i < fixedUpdateCount; i++) comp->FixedUpdate();
+			comp->Update();
+		}
+	});
+
+	Time::wrapTime();
+	Renderer::wrapFrame();
+	Input::wrapInput();
 	return true;
 }
 

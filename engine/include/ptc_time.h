@@ -19,6 +19,8 @@ public:
 	static float deltaTimeUnscaled;
 	static float timeScale;
 	static std::vector<Timer> timers;
+	static float fixedTimeAccumulator;
+	constexpr static const float fixedDeltaTime = 0.02f;
 
 	static void initTime();
 	static void updateTime();

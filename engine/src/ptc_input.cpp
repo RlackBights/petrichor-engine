@@ -1,13 +1,13 @@
+#include <SDL3/SDL_events.h>
 #include <ptc_input.h>
 
- void Input::initInput(int* inScreenWidth, int* inScreenHeight, float mouseSensitivity) {
-    sensitivity = mouseSensitivity;
+void Input::initInput(int* inScreenWidth, int* inScreenHeight) {
     screenWidth = inScreenWidth;
     screenHeight = inScreenHeight;
 }
- void Input::updateInputUnscaled() {
+void Input::updateInputUnscaled() {
     SDL_PollEvent(&e);
-
+    //SDL_FlushEvent(SDL_EVENT_MOUSE_MOTION);
     // Handle key events
     if (e.type == SDL_EVENT_KEY_DOWN) {
         heldKeys[e.key.scancode] = true;
@@ -84,8 +84,8 @@
     else mouseScroll = 0.0f;
 
     if (e.type == SDL_EVENT_MOUSE_MOTION) {
-        mouseXrel += e.motion.xrel * sensitivity;
-        mouseYrel += -e.motion.yrel * sensitivity;
+        mouseXrel += e.motion.xrel;
+        mouseYrel += -e.motion.yrel;
         mouseX = e.motion.x;
         mouseY = e.motion.y;
     }
@@ -134,12 +134,12 @@
         }
     }
 }
- void Input::wrapInput()
+void Input::wrapInput()
 {
     mouseXrel = 0;
     mouseYrel = 0;
 }
- void Input::addBinding(Uint32 key, KeyBindingEventType eventType, std::function<void()> action, bool isForced) {
+void Input::addBinding(Uint32 key, KeyBindingEventType eventType, std::function<void()> action, bool isForced) {
     if (isForced) keyBindingsForced.push_back(KeyBinding{ key, eventType, action});
     else keyBindings.push_back(KeyBinding{ key, eventType, action });
 }
@@ -150,7 +150,6 @@ bool Input::lastKeys[SDL_SCANCODE_COUNT];
 bool Input::heldMouseButtons[256];
 bool Input::lastMouseButtons[256];
 
-float Input::sensitivity;
 float Input::mouseXrel;
 float Input::mouseYrel;
 float Input::mouseX;

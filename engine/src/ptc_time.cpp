@@ -6,6 +6,8 @@ float Time::deltaTime;
 float Time::deltaTimeUnscaled;
 float Time::timeScale;
 std::vector<Timer> Time::timers;
+float Time::fixedTimeAccumulator;
+constexpr const float Time::fixedDeltaTime;
 
 void Time::initTime()
 {
@@ -14,6 +16,7 @@ void Time::initTime()
 	currentFrame = SDL_GetTicks();
 	deltaTimeUnscaled = (currentFrame - lastFrame) / 1000.0f;
 	deltaTime = deltaTimeUnscaled * timeScale;
+	fixedTimeAccumulator = 0.0f;
 }
 void Time::updateTime()
 {

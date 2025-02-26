@@ -36,7 +36,6 @@ public:
     static bool heldMouseButtons[256];
     static bool lastMouseButtons[256];
 
-    static float sensitivity;
     static float mouseXrel;
     static float mouseYrel;
     static float mouseX;
@@ -51,7 +50,7 @@ public:
     static std::vector<KeyBinding> keyBindings;
     static std::vector<KeyBinding> keyBindingsForced; // Keybinds that run even when the input is disabled
 
-    static void initInput(int* inScreenWidth, int* inScreenHeight, float mouseSensitivity = 0.2f);
+    static void initInput(int* inScreenWidth, int* inScreenHeight);
     static void updateInputUnscaled();
     static void wrapInput();
 
