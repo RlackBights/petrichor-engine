@@ -1,3 +1,4 @@
+#include "ptc_input.h"
 #include <ptc_camera.h>
 
 Camera::Camera(bool isMain) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(2.5f), MouseSensitivity(0.6f), Zoom(100.0f)
@@ -45,10 +46,11 @@ void Camera::MoveCamera(Camera_Movement direction, float deltaTime)
     parentObject->transform.position += moveVec * (isBoosting ? 2.0f : 1.0f);
 }
 
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch, float zoom)
+void Camera::FixedUpdate()
 {
-    float yaw   = glm::radians(-xoffset * MouseSensitivity);
-    float pitch = glm::radians(yoffset * MouseSensitivity);
+    float yaw   = glm::radians(-Input::mouseXrel * MouseSensitivity);
+    float pitch = glm::radians(Input::mouseYrel * MouseSensitivity);
+    float zoom = Input::mouseScroll;
 
     glm::quat yawRotation   = glm::angleAxis(yaw, glm::vec3(0.0f, 1.0f, 0.0f));
     glm::quat pitchRotation = glm::angleAxis(pitch, glm::vec3(1.0f, 0.0f, 0.0f));

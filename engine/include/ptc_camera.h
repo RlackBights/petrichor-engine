@@ -36,7 +36,7 @@ public:
     glm::mat4 GetViewMatrix();
     glm::mat4 GetProjectionMatrix(int screenWidth, int screenHeight);
     void MoveCamera(Camera_Movement direction, float deltaTime);
-    void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true, float zoom = 0.0f);
+    void FixedUpdate() override;
     void ProcessMouseScroll(float yoffset);
 
 private:

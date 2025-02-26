@@ -142,8 +142,10 @@ bool init()
 	Console::Write("----------");
 
 	Console::WriteLine("\nFinished initialization!");
-	Console::ClearFormatting();
 
+	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) comp->Start(); } );
+
+	Console::ClearFormatting();
 	Renderer::showWindow();
 	return true;
 }
@@ -153,12 +155,10 @@ bool update()
 	// Initialize stuff for the frame
 	Time::updateTime();
 	Input::updateInputUnscaled();
+	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) comp->Update(); } );
 	if (!Time::isNextFrameReady(Renderer::FPSLimit)) return true;
-	camera.GetComponent<Camera>()->ProcessMouseMovement(Input::mouseXrel, Input::mouseYrel, true, Input::mouseScroll);
-	Renderer::prepareFrame(camera.GetComponent<Camera>());
 
-	// Frame code goes here
-	//cube.transform.rotation.y += 36.0f * Time::deltaTime;
+	// These all could now be moved to their respective update functions, but I am, in fact, quite lazy
 	static float time = 0;
 	time += Time::deltaTime * 2;
 	cube.transform.rotation = glm::quat(glm::radians(glm::vec3(0.0f, time * 100.0f, 0.0f)));
@@ -167,17 +167,10 @@ bool update()
 	light3.transform.position = camTrans.position;
 	light3.transform.rotation = camTrans.rotation;
 
-	cube.GetComponent<Mesh>()->drawInstance();
-	monkey.GetComponent<Mesh>()->drawInstance();
-	sword.GetComponent<Mesh>()->drawInstance();
-	test_billboard.GetComponent<Mesh>()->drawInstance();
-	light.GetComponent<Mesh>()->drawInstance();
-	light2.GetComponent<Mesh>()->drawInstance();
-	light3.GetComponent<Mesh>()->drawInstance();
-	test_billboard.GetComponent<Mesh>()->drawInstance();
+	Renderer::prepareFrame(camera.GetComponent<Camera>());
+	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) comp->FixedUpdate(); } );
 	
 	TextManager::renderText(std::to_string((int)glm::round(1 + Time::timeScale / Time::deltaTime)) + " FPS", 25.0f, 25.0f, 0.5f, Renderer::screenWidth, Renderer::screenHeight, glm::vec3(1.0f));
-	TextManager::renderText(Console::FormatString("%d", Transform::GetRoot()->childCount), 25.0f, 50.0f, 0.5f, Renderer::screenWidth, Renderer::screenHeight, glm::vec3(1.0f));
 
 	// Frame cleanup
 	Time::wrapTime();

@@ -1,6 +1,7 @@
 #ifndef PTC_TRANSFORM_H
 #define PTC_TRANSFORM_H
 
+#include <functional>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <vector>
@@ -20,11 +21,12 @@ public:
 	int childCount;
     Object* object;
 
-	Transform(Object* _object = nullptr);
+	Transform(Object* _object);
 	Transform(bool _root);
 	static Transform* GetRoot();
 	void AddChild(Transform* _child);
 	void RemoveChild(Transform* _child);
+	void PreorderTraversal(std::function<void(Transform*)> processNode);
 };
 
 #endif

@@ -35,6 +35,7 @@ public:
 	Mesh();
 	Mesh(const char* modelPath, bool _isBillboard = false);
 	Mesh(int inVertexCount, float* inVertices, int inIndexCount, int* inIndices, bool _isBillboard = false);
+	void FixedUpdate() override;
 	void addMesh(Mesh msh);
 	void drawInstance();
 	static Mesh createEmptyMesh();

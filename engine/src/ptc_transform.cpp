@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstdio>
 #include <ptc_transform.h>
 
 Transform::Transform(Object* _object)
@@ -10,7 +11,7 @@ Transform::Transform(Object* _object)
 	this->children = {};
 	this->object = _object;
 
-	GetRoot()->AddChild(this);
+	if (_object) GetRoot()->AddChild(this);
 }
 Transform::Transform(bool _root)
 {
@@ -41,5 +42,10 @@ void Transform::RemoveChild(Transform* _child)
 	this->childCount--;
 	_child->parent = nullptr;
 }
+void Transform::PreorderTraversal(std::function<void(Transform*)> processNode)
+{
+	if (this != GetRoot()) processNode(this);
+	for (Transform* child : children) child->PreorderTraversal(processNode);
+}
 
-Transform* Transform::root = new Transform(true);
+Transform* Transform::root = nullptr;

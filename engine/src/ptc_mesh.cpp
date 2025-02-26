@@ -1,3 +1,4 @@
+#include "ptc_console.h"
 #include <ptc_mesh.h>
 #include <vector>
 #include <fstream>
@@ -136,6 +137,10 @@ Mesh::Mesh(int inVertexCount, float* inVertices, int inIndexCount, int* inIndice
 	glBufferData(GL_ARRAY_BUFFER, inVertexCount * sizeof(float), inVertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+void Mesh::FixedUpdate()
+{
+	this->drawInstance();
 }
 void Mesh::addMesh(Mesh msh)
 {

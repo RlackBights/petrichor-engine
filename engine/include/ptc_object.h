@@ -19,7 +19,7 @@ public:
 	Transform transform;
 	bool enabled;
 
-	Object(std::string _name = "", Transform _transform = Transform(), bool _enabled = true);
+	Object(std::string _name = "", bool _enabled = true);
 
 	template <class T>
 	T* GetComponent()
@@ -27,6 +27,8 @@ public:
 		for (auto& component : components) if (T* comp = dynamic_cast<T*>(component.get())) return comp;
 		return nullptr;
 	}
+
+	std::vector<std::unique_ptr<Component>>* GetComponents();
 
 	template <class T, typename... Args>
 	T* AddComponent(Args&&... args)
