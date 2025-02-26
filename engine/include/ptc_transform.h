@@ -21,7 +21,7 @@ public:
     Object* object;
 
 	Transform(Object* _object = nullptr);
-	static void SetRoot(Transform* _root);
+	Transform(bool _root);
 	static Transform* GetRoot();
 	void AddChild(Transform* _child);
 	void RemoveChild(Transform* _child);

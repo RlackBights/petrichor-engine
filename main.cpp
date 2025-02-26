@@ -174,11 +174,10 @@ bool update()
 	light.GetComponent<Mesh>()->drawInstance();
 	light2.GetComponent<Mesh>()->drawInstance();
 	light3.GetComponent<Mesh>()->drawInstance();
-
 	test_billboard.GetComponent<Mesh>()->drawInstance();
+	
 	TextManager::renderText(std::to_string((int)glm::round(1 + Time::timeScale / Time::deltaTime)) + " FPS", 25.0f, 25.0f, 0.5f, Renderer::screenWidth, Renderer::screenHeight, glm::vec3(1.0f));
-	TextManager::renderText(Console::FormatString("%p", root.transform.parent), 25.0f, 50.0f, 0.5f, Renderer::screenWidth, Renderer::screenHeight, glm::vec3(1.0f));
-	TextManager::renderText(Console::FormatString("%p", Transform::GetRoot()), 25.0f, 75.0f, 0.5f, Renderer::screenWidth, Renderer::screenHeight, glm::vec3(1.0f));
+	TextManager::renderText(Console::FormatString("%d", Transform::GetRoot()->childCount), 25.0f, 50.0f, 0.5f, Renderer::screenWidth, Renderer::screenHeight, glm::vec3(1.0f));
 
 	// Frame cleanup
 	Time::wrapTime();
