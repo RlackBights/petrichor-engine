@@ -1,4 +1,6 @@
-#include "ptc_console.h"
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/fwd.hpp>
+#include <glm/geometric.hpp>
 #include <ptc_mesh.h>
 #include <vector>
 #include <fstream>
@@ -114,27 +116,27 @@ Mesh::Mesh()
 {
 	vertexCount = 0;
 	visible = false;
-	isBillboard = false;
+	renderType = RenderType::NORMAL;
 	VBO = 0;
 	addMesh(loadModel("cube.obj"));
 }
-Mesh::Mesh(const char* modelPath, bool _isBillboard)
+Mesh::Mesh(const char* _modelPath, RenderType _renderType)
 {
 	vertexCount = 0;
 	visible = false;
-	isBillboard = _isBillboard;
+	renderType = _renderType;
 	VBO = 0;
-	addMesh(loadModel(modelPath));
+	addMesh(loadModel(_modelPath));
 }
-Mesh::Mesh(int inVertexCount, float* inVertices, int inIndexCount, int* inIndices, bool _isBillboard)
+Mesh::Mesh(int _vertexCount, float* _vertices, int _indexCount, int* _indices, RenderType _renderType)
 {
-	vertexCount = inVertexCount;
+	vertexCount = _vertexCount;
 	visible = true;
-	isBillboard = _isBillboard;
+	renderType = _renderType;
 
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, inVertexCount * sizeof(float), inVertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, _vertexCount * sizeof(float), _vertices, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
@@ -186,17 +188,25 @@ void Mesh::drawInstance()
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, parentObject->transform.position);
-	if (isBillboard)
-	{
-		// MAKE BILLBOARDS WORK FFS
+	
+	Object* cam = Object::Find("camera");
+	Camera* camComp = cam->GetComponent<Camera>();
+	glm::mat4 billboardRotation(1.0f);
+	switch (renderType) { // Implement the other 2 billboard types!
+		case RenderType::NORMAL:
+			model *= glm::mat4_cast(parentObject->transform.rotation);
+			break;
+		case RenderType::CAMERA_FACING_BILLBOARD:
+			model *= glm::mat4(glm::quatLookAt(glm::normalize(cam->transform.position - parentObject->transform.position), cam->GetComponent<Camera>()->WorldUp));
+			break;
+		case RenderType::Y_AXIS_ONLY_BillBOARD:
+			model *= glm::mat4(glm::quatLookAt(glm::normalize(glm::vec3(cam->transform.position.x, parentObject->transform.position.y, cam->transform.position.z) - parentObject->transform.position), cam->GetComponent<Camera>()->WorldUp));
+			break;
+		default:
+			model *= glm::mat4_cast(parentObject->transform.rotation);
+			break;
 	}
-	else
-	{
-		model *= glm::mat4_cast(parentObject->transform.rotation);
-		// model = glm::rotate(model, -glm::radians(parentObject->transform.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-		// model = glm::rotate(model, glm::radians(parentObject->transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-		// model = glm::rotate(model, glm::radians(parentObject->transform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-	}
+
 	model = glm::scale(model, parentObject->transform.scale);
 	mat->shader.setMatrix4x4("model", model);
 	mat->shader.setFloat4("baseCol", (mat->shader.renderAsWireframe || polygonMode[1] == GL_LINE) ? glm::vec4(glm::vec3(0.0f), 1.0f) : (GetComponent<Light>() != nullptr) ? glm::vec4(GetComponent<Light>()->lightColor, 1.0f) * mat->baseColor : mat->baseColor);

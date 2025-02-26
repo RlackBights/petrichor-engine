@@ -1,3 +1,8 @@
+#include <SDL3/SDL_keycode.h>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/fwd.hpp>
+#include <glm/geometric.hpp>
+#include <glm/trigonometric.hpp>
 #include <string>
 #define STB_IMAGE_IMPLEMENTATION
 
@@ -104,11 +109,12 @@ bool init()
 	root.transform.AddChild(&light3.transform);
 
 	test_billboard.AddComponent<Mesh>("plane.obj");
-	test_billboard.GetComponent<Mesh>()->isBillboard = true;
-	test_billboard.AddComponent<Material>(Texture::loadTexture("house.png"));
-	test_billboard.transform.position.x = 3.0f;
+	test_billboard.GetComponent<Mesh>()->renderType = RenderType::Y_AXIS_ONLY_BillBOARD;
+	Material* billboardMat = test_billboard.AddComponent<Material>(Texture::loadTexture("transparent.png"));
+	billboardMat->shader = Shader("vertex_shader.glsl", "flat_frag.glsl");
+	test_billboard.transform.rotation = glm::quat(glm::radians(glm::vec3(0.0f, -90.0f, 0.0f)));;
+	test_billboard.transform.position.z = -3.0f;
 
-	test_billboard.enabled = false;
 	Console::Write("--");
 
 	monkey.AddComponent<Mesh>("monkey.obj");
@@ -162,11 +168,15 @@ bool update()
 	static float time = 0;
 	time += Time::deltaTime * 2;
 	cube.transform.rotation = glm::quat(glm::radians(glm::vec3(0.0f, time * 100.0f, 0.0f)));
-	light.transform.position = glm::vec3(cos(time) * 7, 0.0f, sin(time) *7);
+	light.transform.position = glm::vec3(cos(time) * 7, 0.0f, sin(time) * 7);
 	Transform camTrans = Camera::getMainCamera()->parentObject->transform;
+	//light2.transform.rotation = glm::lookAt(light2.transform.position, light.transform.position, -Camera::WorldUp);
+	//test_billboard.transform.rotation = glm::quatLookAt(glm::normalize(camera.transform.position - test_billboard.transform.position), Camera::WorldUp);
 	light3.transform.position = camTrans.position;
 	light3.transform.rotation = camTrans.rotation;
 
+	glm::vec3 eulerAngles = glm::eulerAngles(camera.transform.rotation);
+	Console::WriteLine(Console::FormatString("Camera rotation: %.2f %.2f %.2f", eulerAngles.x, eulerAngles.y, eulerAngles.z));
 	Renderer::prepareFrame(camera.GetComponent<Camera>());
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) comp->FixedUpdate(); } );
 	
@@ -202,6 +212,7 @@ void initKeybinds()
 	Input::addBinding(SDLK_LSHIFT, KEYBIND_UP, []() { camera.GetComponent<Camera>()->isBoosting = false; });
 	Input::addBinding(SDLK_F11, KEYBIND_DOWN, []() { SDL_SetWindowFullscreen(Renderer::window, !(SDL_GetWindowFlags(Renderer::window) & SDL_WINDOW_FULLSCREEN)); }, true);
 	Input::addBinding(SDLK_V, KEYBIND_DOWN, []() { glPolygonMode(GL_FRONT_AND_BACK, (Renderer::renderMode == GL_LINE) ? Renderer::renderMode = GL_FILL : Renderer::renderMode = GL_LINE); if (Renderer::renderMode == GL_LINE) glDisable(GL_CULL_FACE); else glEnable(GL_CULL_FACE); }, true);
+	Input::addBinding(SDLK_N, KEYBIND_DOWN, []() { Camera::getMainCamera()->perspective = !Camera::getMainCamera()->perspective; });
 
 	Input::addBinding(SDLM_RIGHT, MOUSE_DOWN, []() {
 		Input::enabled = true;

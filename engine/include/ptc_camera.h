@@ -30,8 +30,9 @@ public:
     float MouseSensitivity;
     float Zoom;
     bool isBoosting;
+    bool perspective;
 
-    Camera(bool isMain = false);
+    Camera(bool _perspective = true, bool isMain = false);
     static Camera* getMainCamera();
     glm::mat4 GetViewMatrix();
     glm::mat4 GetProjectionMatrix(int screenWidth, int screenHeight);

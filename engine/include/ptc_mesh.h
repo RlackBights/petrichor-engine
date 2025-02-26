@@ -19,6 +19,14 @@ typedef struct FaceData {
 	int normals[3];
 } FaceData;
 
+typedef enum RenderType {
+	NORMAL,
+	CAMERA_FACING_BILLBOARD,
+	Y_AXIS_ONLY_BillBOARD,
+	VIEW_ALIGNED_BILLBOARD,
+	FIXED_SIZE_VIEW_ALIGNED_BILLBOARD,
+} RenderType;
+
 class Mesh : public Component
 {
 private:
@@ -30,11 +38,11 @@ private:
 public:
 	int vertexCount;
 	bool visible;
-	bool isBillboard;
+	RenderType renderType;
 
 	Mesh();
-	Mesh(const char* modelPath, bool _isBillboard = false);
-	Mesh(int inVertexCount, float* inVertices, int inIndexCount, int* inIndices, bool _isBillboard = false);
+	Mesh(const char* _modelPath, RenderType _renderType = RenderType::NORMAL);
+	Mesh(int _vertexCount, float* _vertices, int _indexCount, int* _indices, RenderType _renderType = RenderType::NORMAL);
 	void FixedUpdate() override;
 	void addMesh(Mesh msh);
 	void drawInstance();

@@ -1,4 +1,5 @@
 #include <ptc_console.h>
+#include <string>
 
 const char* Console::GetColorCode(enum Color color) {
     switch (color) {
@@ -84,7 +85,10 @@ std::string Console::FormatString(const char* format, ...) {
     return result;
 }
 void Console::WriteLine(std::string text, Color color, bool continuous) {
-    printf("%s%s%s\n", GetColorCode(color), text.c_str(), continuous ? "" : "\x1b[0m");
+    Write(text + '\n', color, continuous);
+}
+void Console::WriteLine(const char* text, Color color, bool continuous) {
+    Write(std::string(text) + '\n', color, continuous);
 }
 void Console::Write(std::string text, Color color, bool continuous) {
     printf("%s%s%s", GetColorCode(color), text.c_str(), continuous ? "" : "\x1b[0m");

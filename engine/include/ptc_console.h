@@ -32,7 +32,13 @@ public:
     static void SetCursorPosition(short x, short y);
     static void ClearFormatting();
     static std::string FormatString(const char* format, ...);
+    template <class T>
+    static void WriteLine(T val)
+    {
+        WriteLine(std::to_string(val));
+    }
     static void WriteLine(std::string text, Color color = Color::NOTHING, bool continuous = true);
+    static void WriteLine(const char* text, Color color = Color::NOTHING, bool continuous = true);
     static void Write(std::string text, Color color = Color::NOTHING, bool continuous = true);
 };
 

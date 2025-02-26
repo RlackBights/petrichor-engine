@@ -39,6 +39,8 @@ public:
 
 		return GetComponent<T>();
 	}
+
+	static Object* Find(std::string name);
 };
 
 #endif

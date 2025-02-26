@@ -1,3 +1,4 @@
+#include <SDL3/SDL_events.h>
 #include <ptc_input.h>
 
  void Input::initInput(int* inScreenWidth, int* inScreenHeight, float mouseSensitivity) {
@@ -80,8 +81,7 @@
 
     if (!enabled) return;
 
-    if (e.type == SDL_EVENT_MOUSE_WHEEL) mouseScroll = e.wheel.y;
-    else mouseScroll = 0.0f;
+    if (e.type == SDL_EVENT_MOUSE_WHEEL) mouseScroll += e.wheel.y;
 
     if (e.type == SDL_EVENT_MOUSE_MOTION) {
         mouseXrel += e.motion.xrel * sensitivity;
@@ -138,6 +138,7 @@
 {
     mouseXrel = 0;
     mouseYrel = 0;
+    mouseScroll = 0;
 }
  void Input::addBinding(Uint32 key, KeyBindingEventType eventType, std::function<void()> action, bool isForced) {
     if (isForced) keyBindingsForced.push_back(KeyBinding{ key, eventType, action});
