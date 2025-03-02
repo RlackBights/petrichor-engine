@@ -110,6 +110,8 @@ void Renderer::prepareFrame(Camera* camera)
 		shader.setUInt("time", (GLuint)Time::currentFrame);
 		shader.setMatrix4x4("view", camera->GetViewMatrix());
 		shader.setMatrix4x4("projection", camera->GetProjectionMatrix(Renderer::screenWidth, Renderer::screenHeight));
+
+		glUseProgram(0);
 	}
 
 	glViewport(0, 0, screenWidth, screenHeight);
