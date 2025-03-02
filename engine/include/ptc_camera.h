@@ -24,6 +24,7 @@ public:
     glm::vec3 Front;
     glm::vec3 Up;
     glm::vec3 Right;
+    glm::vec4 backgroundColor;
     static glm::vec3 WorldUp;
 
     float MovementSpeed;

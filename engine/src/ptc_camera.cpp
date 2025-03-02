@@ -15,6 +15,7 @@ Camera::Camera(bool _perspective, bool _main) : Front(glm::vec3(0.0f, 0.0f, -1.0
     Front = glm::vec3(0.0f);
     Up = glm::vec3(0.0f);
     Right = glm::vec3(0.0f);
+    backgroundColor = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
     isBoosting = false;
     perspective = _perspective;
 }
