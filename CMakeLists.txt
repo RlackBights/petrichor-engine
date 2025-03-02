@@ -6,6 +6,8 @@ file(MAKE_DIRECTORY ${directory})
 
 project(petrichor_engine C CXX)
 
+add_compile_options(/EHsc)
+
 include(FetchContent)
 
 find_package(SDL3 QUIET)

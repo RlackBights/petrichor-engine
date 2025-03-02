@@ -176,7 +176,6 @@ bool update()
 	light3.transform.rotation = camTrans.rotation;
 
 	glm::vec3 eulerAngles = glm::eulerAngles(camera.transform.rotation);
-	Console::WriteLine(Console::FormatString("Camera rotation: %.2f %.2f %.2f", eulerAngles.x, eulerAngles.y, eulerAngles.z));
 	Renderer::prepareFrame(camera.GetComponent<Camera>());
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) comp->FixedUpdate(); } );
 	

@@ -66,8 +66,6 @@ void Camera::FixedUpdate()
     float pitch = glm::radians(Input::mouseYrel * MouseSensitivity);
     float zoom  = Input::mouseScroll;
 
-    Console::WriteLine(std::to_string(Input::mouseScroll));
-
     // Get the forward direction from the current quaternion
     glm::vec3 forward = parentObject->transform.rotation * glm::vec3(0, 0, -1);
 
