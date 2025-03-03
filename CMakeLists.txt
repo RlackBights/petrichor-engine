@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.16.0 FATAL_ERROR)
 
-set(CMAKE_SYSTEM_VERSION 10.0 CACHE STRING "" FORCE)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
-file(MAKE_DIRECTORY ${directory})
+#file(MAKE_DIRECTORY ${directory})
 
 project(petrichor_engine C CXX)
 
-add_compile_options(/EHsc)
+if(WIN32)
+    add_compile_options(/EHsc)
+endif()
 
 include(FetchContent)
 
