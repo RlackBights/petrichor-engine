@@ -103,46 +103,160 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 }
 void Shader::use()
 {
-	if (activeShaderProgram == ShaderProgramID) return;
-	glUseProgram(ShaderProgramID);
-	activeShaderProgram = ShaderProgramID;
+    if (activeShaderProgram == ShaderProgramID) return; // Avoid redundant binding
+    
+    if (!glIsProgram(ShaderProgramID)) {
+        Console::WriteLine(Console::FormatString("Error: Shader ID %d is not a valid program!", ShaderProgramID));
+        return;
+    }
+
+    glUseProgram(ShaderProgramID);
+    activeShaderProgram = ShaderProgramID;
+
+    GLenum err;
+    while ((err = glGetError())) {
+        Console::WriteLine(Console::FormatString("OpenGL Error %d in Shader::use()", err));
+    }
 }
 void Shader::setBool(const std::string& name, bool value) const
 {
-	glUniform1i(glGetUniformLocation(ShaderProgramID, name.c_str()), (int)value);
+    GLint location = glGetUniformLocation(ShaderProgramID, name.c_str());
+    if (location == -1) {
+        Console::WriteLine(Console::FormatString("Warning: Uniform '%s' not found in Shader ID %d", name.c_str(), ShaderProgramID));
+        return;
+    }
+    glUniform1i(location, (int)value);
+
+    GLenum err;
+    while ((err = glGetError())) {
+        Console::WriteLine(Console::FormatString("OpenGL Error %d in setBool('%s')", err, name.c_str()));
+    }
 }
+
 void Shader::setInt(const std::string& name, int value) const
 {
-	glUniform1i(glGetUniformLocation(ShaderProgramID, name.c_str()), value);
+    GLint location = glGetUniformLocation(ShaderProgramID, name.c_str());
+    if (location == -1) {
+        Console::WriteLine(Console::FormatString("Warning: Uniform '%s' not found in Shader ID %d", name.c_str(), ShaderProgramID));
+        return;
+    }
+    glUniform1i(location, value);
+
+    GLenum err;
+    while ((err = glGetError())) {
+        Console::WriteLine(Console::FormatString("OpenGL Error %d in setInt('%s')", err, name.c_str()));
+    }
 }
+
 void Shader::setUInt(const std::string& name, GLuint value) const
 {
-	glUniform1ui(glGetUniformLocation(ShaderProgramID, name.c_str()), value);
+    GLint location = glGetUniformLocation(ShaderProgramID, name.c_str());
+    if (location == -1) {
+        Console::WriteLine(Console::FormatString("Warning: Uniform '%s' not found in Shader ID %d", name.c_str(), ShaderProgramID));
+        return;
+    }
+    glUniform1ui(location, value);
+
+    GLenum err;
+    while ((err = glGetError())) {
+        Console::WriteLine(Console::FormatString("OpenGL Error %d in setUInt('%s')", err, name.c_str()));
+    }
 }
+
 void Shader::setFloat(const std::string& name, float value) const
 {
-	glUniform1f(glGetUniformLocation(ShaderProgramID, name.c_str()), value);
+    GLint location = glGetUniformLocation(ShaderProgramID, name.c_str());
+    if (location == -1) {
+        Console::WriteLine(Console::FormatString("Warning: Uniform '%s' not found in Shader ID %d", name.c_str(), ShaderProgramID));
+        return;
+    }
+    glUniform1f(location, value);
+
+    GLenum err;
+    while ((err = glGetError())) {
+        Console::WriteLine(Console::FormatString("OpenGL Error %d in setFloat('%s')", err, name.c_str()));
+    }
 }
+
 void Shader::setFloat3(const std::string& name, glm::vec3 value) const
 {
-	glUniform3f(glGetUniformLocation(ShaderProgramID, name.c_str()), value.x, value.y, value.z);
+    GLint location = glGetUniformLocation(ShaderProgramID, name.c_str());
+    if (location == -1) {
+        Console::WriteLine(Console::FormatString("Warning: Uniform '%s' not found in Shader ID %d", name.c_str(), ShaderProgramID));
+        return;
+    }
+    glUniform3f(location, value.x, value.y, value.z);
+
+    GLenum err;
+    while ((err = glGetError())) {
+        Console::WriteLine(Console::FormatString("OpenGL Error %d in setFloat3('%s')", err, name.c_str()));
+    }
 }
+
 void Shader::setFloat4(const std::string& name, glm::vec4 value) const
 {
-	glUniform4f(glGetUniformLocation(ShaderProgramID, name.c_str()), value.x, value.y, value.z, value.w);
+    GLint location = glGetUniformLocation(ShaderProgramID, name.c_str());
+    if (location == -1) {
+        Console::WriteLine(Console::FormatString("Warning: Uniform '%s' not found in Shader ID %d", name.c_str(), ShaderProgramID));
+        return;
+    }
+    glUniform4f(location, value.x, value.y, value.z, value.w);
+
+    GLenum err;
+    while ((err = glGetError())) {
+        Console::WriteLine(Console::FormatString("OpenGL Error %d in setFloat4('%s')", err, name.c_str()));
+    }
 }
+
 void Shader::setFloat3v(const std::string& name, GLsizei count, std::vector<glm::vec3> value) const
 {
-	if (value.size() > 0) glUniform3fv(glGetUniformLocation(ShaderProgramID, name.c_str()), count, glm::value_ptr(value[0]));
+    if (value.empty()) return;
+
+    GLint location = glGetUniformLocation(ShaderProgramID, name.c_str());
+    if (location == -1) {
+        Console::WriteLine(Console::FormatString("Warning: Uniform '%s' not found in Shader ID %d", name.c_str(), ShaderProgramID));
+        return;
+    }
+    glUniform3fv(location, count, glm::value_ptr(value[0]));
+
+    GLenum err;
+    while ((err = glGetError())) {
+        Console::WriteLine(Console::FormatString("OpenGL Error %d in setFloat3v('%s')", err, name.c_str()));
+    }
 }
+
 void Shader::setFloat1v(const std::string& name, GLsizei count, std::vector<float> value) const
 {
-	if (value.size() > 0) glUniform1fv(glGetUniformLocation(ShaderProgramID, name.c_str()), count, value.data());
+    if (value.empty()) return;
+
+    GLint location = glGetUniformLocation(ShaderProgramID, name.c_str());
+    if (location == -1) {
+        Console::WriteLine(Console::FormatString("Warning: Uniform '%s' not found in Shader ID %d", name.c_str(), ShaderProgramID));
+        return;
+    }
+    glUniform1fv(location, count, value.data());
+
+    GLenum err;
+    while ((err = glGetError())) {
+        Console::WriteLine(Console::FormatString("OpenGL Error %d in setFloat1v('%s')", err, name.c_str()));
+    }
 }
+
 void Shader::setMatrix4x4(const std::string& name, glm::mat4 value) const
 {
-	if (value.length() > 0) glUniformMatrix4fv(glGetUniformLocation(ShaderProgramID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+    GLint location = glGetUniformLocation(ShaderProgramID, name.c_str());
+    if (location == -1) {
+        Console::WriteLine(Console::FormatString("Warning: Uniform '%s' not found in Shader ID %d", name.c_str(), ShaderProgramID));
+        return;
+    }
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+
+    GLenum err;
+    while ((err = glGetError())) {
+        Console::WriteLine(Console::FormatString("OpenGL Error %d in setMatrix4x4('%s')", err, name.c_str()));
+    }
 }
+
 void Shader::SetCommonFunctionsShader(const char* commonShaderPath)
 {
 	std::string fullCommonShaderPath = SHADER_PATH + std::string(commonShaderPath);

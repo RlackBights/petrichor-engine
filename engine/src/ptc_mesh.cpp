@@ -153,6 +153,7 @@ void Mesh::addMesh(Mesh msh)
 void Mesh::drawInstance()
 {
 	if (!visible || !enabled || !parentObject->enabled) return;
+	GLenum err;
 	Material* mat = GetComponent<Material>();
 
 	mat->shader.use();
@@ -230,6 +231,8 @@ void Mesh::drawInstance()
 	mat->shader.setFloat1v("spotLightFocus", (GLsizei)Light::GetSpotlightFocus().size(), Light::GetSpotlightFocus());
 
 	mat->shader.setFloat3("cameraPos", Camera::getMainCamera()->parentObject->transform.position);
+	
+	while ((err = glGetError())) Console::WriteLine(Console::FormatString("OpenGL Error %d at line %d", err, __LINE__));
 		
 	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
