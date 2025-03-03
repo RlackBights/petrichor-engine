@@ -9,6 +9,8 @@ if(WIN32)
     add_compile_options(/EHsc)
 endif()
 
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+
 include(FetchContent)
 
 find_package(SDL3 QUIET)
@@ -38,12 +40,15 @@ if (NOT Freetype_FOUND)
     FetchContent_MakeAvailable(freetype)
 endif()
 
-FetchContent_Declare(
-    glm
-    GIT_REPOSITORY https://github.com/g-truc/glm.git
-    GIT_TAG 0.9.9.8
-)
-FetchContent_MakeAvailable(glm)
+find_package(glm QUIET)
+if (NOT glm_FOUND)
+    FetchContent_Declare(
+        glm
+        GIT_REPOSITORY https://github.com/g-truc/glm.git
+        GIT_TAG 0.9.9.8
+    )
+    FetchContent_MakeAvailable(glm)
+endif()
 
 FetchContent_Declare(
     glad
