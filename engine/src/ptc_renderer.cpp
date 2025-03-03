@@ -48,7 +48,6 @@ void Renderer::initOpenGL()
 {
 	// Create OpenGL context
 	glContext = SDL_GL_CreateContext(window);
-	SDL_GL_MakeCurrent(window, glContext);
 	Console::Write("---");
 
 	if (glContext == NULL)
@@ -64,11 +63,6 @@ void Renderer::initOpenGL()
 		SDL_Log("ERROR::RENDERER::COULD_NOT_INIT_GLAD");
 		exit(-1);
 	}
-
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
 	Console::Write("----");
 }
 void Renderer::initRenderer()
@@ -95,8 +89,8 @@ void Renderer::initRenderer()
 	glEnable(GL_DEPTH_TEST);
 	glBindVertexArray(0);
 
-	glDisable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	Console::Write("--");
 }
 void Renderer::showWindow()
@@ -105,8 +99,7 @@ void Renderer::showWindow()
 }
 void Renderer::prepareFrame(Camera* camera)
 {
-	//glClearColor(camera->backgroundColor.r, camera->backgroundColor.g, camera->backgroundColor.b, camera->backgroundColor.a);
-	glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+	glClearColor(camera->backgroundColor.r, camera->backgroundColor.g, camera->backgroundColor.b, camera->backgroundColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(VAO);
 
