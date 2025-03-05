@@ -46,17 +46,21 @@ ninja -C build
 ### Code organization
 Alright, so you actually want to work with this, great. Here's how you do that:
 
-The `engine/` folder contains code related to how **the engine actually works**. If you want to add your own functionality (mostly dev tools), it's done in this folder. The code inside here should ***never need to access code from the `scripts/` folder***. Speaking of,
+The `engine/` folder contains code related to how **the engine actually works**. My naming convention is quite simple, `ptc` stands for petrichor, and then the class name it manages. If you want to add your own functionality (mostly dev tools), it's done in this folder. For now there's no documentation, so you'll sadly need to dig through the engine if you need something, but for now it's quite small. The code inside here should ***never need to access code from the `scripts/` folder***. Speaking of,
 
-The `scripts/` folder contains the ***game-related scripts*** and logic, and is completely separate from the dev tools the engine provides. These scripts should be the ones that make the game you're developing work<br/>The structure for that is the following:
+The `scripts/` folder contains the ***game-related scripts*** and logic, and is completely separate from the dev tools the engine provides. These scripts should be the ones that make the game you're developing work\
+The structure for that is the following:
 ```
 scripts/
-  ├── include/    # Header files
-  ├── src/        # Source files
-  ├── standalone/ # Standalone source files
+  ├── include/      # Header files
+  ├── src/          # Source files
+  ├── standalone/   # Standalone source files
+  ├── game_main.cpp # Acts as a bootstrap
 ```
+You will need a way to set your objects up. Currently (since scenes are not implemented yet), `game_main.cpp` will act as a "bootstrap", or basically your scene. Here you can create your objects, order them in the hierarchy, and similar things\
+Think of it as a code-based way to describe a hierarchy
 
-For general development it's recommended to **split your code into header and source files**, since that's the convention for C++<br/>
+For general development it's recommended to **split your code into header and source files**, since that's the convention for C++\
 The **option to only write standalone source files** is still **available**, just for the sake of people who wish to work that way
 
 ## Roadmap

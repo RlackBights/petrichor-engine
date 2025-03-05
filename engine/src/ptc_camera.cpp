@@ -1,4 +1,3 @@
-#include "ptc_console.h"
 #include "ptc_input.h"
 #include <glm/common.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
@@ -6,11 +5,10 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/trigonometric.hpp>
 #include <ptc_camera.h>
-#include <string>
 
 Camera::Camera(bool _perspective, bool _main) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(2.5f), MouseSensitivity(0.6f), Zoom(100.0f)
 {
-    if (_perspective || mainCamera == nullptr) mainCamera = this;
+    if (_perspective || main == nullptr) main = this;
     WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
     Front = glm::vec3(0.0f);
     Up = glm::vec3(0.0f);
@@ -18,11 +16,6 @@ Camera::Camera(bool _perspective, bool _main) : Front(glm::vec3(0.0f, 0.0f, -1.0
     backgroundColor = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
     isBoosting = false;
     perspective = _perspective;
-}
-
-Camera* Camera::getMainCamera()
-{
-    return mainCamera;
 }
 
 glm::mat4 Camera::GetViewMatrix()
@@ -116,5 +109,5 @@ void Camera::updateCameraVectors()
     Up = glm::normalize(up);
 }
 
-Camera* Camera::mainCamera;
+Camera* Camera::main;
 glm::vec3 Camera::WorldUp;

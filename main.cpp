@@ -14,6 +14,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "scripts/game_main.cpp"
 #include <ptc_component.h>
 #include <ptc_shader.h>
 #include <ptc_time.h>
@@ -26,14 +27,13 @@
 #include <ptc_transform.h>
 #include <ptc_console.h>
 
-// Variables
-Object root("root"), camera("camera"), cube("cube"), monkey("monkey"), sword("sword"), light("light"), cargo("cargo"), test_billboard("test_billboard"), light2("light2"), light3("light3");
-
 // Function Definitions
 bool init();
 void initKeybinds();
 bool update();
 void cleanup(int exitCode = 0);
+
+Object camera("camera");
 
 int main( int argc, char* argv[] )
 {
@@ -71,84 +71,30 @@ bool init()
 
 	camera.AddComponent<Camera>(true);
 	Console::Write("----------");
-
-	Console::WriteLine("\n[          ]\tModels");
-	Console::SetCursorPosition(1, 6);
-
-	cube.AddComponent<Mesh>("cube.obj");
-	Material* cubeMat = cube.AddComponent<Material>(Texture::loadTexture("house.png"), Texture::loadTexture("container2_specular.png"));
-	cubeMat->specularExponent = 10;
-	cubeMat->specularStrength = 2;
-	cube.transform.position = glm::vec3(3.0f, 0.0f, 2.0f);
-	Console::Write("--");
-
-	Light::ambientLight = glm::vec4(0.7f, 0.8f, 0.5f, 1.0f);
-	Light::ambientLightIntensity = 0.05f;
-
-	light.AddComponent<Mesh>("orb.obj");
-	Material* lightMat = light.AddComponent<Material>();
-	lightMat->shader = Shader("vertex_shader.glsl", "flat_frag.glsl");
-	light.AddComponent<Light>(Point, glm::vec3(0.7f, 0.8f, 0.5f));
-	light.transform.position.y = 2.5f;
-
-	Console::Write("--");
-
-	light2.AddComponent<Mesh>("arrow.obj");
-	Material* light2Mat = light2.AddComponent<Material>();
-	light2Mat->shader = Shader("vertex_shader.glsl", "flat_frag.glsl");
-	light2.AddComponent<Light>(Directional, glm::vec3(0.3f, 0.3f, 1.0f));
-	light2.transform.rotation = glm::quat(glm::radians(glm::vec3(-25.0f, 45.0f, 0.0f)));
-	light2.transform.scale = glm::vec3(0.2f);
-
-	light3.AddComponent<Mesh>("cone.obj");
-	Material* light3Mat = light3.AddComponent<Material>();
-	light3Mat->shader = Shader("vertex_shader.glsl", "flat_frag.glsl");
-	light3.AddComponent<Light>(Spot, glm::vec3(0.8f));
-	light3.transform.scale = glm::vec3(0.2f);
-
-	root.transform.AddChild(&light3.transform);
-
-	test_billboard.AddComponent<Mesh>("plane.obj");
-	test_billboard.GetComponent<Mesh>()->renderType = RenderType::Y_AXIS_ONLY_BillBOARD;
-	Material* billboardMat = test_billboard.AddComponent<Material>(Texture::loadTexture("transparent.png"));
-	billboardMat->shader = Shader("vertex_shader.glsl", "flat_frag.glsl");
-	test_billboard.transform.rotation = glm::quat(glm::radians(glm::vec3(0.0f, -90.0f, 0.0f)));;
-	test_billboard.transform.position.z = -3.0f;
-
-	Console::Write("--");
-
-	monkey.AddComponent<Mesh>("monkey.obj");
-	monkey.AddComponent<Material>(Texture::loadTexture("wall.jpg"));
-	monkey.transform.position = glm::vec3(3.0f, 0.0f, -2.0f);
-	monkey.transform.rotation = glm::quat(glm::radians(glm::vec3(0.0f, -90.0f, 0.0f)));
-	Console::Write("--");
-
-	sword.AddComponent<Mesh>("EthanSword.obj");
-	sword.AddComponent<Material>(Texture::loadTexture("container.png"));
-	sword.transform.position = glm::vec3(3.0f, 2.0f, 0.0f);
-	sword.transform.scale = glm::vec3(5.0f);
-	Console::Write("--");
 	
 	Console::WriteLine("\n[          ]\tInput");
-	Console::SetCursorPosition(1, 7);
+	Console::SetCursorPosition(1, 6);
 
 	Input::initInput(&Renderer::screenWidth, &Renderer::screenHeight);
 	Console::Write("-----");
 	initKeybinds();
 
 	Console::WriteLine("\n[          ]\tRenderer");
-	Console::SetCursorPosition(1, 8);
+	Console::SetCursorPosition(1, 7);
 
 	Renderer::initRenderer();
+	Light::ambientLight = glm::vec4(0.7f, 0.8f, 0.5f, 1.0f);
+	Light::ambientLightIntensity = 0.05f;
 
 	Console::WriteLine("\n[          ]\tTime");
-	Console::SetCursorPosition(1, 9);
+	Console::SetCursorPosition(1, 8);
 
 	Time::initTime();
 	Console::Write("----------");
 
 	Console::WriteLine("\nFinished initialization!");
 
+	game_main();
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) comp->Start(); } );
 
 	Console::ClearFormatting();
@@ -161,28 +107,17 @@ bool update()
 	// Initialize stuff for the frame
 	Time::updateTime();
 	Input::updateInputUnscaled();
+	Renderer::prepareFrame(Camera::main->GetComponent<Camera>());
+	
+	// Run the update functions
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) comp->Update(); } );
+	
+	// Check if we are running at the frame limit
 	if (!Time::isNextFrameReady(Renderer::FPSLimit)) return true;
-
-	// These all could now be moved to their respective update functions, but I am, in fact, quite lazy
-	static float time = 0;
-	time += Time::deltaTime * 2;
-	cube.transform.rotation = glm::quat(glm::radians(glm::vec3(0.0f, time * 100.0f, 0.0f)));
-	light.transform.position = glm::vec3(cos(time) * 7, 0.0f, sin(time) * 7);
-	Transform camTrans = Camera::getMainCamera()->parentObject->transform;
-	//light2.transform.rotation = glm::lookAt(light2.transform.position, light.transform.position, -Camera::WorldUp);
-	//test_billboard.transform.rotation = glm::quatLookAt(glm::normalize(camera.transform.position - test_billboard.transform.position), Camera::WorldUp);
-	light3.transform.position = camTrans.position;
-	light3.transform.rotation = camTrans.rotation;
-
-	Console::WriteLine(Input::getKey((SDLK_A + 'W' - 'A')));
-
-	glm::vec3 eulerAngles = glm::eulerAngles(camera.transform.rotation);
-	Renderer::prepareFrame(camera.GetComponent<Camera>());
+	
+	// Run the fixedUpdate functions
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) comp->FixedUpdate(); } );
 	
-	TextManager::renderText(std::to_string((int)glm::round(1 + Time::timeScale / Time::deltaTime)) + " FPS", 25.0f, 25.0f, 0.5f, Renderer::screenWidth, Renderer::screenHeight, glm::vec3(1.0f));
-
 	// Frame cleanup
 	Time::wrapTime();
 	Input::wrapInput();
@@ -202,18 +137,19 @@ void cleanup(int exitCode)
 
 void initKeybinds()
 {
+
 	Input::addBinding(SDLK_ESCAPE, KEYBIND_DOWN, []() { cleanup(1); }, true);
-	Input::addBinding(SDLK_W, KEYBIND_HOLD, []() { camera.GetComponent<Camera>()->MoveCamera(FORWARD, Time::deltaTimeUnscaled); });
-	Input::addBinding(SDLK_A, KEYBIND_HOLD, []() { camera.GetComponent<Camera>()->MoveCamera(LEFT, Time::deltaTimeUnscaled); });
-	Input::addBinding(SDLK_S, KEYBIND_HOLD, []() { camera.GetComponent<Camera>()->MoveCamera(BACKWARD, Time::deltaTimeUnscaled); });
-	Input::addBinding(SDLK_D, KEYBIND_HOLD, []() { camera.GetComponent<Camera>()->MoveCamera(RIGHT, Time::deltaTimeUnscaled); });
-	Input::addBinding(SDLK_SPACE, KEYBIND_HOLD, []() { camera.GetComponent<Camera>()->MoveCamera(UP, Time::deltaTimeUnscaled); });
-	Input::addBinding(SDLK_LALT, KEYBIND_HOLD, []() { camera.GetComponent<Camera>()->MoveCamera(DOWN, Time::deltaTimeUnscaled); });
-	Input::addBinding(SDLK_LSHIFT, KEYBIND_DOWN, []() { camera.GetComponent<Camera>()->isBoosting = true; });
-	Input::addBinding(SDLK_LSHIFT, KEYBIND_UP, []() { camera.GetComponent<Camera>()->isBoosting = false; });
+	Input::addBinding(SDLK_W, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(FORWARD, Time::deltaTimeUnscaled); });
+	Input::addBinding(SDLK_A, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(LEFT, Time::deltaTimeUnscaled); });
+	Input::addBinding(SDLK_S, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(BACKWARD, Time::deltaTimeUnscaled); });
+	Input::addBinding(SDLK_D, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(RIGHT, Time::deltaTimeUnscaled); });
+	Input::addBinding(SDLK_SPACE, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(UP, Time::deltaTimeUnscaled); });
+	Input::addBinding(SDLK_LALT, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(DOWN, Time::deltaTimeUnscaled); });
+	Input::addBinding(SDLK_LSHIFT, KEYBIND_DOWN, []() { Camera::main->GetComponent<Camera>()->isBoosting = true; });
+	Input::addBinding(SDLK_LSHIFT, KEYBIND_UP, []() { Camera::main->GetComponent<Camera>()->isBoosting = false; });
 	Input::addBinding(SDLK_F11, KEYBIND_DOWN, []() { SDL_SetWindowFullscreen(Renderer::window, !(SDL_GetWindowFlags(Renderer::window) & SDL_WINDOW_FULLSCREEN)); }, true);
 	Input::addBinding(SDLK_V, KEYBIND_DOWN, []() { glPolygonMode(GL_FRONT_AND_BACK, (Renderer::renderMode == GL_LINE) ? Renderer::renderMode = GL_FILL : Renderer::renderMode = GL_LINE); if (Renderer::renderMode == GL_LINE) glDisable(GL_CULL_FACE); else glEnable(GL_CULL_FACE); }, true);
-	Input::addBinding(SDLK_N, KEYBIND_DOWN, []() { Camera::getMainCamera()->perspective = !Camera::getMainCamera()->perspective; });
+	Input::addBinding(SDLK_N, KEYBIND_DOWN, []() { Camera::main->perspective = !Camera::main->perspective; });
 
 	Input::addBinding(SDLM_RIGHT, MOUSE_DOWN, []() {
 		Input::enabled = true;
