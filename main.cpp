@@ -33,8 +33,6 @@ void initKeybinds();
 bool update();
 void cleanup(int exitCode = 0);
 
-Object camera("camera");
-
 int main( int argc, char* argv[] )
 {
 	if (!init()) cleanup(-1);
@@ -69,7 +67,6 @@ bool init()
 	Console::WriteLine("\n[          ]\tCamera");
 	Console::SetCursorPosition(1, 5);
 
-	camera.AddComponent<Camera>(true);
 	Console::Write("----------");
 	
 	Console::WriteLine("\n[          ]\tInput");
@@ -137,31 +134,39 @@ void cleanup(int exitCode)
 
 void initKeybinds()
 {
-
-	Input::addBinding(SDLK_ESCAPE, KEYBIND_DOWN, []() { cleanup(1); }, true);
-	Input::addBinding(SDLK_W, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(FORWARD, Time::deltaTimeUnscaled); });
-	Input::addBinding(SDLK_A, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(LEFT, Time::deltaTimeUnscaled); });
-	Input::addBinding(SDLK_S, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(BACKWARD, Time::deltaTimeUnscaled); });
-	Input::addBinding(SDLK_D, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(RIGHT, Time::deltaTimeUnscaled); });
-	Input::addBinding(SDLK_SPACE, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(UP, Time::deltaTimeUnscaled); });
-	Input::addBinding(SDLK_LALT, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(DOWN, Time::deltaTimeUnscaled); });
-	Input::addBinding(SDLK_LSHIFT, KEYBIND_DOWN, []() { Camera::main->GetComponent<Camera>()->isBoosting = true; });
-	Input::addBinding(SDLK_LSHIFT, KEYBIND_UP, []() { Camera::main->GetComponent<Camera>()->isBoosting = false; });
+	Input::addBinding(SDLK_ESCAPE, KEYBIND_DOWN, []() { cleanup(1); }, true); // Closes the application on escape
+	// Switches between fullscreen and windowed mode on F11
 	Input::addBinding(SDLK_F11, KEYBIND_DOWN, []() { SDL_SetWindowFullscreen(Renderer::window, !(SDL_GetWindowFlags(Renderer::window) & SDL_WINDOW_FULLSCREEN)); }, true);
-	Input::addBinding(SDLK_V, KEYBIND_DOWN, []() { glPolygonMode(GL_FRONT_AND_BACK, (Renderer::renderMode == GL_LINE) ? Renderer::renderMode = GL_FILL : Renderer::renderMode = GL_LINE); if (Renderer::renderMode == GL_LINE) glDisable(GL_CULL_FACE); else glEnable(GL_CULL_FACE); }, true);
-	Input::addBinding(SDLK_N, KEYBIND_DOWN, []() { Camera::main->perspective = !Camera::main->perspective; });
 
-	Input::addBinding(SDLM_RIGHT, MOUSE_DOWN, []() {
-		Input::enabled = true;
-		SDL_SetWindowRelativeMouseMode(Renderer::window, true);
-	}, true);
+	// These act as the engine camera controls:
 
-	Input::addBinding(SDLM_RIGHT, MOUSE_UP, []() {
-		Input::enabled = false;
-		SDL_SetWindowRelativeMouseMode(Renderer::window, false);
-		SDL_WarpMouseInWindow(Renderer::window, Renderer::screenWidth / 2.0f, Renderer::screenHeight / 2.0f);
-	}, true);
+	// Input::addBinding(SDLK_W, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(FORWARD, Time::deltaTimeUnscaled); });
+	// Input::addBinding(SDLK_A, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(LEFT, Time::deltaTimeUnscaled); });
+	// Input::addBinding(SDLK_S, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(BACKWARD, Time::deltaTimeUnscaled); });
+	// Input::addBinding(SDLK_D, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(RIGHT, Time::deltaTimeUnscaled); });
+	// Input::addBinding(SDLK_SPACE, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(UP, Time::deltaTimeUnscaled); });
+	// Input::addBinding(SDLK_LALT, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(DOWN, Time::deltaTimeUnscaled); });
+	// Input::addBinding(SDLK_LSHIFT, KEYBIND_DOWN, []() { Camera::main->GetComponent<Camera>()->isBoosting = true; });
+	// Input::addBinding(SDLK_LSHIFT, KEYBIND_UP, []() { Camera::main->GetComponent<Camera>()->isBoosting = false; });
 
-	Input::enabled = false;
+	// Input::addBinding(SDLM_RIGHT, MOUSE_DOWN, []() 
+	// 	Input::enabled = true;
+	// 	SDL_SetWindowRelativeMouseMode(Renderer::window, true);
+	// }, true);
+
+	// Input::addBinding(SDLM_RIGHT, MOUSE_UP, []() {
+	// 	Input::enabled = false;
+	// 	SDL_SetWindowRelativeMouseMode(Renderer::window, false);
+	// 	SDL_WarpMouseInWindow(Renderer::window, Renderer::screenWidth / 2.0f, Renderer::screenHeight / 2.0f);
+	// }, true);
+
+
+	
+	// Debug features, wireframe rendering and switch between orthographic and perspective rendering:
+	
+	// Input::addBinding(SDLK_V, KEYBIND_DOWN, []() { glPolygonMode(GL_FRONT_AND_BACK, (Renderer::renderMode == GL_LINE) ? Renderer::renderMode = GL_FILL : Renderer::renderMode = GL_LINE); if (Renderer::renderMode == GL_LINE) glDisable(GL_CULL_FACE); else glEnable(GL_CULL_FACE); }, true);
+	// Input::addBinding(SDLK_N, KEYBIND_DOWN, []() { Camera::main->perspective = !Camera::main->perspective; });
+
+	Input::enabled = true; // Was originally false, since the camera movement was locked unless the user held down the right mouse button, similar to unity
 	Console::Write("-----");
 }
