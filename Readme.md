@@ -20,6 +20,7 @@ There are some, not much for now, will edit this as soon as I get farther :D
 - libpng
 - bzip2
 - brotli
+
 *I am quite sure most linux distros come with these preinstalled, or can be easily installed as a dependency of Freetype, I've run into the problem on windows only*
 
 The engine has some dependencies, but they should be downloaded upon the first launch in case your system doesn't have them already
@@ -40,6 +41,23 @@ ninja -C build
 ```sh
 ./bin/petrichor_engine
 ```
+
+## Using the engine
+### Code organization
+Alright, so you actually want to work with this, great. Here's how you do that:
+
+The `engine/` folder contains code related to how **the engine actually works**. If you want to add your own functionality (mostly dev tools), it's done in this folder. The code inside here should ***never need to access code from the `scripts/` folder***. Speaking of,
+
+The `scripts/` folder contains the ***game-related scripts*** and logic, and is completely separate from the dev tools the engine provides. These scripts should be the ones that make the game you're developing work<br/>The structure for that is the following:
+```
+scripts/
+  ├── include/    # Header files
+  ├── src/        # Source files
+  ├── standalone/ # Standalone source files
+```
+
+For general development it's recommended to **split your code into header and source files**, since that's the convention for C++<br/>
+The **option to only write standalone source files** is still **available**, just for the sake of people who wish to work that way
 
 ## Roadmap
 - [ ] Implement scene saving/loading (most likely using reflection, which will be a pain in the ass)

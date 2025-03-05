@@ -144,6 +144,10 @@
     if (isForced) keyBindingsForced.push_back(KeyBinding{ key, eventType, action});
     else keyBindings.push_back(KeyBinding{ key, eventType, action });
 }
+bool Input::getKey(uint _keyCode, ushort* _keyMod)
+{
+    return heldKeys[SDL_GetScancodeFromKey(_keyCode, _keyMod)];
+}
 
 bool Input::enabled;
 bool Input::heldKeys[SDL_SCANCODE_COUNT];
