@@ -229,7 +229,7 @@ void Mesh::drawInstance()
 	mat->shader.setFloat1v("spotLightCutoff", (GLsizei)Light::GetSpotlightCutoff().size(), Light::GetSpotlightCutoff());
 	mat->shader.setFloat1v("spotLightFocus", (GLsizei)Light::GetSpotlightFocus().size(), Light::GetSpotlightFocus());
 
-	mat->shader.setFloat3("cameraPos", Camera::getMainCamera()->parentObject->transform.position);
+	mat->shader.setFloat3("cameraPos", Camera::main->parentObject->transform.position);
 		
 	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

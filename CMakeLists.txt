@@ -67,12 +67,17 @@ FetchContent_MakeAvailable(stb_image)
 
 include_directories(${glad_SOURCE_DIR}/include)
 include_directories(${stb_image_SOURCE_DIR})
-include_directories("engine/include/")
-
-file(GLOB MY_LIB_SRC "engine/src/*.cpp")
 file(GLOB GLAD_SRC "${glad_SOURCE_DIR}/src/glad.c")
 
-add_library(LibsModule STATIC ${MY_LIB_SRC} ${GLAD_SRC})
+
+include_directories("engine/include/")
+include_directories("scripts/include")
+
+file(GLOB ENGINE_LIB_SRC "engine/src/*.cpp")
+file(GLOB GAME_LIB_SRC "scripts/src/*.cpp")
+file(GLOB GAME_STD_SRC "scripts/standalone/*.cpp")
+
+add_library(LibsModule STATIC ${ENGINE_LIB_SRC} ${GAME_LIB_SRC} ${GAME_STD_SRC} ${GLAD_SRC} "scripts/game_main.cpp")
 
 target_link_libraries(LibsModule SDL3::SDL3 OpenGL::GL Freetype::Freetype)
 

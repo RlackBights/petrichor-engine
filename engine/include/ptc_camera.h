@@ -18,8 +18,6 @@ enum Camera_Movement {
 
 class Camera : public Component
 {
-private:
-    static Camera* mainCamera;
 public:
     glm::vec3 Front;
     glm::vec3 Up;
@@ -27,6 +25,7 @@ public:
     glm::vec4 backgroundColor;
     static glm::vec3 WorldUp;
 
+    static Camera* main;
     float MovementSpeed;
     float MouseSensitivity;
     float Zoom;
@@ -34,7 +33,6 @@ public:
     bool perspective;
 
     Camera(bool _perspective = true, bool isMain = false);
-    static Camera* getMainCamera();
     glm::mat4 GetViewMatrix();
     glm::mat4 GetProjectionMatrix(int screenWidth, int screenHeight);
     void MoveCamera(Camera_Movement direction, float deltaTime);
