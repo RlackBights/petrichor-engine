@@ -17,7 +17,7 @@ class Shader
 {
 private:
 	static std::vector<std::string> shaderCombinedPaths;
-	static GLuint activeShaderProgram;
+	static GLint activeShaderProgram;
 public:
 	static std::vector<Shader> shaders;
 	static GLuint CommonFunctionsShaderID;
