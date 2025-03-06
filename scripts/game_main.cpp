@@ -1,11 +1,10 @@
+#include "ptc_camera.h"
 #include "ptc_object.h"
-#include "standalone/example_standalone.cpp"
-#include "example_header.h"
 
-Object testObj("testObj");
+Object camera("camera"), text("text");
 
 void game_main()
 {
-    testObj.AddComponent<ExampleStandaloneComponent>();
-    testObj.AddComponent<ExampleComponent>();
+    Camera* camComp = camera.AddComponent<Camera>(false, true);
+    camComp->backgroundColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f);
 }

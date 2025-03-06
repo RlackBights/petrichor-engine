@@ -60,6 +60,7 @@ bool init()
 	Console::SetCursorPosition(1, 3);
 	
 	Shader::SetCommonFunctionsShader("common_functions.glsl");
+<<<<<<< Updated upstream
 
 	Console::WriteLine("\n[          ]\tText manager");
 	Console::SetCursorPosition(1, 4);
@@ -71,6 +72,8 @@ bool init()
 
 	camera.AddComponent<Camera>(true);
 	Console::Write("----------");
+=======
+>>>>>>> Stashed changes
 	
 	Console::WriteLine("\n[          ]\tInput");
 	Console::SetCursorPosition(1, 6);

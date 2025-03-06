@@ -1,7 +1,9 @@
-#include "ptc_transform.h"
+#include <ptc_transform.h>
+#include <ptc_ui_transform.h>
 #include <ptc_object.h>
 #include <ptc_component.h>
-Object::Object(std::string _name, bool _enabled) : name(_name), transform(this), enabled(_enabled) { }
+
+Object::Object(std::string _name, bool _isUI, bool _enabled) : name(_name), transform((_isUI ? new UITransform(this) : new Transform(this))), enabled(_enabled) {}
 std::vector<std::unique_ptr<Component>>* Object::GetComponents()
 {
     return &components;
