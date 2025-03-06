@@ -1,6 +1,6 @@
 #include <ptc_text.h>
 
-void TextManager::initTextManager(Shader inputShader, int screenWidth, int screenHeight)
+void Text::initTextManager(Shader inputShader, int screenWidth, int screenHeight)
 {
     if (inputShader.ShaderProgramID == -1)
     {
@@ -104,7 +104,7 @@ void TextManager::initTextManager(Shader inputShader, int screenWidth, int scree
     FT_Done_Face(face);
     FT_Done_FreeType(ft);
 }
-void TextManager::renderText(std::string text, float x, float y, float scale, int screenWidth, int screenHeight, glm::vec3 color, bool isUI)
+void Text::renderText(std::string text, float x, float y, float scale, int screenWidth, int screenHeight, glm::vec3 color, bool isUI)
 {
     // activate corresponding render state
     GLint polygonMode[2];
@@ -156,8 +156,8 @@ void TextManager::renderText(std::string text, float x, float y, float scale, in
     glPolygonMode(GL_FRONT_AND_BACK, polygonMode[1]);
 }
 
-std::map<char, Character> TextManager::Characters;
-FT_Library TextManager::ft;
-FT_Face TextManager::face;
-unsigned int TextManager::VAO, TextManager::VBO;
-Shader TextManager::textShader;
+std::map<char, Character> Text::Characters;
+FT_Library Text::ft;
+FT_Face Text::face;
+unsigned int Text::VAO, Text::VBO;
+Shader Text::textShader;

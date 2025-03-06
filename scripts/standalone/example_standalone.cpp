@@ -11,6 +11,6 @@ class ExampleStandaloneComponent : public Component
     }
     void Update() override
     {
-        TextManager::renderText("HELLOOOO", 0.0f, 0.0f, 1.0f, Renderer::screenWidth, Renderer::screenHeight);
+        Text::renderText("HELLOOOO", 0.0f, 0.0f, 1.0f, Renderer::screenWidth, Renderer::screenHeight);
     }
 };
