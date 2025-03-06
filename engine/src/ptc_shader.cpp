@@ -103,9 +103,9 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 }
 void Shader::use()
 {
+	glGetIntegerv(GL_CURRENT_PROGRAM, &activeShaderProgram);
 	if (activeShaderProgram == ShaderProgramID) return;
 	glUseProgram(ShaderProgramID);
-	activeShaderProgram = ShaderProgramID;
 }
 void Shader::setBool(const std::string& name, bool value) const
 {
@@ -190,6 +190,6 @@ void Shader::SetCommonFunctionsShader(const char* commonShaderPath)
 }
 
 GLuint Shader::CommonFunctionsShaderID;
-GLuint Shader::activeShaderProgram;
+GLint Shader::activeShaderProgram;
 std::vector<Shader> Shader::shaders;
 std::vector<std::string> Shader::shaderCombinedPaths;
