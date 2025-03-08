@@ -62,8 +62,6 @@ bool init()
 	Console::WriteLine("\n[          ]\tText manager");
 	Console::SetCursorPosition(1, 4);
 
-	Text::initTextManager(Shader("text_vert.glsl", "text_frag.glsl"), Renderer::screenWidth, Renderer::screenHeight);
-
 	Console::WriteLine("\n[          ]\tCamera");
 	Console::SetCursorPosition(1, 5);
 
