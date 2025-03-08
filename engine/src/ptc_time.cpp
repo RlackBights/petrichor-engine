@@ -20,11 +20,13 @@ void Time::updateTime()
 	lastFrame = currentFrame;
 	currentFrame = SDL_GetTicks();
 	deltaTimeUnscaled = (currentFrame - lastFrame) / 1000.0f;
-	deltaTime += deltaTimeUnscaled;
-
+	deltaTime += deltaTimeUnscaled * timeScale;
+}
+void Time::wrapTime()
+{
 	for (std::vector<Timer>::iterator i = timers.begin(); i != timers.end();)
 	{
-		i->seconds -= (i->unscaled ? deltaTimeUnscaled : deltaTime);
+		i->seconds -= (i->unscaled ? (deltaTime / timeScale) : deltaTime);
 		if (i->seconds <= 0)
 		{
 			i->callback();
@@ -32,9 +34,6 @@ void Time::updateTime()
 		}
 		else i++;
 	}
-}
-void Time::wrapTime()
-{
 	deltaTime = 0.0f;
 }
 bool Time::isNextFrameReady(int FPSLimit)

@@ -23,9 +23,9 @@ private:
     FT_Face face;
     static std::map<std::string, Font*> fontCache;
     std::string path;
-    int fontSize;
     Font(std::string _path, int _fontSize);
 public:
+int fontSize;
     std::map<char, Character> characters;
     static Font* LoadFont(std::string _path, int _fontSize);
 };
