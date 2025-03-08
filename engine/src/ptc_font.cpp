@@ -1,3 +1,4 @@
+#include <freetype/fttypes.h>
 #include <ptc_font.h>
 
 Font::Font(std::string _path, int _fontSize) : path(_path), fontSize(_fontSize)
@@ -30,7 +31,7 @@ Font::Font(std::string _path, int _fontSize) : path(_path), fontSize(_fontSize)
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    for (unsigned char c = 0; c < 128; c++)
+    for (FT_ULong c = 0; c < 1024; c++)
     {
         // load character glyph 
         if (FT_Load_Char(face, c, FT_LOAD_RENDER))

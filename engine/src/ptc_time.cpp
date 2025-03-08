@@ -5,6 +5,7 @@ Uint64 Time::currentFrame;
 float Time::deltaTime;
 float Time::deltaTimeUnscaled;
 float Time::timeScale;
+float Time::time;
 std::vector<Timer> Time::timers;
 
 void Time::initTime()
@@ -12,6 +13,7 @@ void Time::initTime()
 	lastFrame = 0;
 	timeScale = 1.0f;
 	currentFrame = SDL_GetTicks();
+	time = 0.0f;
 	deltaTimeUnscaled = (currentFrame - lastFrame) / 1000.0f;
 	deltaTime = deltaTimeUnscaled * timeScale;
 }
@@ -34,6 +36,7 @@ void Time::wrapTime()
 		}
 		else i++;
 	}
+	time += deltaTime;
 	deltaTime = 0.0f;
 }
 bool Time::isNextFrameReady(int FPSLimit)

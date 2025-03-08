@@ -1,5 +1,9 @@
+#include <SDL3/SDL_log.h>
 #include <functional>
+#include <glm/detail/qualifier.hpp>
+#include <glm/fwd.hpp>
 #include <ptc_text.h>
+#include <string>
 
 Text::Text(std::string _text, float _x, float _y, Font* _font, glm::vec4 _color, Shader _shader) : text(_text), font(_font), color(_color), textShader(_shader), position(_x, _y), offset(0, 0)
 {
@@ -38,7 +42,6 @@ void Text::FixedUpdate()
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     textShader.use();
     textShader.setMatrix4x4("projection", glm::ortho(0.0f, (float)Renderer::screenWidth, 0.0f, (float)Renderer::screenHeight));
-    textShader.setFloat4("textColor", color);
     textShader.setInt("text", 0);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
@@ -52,14 +55,36 @@ void Text::FixedUpdate()
     // iterate through all characters
     std::string::const_iterator c;
     int index = 0;
+    glm::vec4 renderColor = color;
     for (c = text.begin(); c != text.end(); c++)
     {
-        if (*c == '\n') {
-            // Move to new line
-            x = position.x - getPixelWidth(index + 1) / 2.0f; // Reset x position
-            y -= font->fontSize; // Move down by one line
-            continue; // Skip rendering the newline character
+        switch (*c)
+        {
+            case '\n':
+                // Move to new line
+                x = position.x - getPixelWidth(index + 1) / 2.0f; // Reset x position
+                y -= font->fontSize; // Move down by one line
+                continue; // Skip rendering the newline character
+            case '[':
+                if ((c + 7) < text.end() && *(c + 7) == ']') {
+                    bool isCorrect = true;
+                    for (int i = 1; i < 7 && isCorrect; i++) {
+                        if (*(c + i) < '0' || *(c + i) > 'f' || (*(c + i) > '9' && *(c + i) < 'A') || (*(c + i) > 'F' && *(c + i) < 'a')) isCorrect = false;
+                    }
+                    if (!isCorrect) break;
+                    renderColor.x = std::stoi(std::string(1, (char)*(c + 1)) + (char)*(c + 2), 0, 16) / 255.0f;
+                    renderColor.y = std::stoi(std::string(1, (char)*(c + 3)) + (char)*(c + 4), 0, 16) / 255.0f;
+                    renderColor.z = std::stoi(std::string(1, (char)*(c + 5)) + (char)*(c + 6), 0, 16) / 255.0f;
+                    c += 7;
+                    continue;
+                } else {
+                    break;
+                }
+            default:
+                break;
         }
+
+        textShader.setFloat4("textColor", renderColor);
 
         Character ch = font->characters[*c];
 
@@ -115,6 +140,10 @@ void Text::SetText(std::string _text, bool _updatePosition)
     text = _text;
     if (_updatePosition) CenterText();
 }
+std::string Text::GetText()
+{
+    return text;
+}
 int Text::getPixelWidth(int _index, bool _ignoreLinebreak)
 {
     int width = 0;
@@ -123,6 +152,15 @@ int Text::getPixelWidth(int _index, bool _ignoreLinebreak)
     int index = 0;
     for (c = text.begin(); c != text.end(); c++)
     {
+        if ((c + 7) < text.end() && *(c + 7) == ']') {
+            bool isCorrect = true;
+            for (int i = 1; i < 7 && isCorrect; i++) {
+                if (*(c + i) < '0' || *(c + i) > 'f' || (*(c + i) > '9' && *(c + i) < 'A') || (*(c + i) > 'F' && *(c + i) < 'a')) isCorrect = false;
+            }
+            if (!isCorrect) break;
+            c += 7;
+            continue;
+        }
         if (_index > index++) continue;
         if (font->characters.find(*c) != font->characters.end()) {
             if (!_ignoreLinebreak && *c == '\n') return width;

@@ -32,6 +32,7 @@ public:
 	void MoveText(int _x, int _y, bool _centered = true);
 	void CenterText();
 	void SetText(std::string _text, bool _updatePosition = true);
+	std::string GetText();
 	int getPixelWidth(int _index = 0, bool _ignoreLinebreak = false);
 };
 

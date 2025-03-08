@@ -90,7 +90,7 @@ bool init()
 	Console::WriteLine("\nFinished initialization!");
 
 	game_main();
-	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) comp->Start(); } );
+	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) if (comp->enabled && comp->parentObject->enabled) comp->Start(); } );
 
 	Console::ClearFormatting();
 	Renderer::showWindow();
@@ -105,13 +105,13 @@ bool update()
 	Renderer::prepareFrame(Camera::main->GetComponent<Camera>());
 	
 	// Run the update functions
-	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) comp->Update(); } );
+	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) if (comp->enabled && comp->parentObject->enabled) comp->Update(); } );
 	
 	// Check if we are running at the frame limit
 	if (!Time::isNextFrameReady(Renderer::FPSLimit)) return true;
 	
 	// Run the fixedUpdate functions
-	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) comp->FixedUpdate(); } );
+	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) if (comp->enabled && comp->parentObject->enabled) comp->FixedUpdate(); } );
 	
 	// Frame cleanup
 	Time::wrapTime();
