@@ -24,6 +24,7 @@ public:
     void virtual Update() {}
     void virtual FixedUpdate() {}
     void virtual Start() {}
+    void virtual Awake() {}
 };
 
 #endif

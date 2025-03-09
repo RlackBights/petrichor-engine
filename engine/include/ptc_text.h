@@ -22,18 +22,20 @@ private:
     unsigned int VAO, VBO;
 	Font* font;
 	glm::vec4 color;
+
+	void FixedUpdate() override;
+	int getPixelWidth(int _index = 0, bool _ignoreLinebreak = false);
 public:
     Shader textShader;
 	std::function<float(float _x)> animationFunction;
 
     Text(std::string _text, float _x = 0.0f, float _y = 0.0f, Font* _font = Font::LoadFont("arial.ttf", 48), glm::vec4 _color = glm::vec4(1.0f), Shader _shader = Shader("text_vert.glsl", "text_frag.glsl"));
-	void FixedUpdate() override;
 	void SetTextAnimation(std::function<float(float _x)> _animationFunction);
 	void MoveText(int _x, int _y, bool _centered = true);
 	void CenterText();
 	void SetText(std::string _text, bool _updatePosition = true);
 	std::string GetText();
-	int getPixelWidth(int _index = 0, bool _ignoreLinebreak = false);
+	void Awake() override;
 };
 
 #endif

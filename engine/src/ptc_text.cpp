@@ -51,7 +51,7 @@ void Text::FixedUpdate()
     int lineNum = 1;
     for (char c : text) if (c == '\n') lineNum++;
 
-    float x = (position.x + offset.x), y = (position.y + offset.y + lineNum * font->fontSize / 2.0f);
+    float x = (parentObject->transform.position.x + offset.x), y = (parentObject->transform.position.y + offset.y + lineNum * font->fontSize / 2.0f);
     // iterate through all characters
     std::string::const_iterator c, i;
     int index = 0, newlineNum;
@@ -64,7 +64,7 @@ void Text::FixedUpdate()
                 newlineNum = 0;
                 for (i = c; *i == '\n'; i++) newlineNum++;
                 // Move to new line
-                x = position.x - getPixelWidth(index + newlineNum) / 2.0f; // Reset x position
+                x = parentObject->transform.position.x - getPixelWidth(index + newlineNum) / 2.0f; // Reset x position
                 y -= font->fontSize * newlineNum; // Move down by one line
                 c += newlineNum - 1;
                 continue; // Skip rendering the newline character
@@ -92,7 +92,7 @@ void Text::FixedUpdate()
         Character ch = font->characters[*c];
 
         float xpos = x + (c == text.begin() ? 0 : ch.Bearing.x) * parentObject->transform.scale.x;
-        float ypos = y - (ch.Size.y - ch.Bearing.y) * parentObject->transform.scale.y + animationFunction(xpos - position.x);
+        float ypos = y - (ch.Size.y - ch.Bearing.y) * parentObject->transform.scale.y + animationFunction(xpos - parentObject->transform.position.x);
 
         float w = ch.Size.x * parentObject->transform.scale.x;
         float h = ch.Size.y * parentObject->transform.scale.y;
@@ -123,14 +123,19 @@ void Text::FixedUpdate()
     glEnable(GL_DEPTH_TEST);
     glPolygonMode(GL_FRONT_AND_BACK, polygonMode[1]);
 }
+void Text::Awake()
+{
+    parentObject->transform.position.x = position.x;
+    parentObject->transform.position.y = position.y;
+}
 void Text::SetTextAnimation(std::function<float(float _x)> _animationFunction)
 {
     this->animationFunction = _animationFunction;
 }
 void Text::MoveText(int _x, int _y, bool _centered)
 {
-    position.x = _x;
-    position.y = _y;
+    parentObject->transform.position.x = _x;
+    parentObject->transform.position.y = _y;
     if (_centered) CenterText();
 }
 void Text::CenterText()

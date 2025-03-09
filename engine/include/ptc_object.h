@@ -35,6 +35,7 @@ public:
 	{
 		auto component = std::make_unique<T>(std::forward<Args>(args)...);
 		component->SetParentObject(this);
+		component->Awake();
 		components.push_back(std::move(component));
 
 		return GetComponent<T>();
