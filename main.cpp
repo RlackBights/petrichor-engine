@@ -42,47 +42,46 @@ int main( int argc, char* argv[] )
 
 bool init()
 {
+	int consoleOffset = 1;
+
 	// Initialize rendering stuff
 	Console::ClearScreen();
 	Console::WriteLine("Initializing...", BRIGHT_YELLOW);
 	Console::WriteLine("[          ]\tSDL");
-	Console::SetCursorPosition(1, 1);
+	Console::SetCursorPosition(1, consoleOffset++);
 	Renderer::initSDL("PTC Framework");
 
 	Console::WriteLine("\n[          ]\tOpenGL");
-	Console::SetCursorPosition(1, 2);
+	Console::SetCursorPosition(1, consoleOffset++);
 
 	Renderer::initOpenGL();
 	
 	Console::WriteLine("\n[          ]\tCommon Functions shader");
-	Console::SetCursorPosition(1, 3);
+	Console::SetCursorPosition(1, consoleOffset++);
 	
 	Shader::SetCommonFunctionsShader("common_functions.glsl");
 
-	Console::WriteLine("\n[          ]\tText manager");
-	Console::SetCursorPosition(1, 4);
-
 	Console::WriteLine("\n[          ]\tCamera");
-	Console::SetCursorPosition(1, 5);
+	Console::SetCursorPosition(1, consoleOffset++);
 
 	Console::Write("----------");
 	
 	Console::WriteLine("\n[          ]\tInput");
-	Console::SetCursorPosition(1, 6);
+	Console::SetCursorPosition(1, consoleOffset++);
 
 	Input::initInput(&Renderer::screenWidth, &Renderer::screenHeight);
 	Console::Write("-----");
 	initKeybinds();
 
 	Console::WriteLine("\n[          ]\tRenderer");
-	Console::SetCursorPosition(1, 7);
+	Console::SetCursorPosition(1, consoleOffset++);
 
 	Renderer::initRenderer();
 	Light::ambientLight = glm::vec4(0.7f, 0.8f, 0.5f, 1.0f);
 	Light::ambientLightIntensity = 0.05f;
 
 	Console::WriteLine("\n[          ]\tTime");
-	Console::SetCursorPosition(1, 8);
+	Console::SetCursorPosition(1, consoleOffset++);
 
 	Time::initTime();
 	Console::Write("----------");

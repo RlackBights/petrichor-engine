@@ -24,6 +24,7 @@ class TextInput : public Component
 private:
     static glm::vec4 completeColor;
     glm::vec4 baseColor;
+    glm::vec4 disabledColor;
     Text* textRef;
     bool ordered;
     bool strictOrder;
@@ -32,41 +33,11 @@ private:
     int length;
     float x, y;
     std::function<void(TextInput* _self)> onComplete;
-public:
-    TextInput(std::string _text, float _x, float _y, glm::vec4 _color, bool _ordered, bool _strictOrder, std::function<void(TextInput* _self)> _onComplete) : onComplete(_onComplete), text(_text), x(_x), y(_y), ordered(_ordered), strictOrder((!ordered ? false : _strictOrder)), baseColor(_color)
-    {
-        length = 0;
-        for (char c : _text)
-        {
-            length++;
-            characters.push_back({c});
-        }
-    }
-
-    std::string vec4ToHexColor(const glm::vec4& color) {
-        int r = static_cast<int>(color.r * 255.0f);
-        int g = static_cast<int>(color.g * 255.0f);
-        int b = static_cast<int>(color.b * 255.0f);
     
-        std::stringstream ss;
-        ss << std::hex << std::setfill('0') << std::setw(2) << r
-           << std::setw(2) << g
-           << std::setw(2) << b;
-        
-        return '[' + ss.str() + ']';
-    }
-    void Start() override
-    {
-        textRef = parentObject->AddComponent<Text>(vec4ToHexColor(baseColor) + text, x, y);
-        textRef->CenterText();
-        textRef->enabled = false;
-        enabled = false;
-        Time::createTimer(6.0f, [&]() { textRef->enabled = true; enabled = true; });
-    }
     void FixedUpdate() override
     {
         uint scancode = Input::lastKey;
-        if (scancode < SDLK_0 || scancode > SDLK_Z || (scancode > SDLK_9 && scancode < SDLK_A)) return;
+        if (disableWriting || scancode < SDLK_0 || scancode > SDLK_Z || (scancode > SDLK_9 && scancode < SDLK_A)) return;
         
         bool completeWord = true;
         bool blockRest = false;
@@ -102,17 +73,65 @@ public:
         textRef->SetText(finalText);
         if (completeWord) onComplete(this);
     }
-    void RefreshText(std::string _text = "")
+public:
+    bool disableWriting;
+
+    TextInput(std::string _text, float _x = 0.0f, float _y = 0.0f, glm::vec4 _color = glm::vec4(1.0f), bool _ordered = false, bool _strictOrder = false, std::function<void(TextInput* _self)> _onComplete = [](TextInput* _self) {}) : onComplete(_onComplete), text(_text), x(_x), y(_y), ordered(_ordered), strictOrder((!ordered ? false : _strictOrder)), baseColor(_color), disableWriting(false)
     {
-        characters.clear();
-        if (_text == "") _text = text;
+        disabledColor = _color * glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
         length = 0;
         for (char c : _text)
         {
             length++;
             characters.push_back({c});
         }
-        textRef->SetText(vec4ToHexColor(baseColor) + _text);
+    }
+
+    std::string vec4ToHexColor(const glm::vec4& color) {
+        int r = static_cast<int>(color.r * 255.0f);
+        int g = static_cast<int>(color.g * 255.0f);
+        int b = static_cast<int>(color.b * 255.0f);
+    
+        std::stringstream ss;
+        ss << std::hex << std::setfill('0') << std::setw(2) << r
+           << std::setw(2) << g
+           << std::setw(2) << b;
+        
+        return '[' + ss.str() + ']';
+    }
+    void Awake() override
+    {
+        textRef = AddComponent<Text>(vec4ToHexColor((disableWriting) ? disabledColor : baseColor) + text, x, y);
+        textRef->CenterText();
+        textRef->enabled = false;
+        enabled = false;
+        Time::createTimer(6.0f, [&]() { textRef->enabled = true; enabled = true; });
+    }
+    void RefreshText(std::string _text = "")
+    {
+        characters.clear();
+        if (_text == "") _text = text;
+        text = _text;
+        length = 0;
+        for (char c : _text)
+        {
+            length++;
+            characters.push_back({c});
+        }
+        textRef->SetText(vec4ToHexColor((disableWriting) ? disabledColor : baseColor) + _text);
+    }
+    std::string GetText()
+    {
+        return text;
+    }
+    void SetCompleteFunction(std::function<void(TextInput* _self)> _onComplete)
+    {
+        onComplete = _onComplete;
+    }
+    void DisableWriting(bool _disable)
+    {
+        disableWriting = _disable;
+        RefreshText();
     }
 };
 

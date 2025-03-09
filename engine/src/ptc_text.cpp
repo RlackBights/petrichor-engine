@@ -179,3 +179,7 @@ int Text::getPixelWidth(int _index, bool _ignoreLinebreak)
 
     return width;
 }
+Font* Text::GetFont()
+{
+    return font;
+}
