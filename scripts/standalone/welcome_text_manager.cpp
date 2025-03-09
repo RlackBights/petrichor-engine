@@ -20,6 +20,6 @@ public:
         textRef = parentObject->AddComponent<Text>("Welcome...", Renderer::screenWidth / 2.0f, Renderer::screenHeight / 2.0f, Font::LoadFont("asd.ttf", 48), glm::vec4(1.0f, 0.1f, 0.1f, 1.0f)); 
         textRef->CenterText();
         Time::createTimer(3.0f, [&]() { textRef->SetText("This will be a [00ff00]simple[ff1a1a] game,\ndon't worry"); });
-        Time::createTimer(6.0f, [&]() { textRef->SetText("Type the following:\n\n\n"); });
+        Time::createTimer(6.0f, [&]() { textRef->SetText("Type the following words\n\n\n\n\nExperiment a little"); });
     }
 };

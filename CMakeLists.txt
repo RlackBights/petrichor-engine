@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.16.0 FATAL_ERROR)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
-#file(MAKE_DIRECTORY ${directory})
 
 project(petrichor_engine C CXX)
 

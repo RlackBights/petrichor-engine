@@ -53,17 +53,20 @@ void Text::FixedUpdate()
 
     float x = (position.x + offset.x), y = (position.y + offset.y + lineNum * font->fontSize / 2.0f);
     // iterate through all characters
-    std::string::const_iterator c;
-    int index = 0;
+    std::string::const_iterator c, i;
+    int index = 0, newlineNum;
     glm::vec4 renderColor = color;
     for (c = text.begin(); c != text.end(); c++)
     {
         switch (*c)
         {
             case '\n':
+                newlineNum = 0;
+                for (i = c; *i == '\n'; i++) newlineNum++;
                 // Move to new line
-                x = position.x - getPixelWidth(index + 1) / 2.0f; // Reset x position
-                y -= font->fontSize; // Move down by one line
+                x = position.x - getPixelWidth(index + newlineNum) / 2.0f; // Reset x position
+                y -= font->fontSize * newlineNum; // Move down by one line
+                c += newlineNum - 1;
                 continue; // Skip rendering the newline character
             case '[':
                 if ((c + 7) < text.end() && *(c + 7) == ']') {
