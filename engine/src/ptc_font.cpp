@@ -17,8 +17,13 @@ Font::Font(std::string _path, int _fontSize) : path(_path), fontSize(_fontSize)
 
     if (FT_New_Face(ft, std::string(FONT_PATH + _path).c_str(), 0, &face))
     {
-        SDL_Log("ERROR::FREETYPE::FAILED_TO_LOAD_FONT");
-        return;
+        SDL_Log("ERROR::FREETYPE::FAILED_TO_LOAD_FONT\nDefaulting to arial...");
+        path = "arial.ttf";
+        if (FT_New_Face(ft, (std::string(FONT_PATH) + "arial.ttf").c_str(), 0, &face))
+        {
+            SDL_Log("ERROR::FREETYPE::FAILED_TO_LOAD_FONT\nFailed to load arial.ttf");
+            return;
+        }
     }
 
     FT_Set_Pixel_Sizes(face, 0, _fontSize);
