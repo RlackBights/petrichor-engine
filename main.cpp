@@ -1,3 +1,4 @@
+#include "ptc_gui.h"
 #include <SDL3/SDL_keycode.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/fwd.hpp>
@@ -77,6 +78,7 @@ bool init()
 	Console::SetCursorPosition(1, consoleOffset++);
 
 	Renderer::initRenderer();
+	GUI::InitUI();
 	Light::ambientLight = glm::vec4(0.7f, 0.8f, 0.5f, 1.0f);
 	Light::ambientLightIntensity = 0.05f;
 
@@ -111,6 +113,8 @@ bool update()
 	
 	// Run the fixedUpdate functions
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) if (comp->enabled && comp->parentObject->enabled) comp->FixedUpdate(); } );
+
+	GUI::RenderUI();
 	
 	// Frame cleanup
 	Time::wrapTime();

@@ -1,6 +1,7 @@
 #ifndef PTC_MATH_H
 #define PTC_MATH_H
 
+#include <glm/fwd.hpp>
 #include <glm/glm.hpp>
 #include <glm/ext/scalar_constants.hpp>
 
@@ -41,6 +42,7 @@ class Math
 {
 public:
     static float ApplyEasing(float _x, EasingFunction _easingFunction);
+    static glm::vec4 Lerp(glm::vec4 _start, glm::vec4 _end, float _step);
 };
 
 #endif

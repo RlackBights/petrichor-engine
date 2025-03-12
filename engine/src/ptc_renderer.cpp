@@ -91,7 +91,7 @@ void Renderer::initRenderer()
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	Console::Write("--");
+	Console::Write("---");
 }
 void Renderer::showWindow()
 {

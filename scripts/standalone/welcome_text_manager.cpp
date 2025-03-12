@@ -20,6 +20,7 @@ private:
                 textRef->MoveText(Renderer::screenWidth / 2.0f, (Renderer::screenHeight + textRef->GetFont()->fontSize / 2.0f) - Math::ApplyEasing(Time::time - timeStart, EasingFunction::IN_OUT_QUAD) * (Renderer::screenHeight + textRef->GetFont()->fontSize) / 2.0f);
                 break;
             case 1:
+                textRef->SetText("Alright, check this out...");
                 textRef->MoveText(Renderer::screenWidth / 2.0f - Math::ApplyEasing(Time::time - timeStart, EasingFunction::IN_OUT_QUAD) * Renderer::screenWidth / 4.0f, (Renderer::screenHeight + textRef->GetFont()->fontSize * 4) / 2.0f);
                 break;
             default:

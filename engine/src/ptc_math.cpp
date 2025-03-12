@@ -1,4 +1,5 @@
 #include <glm/common.hpp>
+#include <glm/fwd.hpp>
 #include <ptc_math.h>
 
 float Math::ApplyEasing(float _x, EasingFunction _easingFunction) {
@@ -36,4 +37,8 @@ float Math::ApplyEasing(float _x, EasingFunction _easingFunction) {
         case IN_OUT_BOUNCE: return (_x < 0.5f) ? (glm::pow(2 * _x, 2) / 2) : (1 - glm::pow(2 * (1 - _x), 2) / 2);
         default: return _x;
     }
+}
+glm::vec4 Math::Lerp(glm::vec4 _start, glm::vec4 _end, float _step)
+{
+    return glm::vec4((_start.x * (1 - _step)) + (_end.x * _step), (_start.y * (1 - _step)) + (_end.y * _step), (_start.z * (1 - _step)) + (_end.z * _step), (_start.w * (1 - _step)) + (_end.w * _step));
 }

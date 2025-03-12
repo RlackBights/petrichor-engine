@@ -78,7 +78,7 @@ public:
 
     TextInput(std::string _text, float _x = 0.0f, float _y = 0.0f, glm::vec4 _color = glm::vec4(1.0f), bool _ordered = false, bool _strictOrder = false, std::function<void(TextInput* _self)> _onComplete = [](TextInput* _self) {}) : onComplete(_onComplete), text(_text), x(_x), y(_y), ordered(_ordered), strictOrder((!ordered ? false : _strictOrder)), baseColor(_color), disableWriting(false)
     {
-        disabledColor = _color * glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+        disabledColor = _color * glm::vec4(0.6f, 0.6f, 0.6f, 1.0f);
         length = 0;
         for (char c : _text)
         {
