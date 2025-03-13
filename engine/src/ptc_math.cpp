@@ -38,7 +38,11 @@ float Math::ApplyEasing(float _x, EasingFunction _easingFunction) {
         default: return _x;
     }
 }
+float Math::Lerp(float _start, float _end, float _step)
+{
+    return (_start * (1 - _step) + (_end * _step));
+}
 glm::vec4 Math::Lerp(glm::vec4 _start, glm::vec4 _end, float _step)
 {
-    return glm::vec4((_start.x * (1 - _step)) + (_end.x * _step), (_start.y * (1 - _step)) + (_end.y * _step), (_start.z * (1 - _step)) + (_end.z * _step), (_start.w * (1 - _step)) + (_end.w * _step));
+    return glm::vec4(Lerp(_start.x, _end.x, _step), Lerp(_start.y, _end.y, _step), Lerp(_start.z, _end.z, _step), Lerp(_start.w, _end.w, _step));
 }

@@ -48,8 +48,8 @@ public:
     {
         LoadWords();
 
-        cutsceneRef = welcomeText.AddComponent<WelcomeTextManager>();
         scoreRef = scoreTracker.AddComponent<ScoreTracker>();
+        cutsceneRef = welcomeText.AddComponent<WelcomeTextManager>();
         textLevels.push_back(textLevel1.AddComponent<TextInput>(GetRandomWord(), Renderer::screenWidth / 2.0f, Renderer::screenHeight / 2.0f, glm::vec4(0.2f, 0.8f, 0.8f, 1.0f), false, false));
         textLevels[0]->SetCompleteFunction([&](TextInput* _self) {
             _self->enabled = false;
@@ -58,9 +58,12 @@ public:
             _self->enabled = true;
             if (scoreRef->GetWordsFinished() == 3)
             {
-                _self->DisableWriting(true);
                 cutsceneRef->AdvanceCutscene();
-                Time::createTimer(3.0f, [&]() { textLevels[0]->DisableWriting(false); });
+                cutsceneRef->GetTextRef()->SetText("Alright, check this out...");
+                Time::createTimer(3.0f, [&]() { cutsceneRef->GetTextRef()->SetText("This is your health\nYou can restore it by typing"); });
+                Time::createTimer(8.0f, [&]() { cutsceneRef->GetTextRef()->SetText("It will decrease over time\nIf it runs out, you die"); });
+                Time::createTimer(13.0f, [&]() { cutsceneRef->GetTextRef()->SetText("All good? Let's get into it"); });
+                Time::createTimer(16.0f, [&]() { cutsceneRef->SetEnd(true); scoreRef->SetEndCutscene(true); });
             }
         });
     }

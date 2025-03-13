@@ -42,6 +42,7 @@ class Math
 {
 public:
     static float ApplyEasing(float _x, EasingFunction _easingFunction);
+    static float Lerp(float _start, float _end, float _step);
     static glm::vec4 Lerp(glm::vec4 _start, glm::vec4 _end, float _step);
 };
 

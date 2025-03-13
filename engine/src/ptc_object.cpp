@@ -1,3 +1,4 @@
+#include "ptc_console.h"
 #include "ptc_transform.h"
 #include <ptc_object.h>
 #include <ptc_component.h>
@@ -12,5 +13,6 @@ Object* Object::Find(std::string name)
     Transform::GetRoot()->PreorderTraversal([name, &out](Transform* node) {
         if (!out && node->object && node->object->name == name) out = node->object;
     });
+    if (out == NULL) Console::WriteLine(Console::FormatString("[ERROR] Could not find object with name %s", name.c_str()), Color::RED, false);
     return out;
 }

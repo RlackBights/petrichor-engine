@@ -110,12 +110,12 @@ bool update()
 	
 	// Check if we are running at the frame limit
 	if (!Time::isNextFrameReady(Renderer::FPSLimit)) return true;
-	
+
+	GUI::RenderUI();
+		
 	// Run the fixedUpdate functions
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) if (comp->enabled && comp->parentObject->enabled) comp->FixedUpdate(); } );
 
-	GUI::RenderUI();
-	
 	// Frame cleanup
 	Time::wrapTime();
 	Input::wrapInput();
