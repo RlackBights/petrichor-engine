@@ -71,10 +71,10 @@ public:
     {
         textRef = AddComponent<Text>("", Renderer::screenWidth / 2.0f, Renderer::screenHeight / 10.0f);
     }
-    void FinishedWord(std::string _word)
+    void FinishedWord(std::string _word, float _mult = 1.0f)
     {
         wordsFinished++;
-        uint wordPoints = (int)glm::pow(_word.length(), 1.3f);
+        uint wordPoints = (int)glm::pow(_word.length(), 1.3f) * _mult;
         points += wordPoints * glm::sqrt(glm::floor(combo));
         health = glm::clamp(health + (wordPoints / 100.0f) * glm::sqrt(combo), 0.0f, 1.0f);
         combo = glm::clamp(combo + wordPoints / 100.0f, 1.0f, 6.999f);

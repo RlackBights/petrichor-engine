@@ -45,7 +45,7 @@ public:
         cutsceneState = 0;
         timeStart = Time::time + 0.0f;
         scoreRef = Object::Find("scoreTracker")->GetComponent<ScoreTracker>();
-        textRef = AddComponent<Text>("Welcome...", Renderer::screenWidth / 2.0f, Renderer::screenHeight / 2.0f, Font::LoadFont("asd.ttf", 48), glm::vec4(1.0f, 0.1f, 0.1f, 1.0f)); 
+        textRef = AddComponent<Text>("Welcome...", Renderer::screenWidth / 2.0f, Renderer::screenHeight / 2.0f, Font::LoadFont("arial.ttf", 48), glm::vec4(1.0f, 0.1f, 0.1f, 1.0f)); 
         textRef->CenterText();
 
         Time::createTimer(3.0f, [&]() { textRef->SetText("This will be a [00ff00]simple[ff1a1a] game,\ndon't worry"); });

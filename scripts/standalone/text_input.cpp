@@ -1,3 +1,6 @@
+#ifndef TEXT_INPUT
+#define TEXT_INPUT
+
 #include "ptc_component.h"
 #include "ptc_input.h"
 #include "ptc_text.h"
@@ -136,3 +139,5 @@ public:
 };
 
 glm::vec4 TextInput::completeColor = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
+
+#endif
