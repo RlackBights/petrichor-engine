@@ -152,6 +152,14 @@ std::string Text::GetText()
 {
     return text;
 }
+void Text::SetTextColor(glm::vec4 _color)
+{
+    color = _color;
+}
+glm::vec4 Text::GetTextColor()
+{
+    return color;
+}
 int Text::getPixelWidth(int _index, bool _ignoreLinebreak)
 {
     int width = 0;

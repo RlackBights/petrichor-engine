@@ -56,7 +56,7 @@ private:
             combo = glm::clamp(combo - comboDecay, 1.0f, 10.0f);
         }
         if (endCutscene && startTime == 0.0f) startTime = Time::time;
-        lastHealth = Math::Lerp(lastHealth, health, 1.01f - health);
+        lastHealth = Math::Lerp(lastHealth, health, 0.1f);
         lastCombo = Math::Lerp(lastCombo, glm::fract(combo) * (Renderer::screenWidth / 3.0f), 0.1f);
         textRef->SetText(Console::FormatString("%d", points));
         textRef->SetTextAnimation([&](float _x) {
@@ -71,13 +71,13 @@ public:
     {
         textRef = AddComponent<Text>("", Renderer::screenWidth / 2.0f, Renderer::screenHeight / 10.0f);
     }
-    void FinishedWord(std::string _word, float _mult = 1.0f)
+    void FinishedWord(std::string _word, float _mult = 1.0f, float _comboBonus = 0.0f)
     {
         wordsFinished++;
         uint wordPoints = (int)glm::pow(_word.length(), 1.3f) * _mult;
         points += wordPoints * glm::sqrt(glm::floor(combo));
         health = glm::clamp(health + (wordPoints / 100.0f) * glm::sqrt(combo), 0.0f, 1.0f);
-        combo = glm::clamp(combo + wordPoints / 100.0f, 1.0f, 6.999f);
+        combo = glm::clamp(combo + _comboBonus + wordPoints / 100.0f, 1.0f, 6.999f);
     }
     uint GetWordsFinished()
     {
@@ -90,6 +90,14 @@ public:
     void SetEndCutscene(bool _end)
     {
         endCutscene = _end;
+        combo = 0;
+        health = 1.0f;
+        points = 0;
+        wordsFinished = 0;
+    }
+    bool GetEndCutscene()
+    {
+        return endCutscene;
     }
 };
 

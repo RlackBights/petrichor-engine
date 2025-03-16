@@ -3,7 +3,6 @@
 #include "ptc_renderer.h"
 #include "ptc_text.h"
 #include "ptc_time.h"
-#include "./text_input.cpp"
 #include <cstdlib>
 class Level2 : public Component
 {

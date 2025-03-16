@@ -33,6 +33,8 @@ public:
 	void SetTextAnimation(std::function<float(float _x)> _animationFunction);
 	void MoveText(int _x, int _y, bool _centered = true);
 	void CenterText();
+	void SetTextColor(glm::vec4 _color);
+	glm::vec4 GetTextColor();
 	void SetText(std::string _text, bool _updatePosition = true);
 	std::string GetText();
 	void Awake() override;

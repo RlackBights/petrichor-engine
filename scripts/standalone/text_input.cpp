@@ -106,22 +106,29 @@ public:
     {
         textRef = AddComponent<Text>(vec4ToHexColor((disableWriting) ? disabledColor : baseColor) + text, x, y);
         textRef->CenterText();
-        textRef->enabled = false;
-        enabled = false;
-        Time::createTimer(6.0f, [&]() { textRef->enabled = true; enabled = true; });
     }
-    void RefreshText(std::string _text = "")
+    void RefreshText(std::string _text = "", bool keepCorrect = true)
     {
-        characters.clear();
+        if (keepCorrect) characters.clear();
         if (_text == "") _text = text;
+        else
+        {
+            keepCorrect = false;
+            characters.clear();
+        }
         text = _text;
         length = 0;
+        int i = 0;
+        std::string finalText = "";
         for (char c : _text)
         {
             length++;
-            characters.push_back({c});
+            if (!keepCorrect) characters.push_back({c});
+            else finalText += ((characters[i].correct) ? vec4ToHexColor(completeColor * (disableWriting ? glm::vec4(0.6f, 0.6f, 0.6f, 1.0f) : glm::vec4(1.0f))) : vec4ToHexColor(baseColor * (disableWriting ? glm::vec4(0.6f, 0.6f, 0.6f, 1.0f) : glm::vec4(1.0f)))) + characters[i].character;
+            i++;
         }
-        textRef->SetText(vec4ToHexColor((disableWriting) ? disabledColor : baseColor) + _text);
+        if (!keepCorrect) textRef->SetText(vec4ToHexColor(baseColor * (disableWriting ? glm::vec4(0.6f, 0.6f, 0.6f, 1.0f) : glm::vec4(1.0f))) + _text);
+        else textRef->SetText(finalText);
     }
     std::string GetText()
     {
@@ -131,7 +138,7 @@ public:
     {
         onComplete = _onComplete;
     }
-    void DisableWriting(bool _disable)
+    void DisableWriting(bool _disable, bool _refresh = true)
     {
         disableWriting = _disable;
         RefreshText();
