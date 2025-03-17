@@ -71,10 +71,10 @@ public:
         LoadWords();
 
         scoreRef = scoreTracker.AddComponent<ScoreTracker>();
-        if (!skipIntro) cutsceneRef = welcomeText.AddComponent<WelcomeTextManager>();
-        textLevels.push_back(textLevel1.AddComponent<TextInput>(GetRandomWord(), Renderer::screenWidth / 2.0f, Renderer::screenHeight / 2.0f, glm::vec4(0.2f, 0.8f, 0.8f, 1.0f), false, false));
-        textLevels.push_back(textLevel2.AddComponent<TextInput>(GetRandomWord(), Renderer::screenWidth / 2.0f, Renderer::screenHeight / 2.0f, glm::vec4(0.2f, 0.8f, 0.8f, 1.0f), true, false));
-        textLevels.push_back(textLevel3.AddComponent<TextInput>(GetRandomWord(true), Renderer::screenWidth / 3.0f - 48.0f, Renderer::screenHeight * 0.15f, glm::vec4(0.2f, 0.8f, 0.8f, 1.0f), true, false));
+        cutsceneRef = welcomeText.AddComponent<WelcomeTextManager>();
+        textLevels.push_back(textLevel1.AddComponent<TextInput>(GetRandomWord(), Renderer::screenWidth / 2.0f, Renderer::screenHeight / 2.0f, glm::vec4(0.9f, 0.1f, 0.1f, 1.0f), false, false));
+        textLevels.push_back(textLevel2.AddComponent<TextInput>(GetRandomWord(), Renderer::screenWidth / 2.0f, Renderer::screenHeight / 2.0f, glm::vec4(0.9f, 0.2f, 0.9f, 1.0f), true, false));
+        textLevels.push_back(textLevel3.AddComponent<TextInput>(GetRandomWord(true), Renderer::screenWidth / 3.0f - 48.0f, Renderer::screenHeight * 0.15f, glm::vec4(0.8f, 0.8f, 0.8f, 1.0f), true, false));
         textLevels.push_back(textLevel4.AddComponent<TextInput>(GetRandomWord(), Renderer::screenWidth / 2.0f, Renderer::screenHeight / 3.0f, glm::vec4(0.2f, 0.8f, 0.8f, 1.0f), true, false));
         textLevels[0]->SetCompleteFunction([&](TextInput* _self) {
             scoreRef->FinishedWord(textLevels[0]->GetText());

@@ -10,5 +10,5 @@ void game_main()
 {
     srand(time(0));
     camera.AddComponent<Camera>();
-    gameManager.AddComponent<GameManager>(true);
+    gameManager.AddComponent<GameManager>();
 }
