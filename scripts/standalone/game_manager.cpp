@@ -100,7 +100,7 @@ public:
             scoreRef->SetEndCutscene(true);
             Time::createTimer(10.0f, [&]() { textLevel2.enabled = true; });
             Time::createTimer(20.0f, [&]() { textLevel3.enabled = true; });
-            Time::createTimer(0.0f, [&]() { textLevel4.enabled = true; });
+            Time::createTimer(30.0f, [&]() { textLevel4.enabled = true; });
         } else
         {
             textLevels[0]->GetComponent<Text>()->enabled = false;
