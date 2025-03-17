@@ -1,4 +1,5 @@
 #include <SDL3/SDL_events.h>
+#include <SDL3/SDL_stdinc.h>
 #include <ptc_input.h>
 
  void Input::initInput(int* inScreenWidth, int* inScreenHeight, float mouseSensitivity) {
@@ -11,6 +12,7 @@
 
     // Handle key events
     if (e.type == SDL_EVENT_KEY_DOWN) {
+        lastKey = e.key.key;
         heldKeys[e.key.scancode] = true;
     }
     else if (e.type == SDL_EVENT_KEY_UP) {
@@ -139,6 +141,7 @@
     mouseXrel = 0;
     mouseYrel = 0;
     mouseScroll = 0;
+    lastKey = 0;
 }
  void Input::addBinding(Uint32 key, KeyBindingEventType eventType, std::function<void()> action, bool isForced) {
     if (isForced) keyBindingsForced.push_back(KeyBinding{ key, eventType, action});
@@ -161,6 +164,7 @@ float Input::mouseYrel;
 float Input::mouseX;
 float Input::mouseY;
 float Input::mouseScroll;
+Uint32 Input::lastKey;
 
 int* Input::screenWidth;
 int* Input::screenHeight;

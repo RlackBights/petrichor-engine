@@ -91,7 +91,7 @@ void Renderer::initRenderer()
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	Console::Write("--");
+	Console::Write("---");
 }
 void Renderer::showWindow()
 {
@@ -99,6 +99,7 @@ void Renderer::showWindow()
 }
 void Renderer::prepareFrame(Camera* camera)
 {
+	if (camera == NULL) return;
 	glClearColor(camera->backgroundColor.r, camera->backgroundColor.g, camera->backgroundColor.b, camera->backgroundColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(VAO);

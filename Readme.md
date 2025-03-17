@@ -63,6 +63,8 @@ Think of it as a code-based way to describe a hierarchy
 For general development it's recommended to **split your code into header and source files**, since that's the convention for C++\
 The **option to only write standalone source files** is still **available**, just for the sake of people who wish to work that way
 
+As a final note, the main branch includes a very basic example of how files and objects are structured. If you need more complicated examples, you can check the game demo branches out, which include actual games made using the newest features of the engine. Keep in mind, the game demos run on a snapshot of the engine from the time it was made, these branches will not be updated, but the newest game demo should always include the most important updates
+
 ## Roadmap
 - [ ] Implement scene saving/loading (most likely using reflection, which will be a pain in the ass)
 - [ ] Add UI, so things can be edited in-engine

@@ -1,32 +1,44 @@
 #ifndef PTC_TEXT_H
 #define PTC_TEXT_H
 
+#include <functional>
+#include <ptc_component.h>
+#include <ptc_renderer.h>
+#include <ptc_font.h>
 #include <ft2build.h>
+#include <glm/fwd.hpp>
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include <SDL3/SDL.h>
 #include <ptc_shader.h>
-#include <map>
-#include FT_FREETYPE_H
+#include <freetype2/freetype/freetype.h>
 
-struct Character {
-	unsigned int TextureID;  // ID handle of the glyph texture
-	glm::ivec2   Size;       // Size of glyph
-	glm::ivec2   Bearing;    // Offset from baseline to left/top of glyph
-	unsigned int Advance;    // Offset to advance to next glyph
-};
-
-class TextManager
+class Text : public Component
 {
-public:
-	static std::map<char, Character> Characters;
-	static FT_Library ft;
-	static FT_Face face;
-    static unsigned int VAO, VBO;
-    static Shader textShader;
+private:
+	std::string text;
+	glm::vec2 position;
+	glm::vec2 offset;
+    unsigned int VAO, VBO;
+	Font* font;
+	glm::vec4 color;
+	std::function<float(float _x)> animationFunction;
 
-    static void initTextManager(Shader inputShader, int screenWidth, int screenHeight);
-	static void renderText(std::string text, float x = 0.0f, float y = 0.0f, float scale = 1.0f, int screenWidth = 800, int screenHeight = 600, glm::vec3 color = glm::vec3(1.0f), bool isUI = true);
+	void FixedUpdate() override;
+public:
+    Shader textShader;
+
+	int getPixelWidth(int _index = 0, bool _ignoreLinebreak = false);
+    Text(std::string _text, float _x = 0.0f, float _y = 0.0f, Font* _font = Font::LoadFont("arial.ttf", 48), glm::vec4 _color = glm::vec4(1.0f), Shader _shader = Shader("text_vert.glsl", "text_frag.glsl"));
+	void SetTextAnimation(std::function<float(float _x)> _animationFunction);
+	void MoveText(int _x, int _y, bool _centered = true);
+	void CenterText();
+	void SetTextColor(glm::vec4 _color);
+	glm::vec4 GetTextColor();
+	void SetText(std::string _text, bool _updatePosition = true);
+	std::string GetText();
+	void Awake() override;
+	Font* GetFont();
 };
 
 #endif

@@ -18,6 +18,7 @@ public:
 	static float deltaTime;
 	static float deltaTimeUnscaled;
 	static float timeScale;
+	static float time;
 	static std::vector<Timer> timers;
 
 	static void initTime();

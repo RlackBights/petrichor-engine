@@ -1,6 +1,7 @@
 #ifndef PTC_INPUT_H
 #define PTC_INPUT_H
 
+#include <SDL3/SDL_stdinc.h>
 #include <cstdlib>
 #include <SDL3/SDL.h>
 #include <functional>
@@ -42,6 +43,7 @@ public:
     static float mouseX;
     static float mouseY;
     static float mouseScroll;
+    static Uint32 lastKey;
 
     static int* screenWidth;
     static int* screenHeight;

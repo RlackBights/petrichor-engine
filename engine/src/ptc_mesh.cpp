@@ -187,27 +187,27 @@ void Mesh::drawInstance()
 	mat->shader.setInt("NormalMap", 2);
 
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, parentObject->transform->position);
+	model = glm::translate(model, parentObject->transform.position);
 	
 	Object* cam = Object::Find("camera");
 	Camera* camComp = cam->GetComponent<Camera>();
 	glm::mat4 billboardRotation(1.0f);
 	switch (renderType) { // Implement the other 2 billboard types!
 		case RenderType::NORMAL:
-			model *= glm::mat4_cast(parentObject->transform->rotation);
+			model *= glm::mat4_cast(parentObject->transform.rotation);
 			break;
 		case RenderType::CAMERA_FACING_BILLBOARD:
-			model *= glm::mat4(glm::quatLookAt(glm::normalize(cam->transform->position - parentObject->transform->position), cam->GetComponent<Camera>()->WorldUp));
+			model *= glm::mat4(glm::quatLookAt(glm::normalize(cam->transform.position - parentObject->transform.position), cam->GetComponent<Camera>()->WorldUp));
 			break;
 		case RenderType::Y_AXIS_ONLY_BillBOARD:
-			model *= glm::mat4(glm::quatLookAt(glm::normalize(glm::vec3(cam->transform->position.x, parentObject->transform->position.y, cam->transform->position.z) - parentObject->transform->position), cam->GetComponent<Camera>()->WorldUp));
+			model *= glm::mat4(glm::quatLookAt(glm::normalize(glm::vec3(cam->transform.position.x, parentObject->transform.position.y, cam->transform.position.z) - parentObject->transform.position), cam->GetComponent<Camera>()->WorldUp));
 			break;
 		default:
-			model *= glm::mat4_cast(parentObject->transform->rotation);
+			model *= glm::mat4_cast(parentObject->transform.rotation);
 			break;
 	}
 
-	model = glm::scale(model, parentObject->transform->scale);
+	model = glm::scale(model, parentObject->transform.scale);
 	mat->shader.setMatrix4x4("model", model);
 	mat->shader.setFloat4("baseCol", (mat->shader.renderAsWireframe || polygonMode[1] == GL_LINE) ? glm::vec4(glm::vec3(0.0f), 1.0f) : (GetComponent<Light>() != nullptr) ? glm::vec4(GetComponent<Light>()->lightColor, 1.0f) * mat->baseColor : mat->baseColor);
 	mat->shader.setFloat("specularStrength", GetComponent<Material>()->specularStrength);
@@ -229,7 +229,7 @@ void Mesh::drawInstance()
 	mat->shader.setFloat1v("spotLightCutoff", (GLsizei)Light::GetSpotlightCutoff().size(), Light::GetSpotlightCutoff());
 	mat->shader.setFloat1v("spotLightFocus", (GLsizei)Light::GetSpotlightFocus().size(), Light::GetSpotlightFocus());
 
-	mat->shader.setFloat3("cameraPos", Camera::main->parentObject->transform->position);
+	mat->shader.setFloat3("cameraPos", Camera::main->parentObject->transform.position);
 		
 	glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

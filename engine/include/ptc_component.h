@@ -21,9 +21,16 @@ public:
         return parentObject->GetComponent<T>();
     }
 
+    template <class T, typename... Args>
+	T* AddComponent(Args&&... args)
+	{
+        return parentObject->AddComponent<T>(args...);
+	}
+
     void virtual Update() {}
     void virtual FixedUpdate() {}
     void virtual Start() {}
+    void virtual Awake() {}
 };
 
 #endif
