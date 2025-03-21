@@ -1,4 +1,5 @@
 #include "ptc_gui.h"
+#include "ptc_state.h"
 #include <SDL3/SDL_keycode.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/fwd.hpp>
@@ -36,6 +37,7 @@ void cleanup(int exitCode = 0);
 
 int main( int argc, char* argv[] )
 {
+	State::SetArguments(argc, argv);
 	if (!init()) cleanup(-1);
 	while (update());
 	cleanup(0);

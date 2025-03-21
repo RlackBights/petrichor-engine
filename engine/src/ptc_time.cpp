@@ -1,3 +1,5 @@
+#include "ptc_console.h"
+#include <exception>
 #include <ptc_time.h>
 
 Uint64 Time::lastFrame;
@@ -31,13 +33,27 @@ void Time::wrapTime()
 		i->seconds -= (i->unscaled ? deltaTimeUnscaled : deltaTime);
 		if (i->seconds <= 0)
 		{
-			i->callback();
+			if (i->callback)
+			{
+				try
+				{
+					i->callback();
+				} catch (const std::exception e) 
+				{
+					Console::WriteLine(Console::FormatString("Timer error: %s", e.what()), Color::RED, false);
+				}
+			} else
+			{
+				Console::WriteLine("ERROR: Timer callback function not found", Color::RED, false);
+			}
+
 			i = timers.erase(i);
 		}
 		else i++;
 	}
 	time += deltaTime;
 	deltaTime = 0.0f;
+	deltaTimeUnscaled = 0.0f;
 }
 bool Time::isNextFrameReady(int FPSLimit)
 {
@@ -51,5 +67,11 @@ bool Time::isNextFrameReady(int FPSLimit)
 }
 void Time::createTimer(float seconds, std::function<void()> callback, bool unscaled)
 {
-	timers.push_back(Timer{ seconds, callback, unscaled });
+
+    if (!callback)
+    {
+        Console::WriteLine("ERROR: Received empty callback!");
+        return;
+    }
+	timers.push_back(Timer{ seconds, std::move(callback), unscaled });
 }

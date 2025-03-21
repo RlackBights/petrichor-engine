@@ -71,7 +71,7 @@ public:
         LoadWords();
 
         scoreRef = scoreTracker.AddComponent<ScoreTracker>();
-        cutsceneRef = welcomeText.AddComponent<WelcomeTextManager>();
+        if (!skipIntro) cutsceneRef = welcomeText.AddComponent<WelcomeTextManager>();
         textLevels.push_back(textLevel1.AddComponent<TextInput>(GetRandomWord(), Renderer::screenWidth / 2.0f, Renderer::screenHeight / 2.0f, glm::vec4(0.9f, 0.1f, 0.1f, 1.0f), false, false));
         textLevels.push_back(textLevel2.AddComponent<TextInput>(GetRandomWord(), Renderer::screenWidth / 2.0f, Renderer::screenHeight / 2.0f, glm::vec4(0.9f, 0.2f, 0.9f, 1.0f), true, false));
         textLevels.push_back(textLevel3.AddComponent<TextInput>(GetRandomWord(true), Renderer::screenWidth / 3.0f - 48.0f, Renderer::screenHeight * 0.15f, glm::vec4(0.8f, 0.8f, 0.8f, 1.0f), true, false));
@@ -85,7 +85,9 @@ public:
                 {
                     cutsceneRef->AdvanceCutscene();
                     cutsceneRef->GetTextRef()->SetText("Alright, check this out...");
-                    Time::createTimer(3.0f, [&]() { cutsceneRef->GetTextRef()->SetText("This is your health\nYou can restore it by typing"); });
+                    Time::createTimer(3.0f, [this]() {
+                        cutsceneRef->GetTextRef()->SetText("This is your health\nYou can restore it by typing");
+                    });
                     Time::createTimer(8.0f, [&]() { cutsceneRef->GetTextRef()->SetText("It will decrease over time\nIf it runs out, you die"); });
                     Time::createTimer(13.0f, [&]() { cutsceneRef->GetTextRef()->SetText("All good? Let's get into it"); });
                     Time::createTimer(16.0f, [&]() { cutsceneRef->SetEnd(true); scoreRef->SetEndCutscene(true); });
