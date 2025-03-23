@@ -3,6 +3,8 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 bin/
+*.AppDir/
+*.AppImage
 
 *.o
 *.obj
