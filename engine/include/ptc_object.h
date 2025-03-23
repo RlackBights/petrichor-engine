@@ -16,10 +16,10 @@ private:
 public:
 	std::string name;
 	std::vector<std::string> tags;
-	Transform* transform;
+	Transform transform;
 	bool enabled;
 
-	Object(std::string _name = "", bool _isUI = false, bool _enabled = true);
+	Object(std::string _name = "", bool _enabled = true);
 
 	template <class T>
 	T* GetComponent()

@@ -25,13 +25,13 @@ std::vector<Light*> Light::GetLights(LightType _type)
 std::vector<glm::vec3> Light::GetLightDirections(LightType _type)
 {
 	std::vector<glm::vec3> dir;
-	for (Light* light : GetLights(_type)) dir.push_back(Light::QuaternionToDirection(light->parentObject->transform->rotation));
+	for (Light* light : GetLights(_type)) dir.push_back(Light::QuaternionToDirection(light->parentObject->transform.rotation));
 	return dir;
 }
 std::vector<glm::vec3> Light::GetLightPositions(LightType _type)
 {
 	std::vector<glm::vec3> pos;
-	for (Light* light : GetLights(_type)) pos.push_back(light->parentObject->transform->position);
+	for (Light* light : GetLights(_type)) pos.push_back(light->parentObject->transform.position);
 	return pos;
 }
 std::vector<glm::vec3> Light::GetLightColors(LightType _type)
@@ -59,7 +59,7 @@ std::vector<PointLight> Light::GetPointLights()
 	for (Light* light : GetLights(Point))
 	{
 		PointLight pl = PointLight();
-		pl.pos = glm::vec4(light->parentObject->transform->position, 1.0f);
+		pl.pos = glm::vec4(light->parentObject->transform.position, 1.0f);
 		pl.col = glm::vec4(light->lightColor, 1.0f);
 		l.push_back(pl);
 	}

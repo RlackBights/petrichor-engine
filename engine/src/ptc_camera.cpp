@@ -20,7 +20,7 @@ Camera::Camera(bool _perspective, bool _main) : Front(glm::vec3(0.0f, 0.0f, -1.0
 
 glm::mat4 Camera::GetViewMatrix()
 {
-    return glm::lookAt(parentObject->transform->position, parentObject->transform->position + Front, Up);
+    return glm::lookAt(parentObject->transform.position, parentObject->transform.position + Front, Up);
 }
 
 glm::mat4 Camera::GetProjectionMatrix(int screenWidth, int screenHeight)
@@ -51,7 +51,7 @@ void Camera::MoveCamera(Camera_Movement direction, float deltaTime)
     if (direction == DOWN)
         moveVec -= Up * velocity;
 
-    parentObject->transform->position += moveVec * (isBoosting ? 2.0f : 1.0f);
+    parentObject->transform.position += moveVec * (isBoosting ? 2.0f : 1.0f);
 }
 
 void Camera::FixedUpdate()
@@ -61,7 +61,7 @@ void Camera::FixedUpdate()
     float zoom  = Input::mouseScroll;
 
     // Get the forward direction from the current quaternion
-    glm::vec3 forward = parentObject->transform->rotation * glm::vec3(0, 0, -1);
+    glm::vec3 forward = parentObject->transform.rotation * glm::vec3(0, 0, -1);
 
     // Extract current pitch using arcsin (safe method)
     float currentPitch = glm::degrees(glm::asin(forward.y)); // Get pitch from forward vector
@@ -77,11 +77,11 @@ void Camera::FixedUpdate()
     glm::quat yawRotation = glm::angleAxis(yaw, glm::vec3(0, 1, 0));
 
     // Apply the yaw first, then the clamped pitch
-    parentObject->transform->rotation = yawRotation * parentObject->transform->rotation;
-    parentObject->transform->rotation = parentObject->transform->rotation * pitchRotation;
+    parentObject->transform.rotation = yawRotation * parentObject->transform.rotation;
+    parentObject->transform.rotation = parentObject->transform.rotation * pitchRotation;
 
     // Normalize to avoid drift
-    parentObject->transform->rotation = glm::normalize(parentObject->transform->rotation);
+    parentObject->transform.rotation = glm::normalize(parentObject->transform.rotation);
 
     if (zoom != 0.0f) ProcessMouseScroll(zoom);
 
@@ -97,7 +97,7 @@ void Camera::ProcessMouseScroll(float yoffset)
 
 void Camera::updateCameraVectors()
 {
-    glm::quat rotation = parentObject->transform->rotation;
+    glm::quat rotation = parentObject->transform.rotation;
 
     glm::vec3 front = rotation * glm::vec3(0.0f, 0.0f, -1.0f);
 
