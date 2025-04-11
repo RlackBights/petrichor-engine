@@ -105,7 +105,7 @@ bool update()
 	// Initialize stuff for the frame
 	Time::updateTime();
 	Input::updateInputUnscaled();
-	Renderer::prepareFrame(Camera::main->GetComponent<Camera>());
+	Renderer::prepareFrame(Camera::main ? Camera::main->GetComponent<Camera>() : nullptr);
 	
 	// Run the update functions
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) if (comp->enabled && comp->parentObject->enabled) comp->Update(); } );

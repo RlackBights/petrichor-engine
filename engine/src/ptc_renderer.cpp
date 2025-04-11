@@ -1,3 +1,4 @@
+#include "ptc_console.h"
 #include <ptc_renderer.h>
 
 Renderer::Renderer() {
@@ -8,7 +9,7 @@ void Renderer::initSDL(const char* windowName, int inScreenWidth, int inScreenHe
 {
 	if (!SDL_Init(SDL_INIT_VIDEO))
 	{
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+		Console::WriteLine(Console::FormatString("SDL could not initialize! SDL_Error: %s\n", SDL_GetError()), Color::RED, false);
 		return;
 	}
 	Console::Write("--");

@@ -18,7 +18,6 @@ public:
     template <class T>
     T* GetComponent()
     {
-        if (!this) return nullptr;
         return parentObject->GetComponent<T>();
     }
 

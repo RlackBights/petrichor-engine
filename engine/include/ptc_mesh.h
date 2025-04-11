@@ -34,6 +34,9 @@ private:
 	static PointLight* pointLights;
 	static int lightNum;
 	static Mesh processModelCode(std::string modelCode);
+	void FixedUpdate() override;
+	void addMesh(Mesh msh);
+	void drawInstance();
 
 public:
 	int vertexCount;
@@ -43,9 +46,6 @@ public:
 	Mesh();
 	Mesh(const char* _modelPath, RenderType _renderType = RenderType::NORMAL);
 	Mesh(int _vertexCount, float* _vertices, int _indexCount, int* _indices, RenderType _renderType = RenderType::NORMAL);
-	void FixedUpdate() override;
-	void addMesh(Mesh msh);
-	void drawInstance();
 	static Mesh createEmptyMesh();
 	static Mesh loadModel(const char* modelPath = "");
 };
