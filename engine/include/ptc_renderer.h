@@ -19,6 +19,7 @@ public:
 	static SDL_Window* window;
 	static SDL_GLContext glContext;
 	static int screenWidth, screenHeight;
+	static int viewportX, viewportY, viewportWidth, viewportHeight;
 	static int FPSLimit;
 	static GLint renderMode;
 
@@ -27,6 +28,7 @@ public:
 	static void initOpenGL();
 	static void initRenderer();
 	static void showWindow();
+	static void prepareUI(Camera* camera);
 	static void prepareFrame(Camera* camera);
 	static void wrapFrame();
 };

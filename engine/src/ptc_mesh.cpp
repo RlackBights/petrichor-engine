@@ -285,6 +285,3 @@ Mesh Mesh::loadModel(const char* modelPath)
 
 	return processModelCode(modelCode);
 }
-
-PointLight* Mesh::pointLights;
-int Mesh::lightNum;

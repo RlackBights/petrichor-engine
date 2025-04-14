@@ -31,8 +31,6 @@ class Mesh : public Component
 {
 private:
 	GLuint VBO;
-	static PointLight* pointLights;
-	static int lightNum;
 	static Mesh processModelCode(std::string modelCode);
 	void FixedUpdate() override;
 	void addMesh(Mesh msh);

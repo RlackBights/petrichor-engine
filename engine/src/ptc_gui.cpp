@@ -6,6 +6,7 @@
 
 void GUI::InitUI()
 {
+    cursorPos = {0, 0};
     shader = Shader("gui_vert.glsl", "gui_frag.glsl");
     glGenBuffers(1, &VBO);
     glGenVertexArrays(1, &VAO);
@@ -88,10 +89,8 @@ void GUI::RenderUI()
     glBindVertexArray(0);
     glEnable(GL_DEPTH_TEST);
 }
-void GUI::Panel(int _x, int _y, int _z, int _w, int _h, glm::vec4 _color)
-{
-    DrawQuad(_x, _y, _z, _w, _h, _color);
-}
+
 std::vector<float> GUI::batchedVertices;
 Shader GUI::shader;
 GLuint GUI::VBO, GUI::VAO;
+glm::vec2 GUI::cursorPos;

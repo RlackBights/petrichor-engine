@@ -102,18 +102,33 @@ bool init()
 
 bool update()
 {
+	// Need rendering passes separately for the engine UI, and for the game preview
+	// Need a hierarchy (Should be easy since the nodes already exist), an inspector (sounds like absolute hell), and a console (idk)
+	// Might want a file manager too, but it can wait
+	// Engine-level features required:
+	// Sound system (Probably the easiest)
+	// Fix 3d rendering (Not too hard, but quite a bit of work)
+	// Add bone-based animation support (Sounds like absolute hell unless there's some very obvious way how to handle it)
+	// Add a particle system  (Heard a bunch about it, probably not the worst)
+	// Scripting language??? Maybe add Lua(4/10)/Python(8/10)/Js(6/10)
+
+	// ENGINE
+
+	Renderer::prepareUI(Camera::main);
+	GUI::RenderUI();
+
+	// GAME
+
 	// Initialize stuff for the frame
 	Time::updateTime();
 	Input::updateInputUnscaled();
-	Renderer::prepareFrame(Camera::main ? Camera::main->GetComponent<Camera>() : nullptr);
+	Renderer::prepareFrame(Camera::main ? Camera::main : nullptr);
 	
 	// Run the update functions
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) if (comp->enabled && comp->parentObject->enabled) comp->Update(); } );
 	
 	// Check if we are running at the frame limit
 	if (!Time::isNextFrameReady(Renderer::FPSLimit)) return true;
-
-	GUI::RenderUI();
 		
 	// Run the fixedUpdate functions
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) if (comp->enabled && comp->parentObject->enabled) comp->FixedUpdate(); } );

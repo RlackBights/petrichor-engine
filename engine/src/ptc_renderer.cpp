@@ -22,6 +22,10 @@ void Renderer::initSDL(const char* windowName, int inScreenWidth, int inScreenHe
 	const SDL_DisplayMode* DM = SDL_GetCurrentDisplayMode(*SDL_GetDisplays(nullptr));
 	screenWidth = (inScreenWidth <= 0) ? (int)(DM->w * 0.8f) : inScreenWidth;
 	screenHeight = (inScreenHeight <= 0) ? (int)(DM->h * 0.8f) : inScreenHeight;
+	viewportWidth = screenWidth;
+	viewportHeight = screenHeight;
+	viewportX = 0;
+	viewportY = 0;
 	Console::Write("--");
 
 
@@ -98,9 +102,20 @@ void Renderer::showWindow()
 {
 	SDL_ShowWindow(window);
 }
+void Renderer::prepareUI(Camera* camera)
+{
+	if (camera == NULL) return;
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
 void Renderer::prepareFrame(Camera* camera)
 {
 	if (camera == NULL) return;
+
+	glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
+	glScissor(viewportX, viewportY, viewportWidth, viewportHeight);
+	glEnable(GL_SCISSOR_TEST);
+
 	glClearColor(camera->backgroundColor.r, camera->backgroundColor.g, camera->backgroundColor.b, camera->backgroundColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(VAO);
@@ -116,7 +131,8 @@ void Renderer::prepareFrame(Camera* camera)
 		glUseProgram(0);
 	}
 
-	glViewport(0, 0, screenWidth, screenHeight);
+	glDisable(GL_SCISSOR_TEST);
+
 }
 void Renderer::wrapFrame()
 {
@@ -129,5 +145,6 @@ GLuint Renderer::VAO;
 SDL_Window* Renderer::window;
 SDL_GLContext Renderer::glContext;
 int Renderer::screenWidth, Renderer::screenHeight;
+int Renderer::viewportX, Renderer::viewportY, Renderer::viewportWidth, Renderer::viewportHeight;
 int Renderer::FPSLimit;
 GLint Renderer::renderMode;
