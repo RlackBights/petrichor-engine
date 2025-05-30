@@ -14,17 +14,15 @@ class Mesh
 {
 private:
 	GLuint VBO, VAO, EBO;
+public:
 	std::vector<Vertex> vertices;
 	std::vector<int> indices;
-public:
 	std::string name;
+	int smoothing;
 
 	Mesh();
 	Mesh(std::string name);
 	Mesh(std::string name, std::vector<Vertex> vertices, std::vector<int> indices);
-
-	void AddVertex(Vertex vertex);
-	void AddIndex(int index);
 };
 
 #endif

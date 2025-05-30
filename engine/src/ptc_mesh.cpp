@@ -14,16 +14,13 @@
 #include <vector>
 
 Mesh::Mesh() {}
-Mesh::Mesh(std::string name) { this->name = name; }
+Mesh::Mesh(std::string name) { this->name = name; this->vertices = {}; this->indices = {}; }
 Mesh::Mesh(std::string name, std::vector<Vertex> vertices, std::vector<int> indices)
 {
     this->name = name;
     this->vertices = vertices;
     this->indices = indices;
 }
-
-void Mesh::AddVertex(Vertex vertex) { this->vertices.push_back(vertex); }
-void Mesh::AddIndex(int index) { this->indices.push_back(index); }
 
 // Mesh Mesh::processModelCode(std::string modelCode)
 // {

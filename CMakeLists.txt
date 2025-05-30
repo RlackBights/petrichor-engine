@@ -69,8 +69,10 @@ target_link_libraries(petrichor_engine LibsModule)
 # Resource Copy (Post-Build)
 # =========================
 
-add_custom_command(TARGET petrichor_engine POST_BUILD
+add_custom_target(copy_resources ALL
     COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_SOURCE_DIR}/bin/resources
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources ${CMAKE_SOURCE_DIR}/bin/resources
     COMMAND ${CMAKE_SOURCE_DIR}/update_libraries.sh
+    COMMENT "Copying resources and updating libraries"
 )
+add_dependencies(copy_resources petrichor_engine)

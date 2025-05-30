@@ -1,6 +1,8 @@
 #ifndef PTC_CONSOLE_HPP
 #define PTC_CONSOLE_HPP
 
+#include <cstddef>
+#include <vector>
 #undef APIENTRY
 #include <string>
 
@@ -34,6 +36,13 @@ public:
     static void WriteLine(T val)
     {
         WriteLine(std::to_string(val));
+    }
+    template <class T>
+    static void WriteLine(std::vector<T> val)
+    {
+        Write("[");
+        for (size_t i = 0; i < val.size(); i++) { Write(std::to_string(val[i]) + ((i == val.size() - 1) ? "" : ", ")); }
+        WriteLine("]");
     }
     static void WriteLine(std::string text, Color color = Color::NOTHING, bool continuous = true);
     static void WriteLine(const char* text, Color color = Color::NOTHING, bool continuous = true);
