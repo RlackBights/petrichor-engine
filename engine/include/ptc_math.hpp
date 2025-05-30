@@ -1,5 +1,5 @@
-#ifndef PTC_MATH_H
-#define PTC_MATH_H
+#ifndef PTC_MATH_HPP
+#define PTC_MATH_HPP
 
 #include <glm/fwd.hpp>
 #include <glm/glm.hpp>

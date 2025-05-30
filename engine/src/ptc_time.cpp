@@ -1,6 +1,6 @@
-#include "ptc_console.h"
+#include "ptc_console.hpp"
 #include <exception>
-#include <ptc_time.h>
+#include <ptc_time.hpp>
 
 Uint64 Time::lastFrame;
 Uint64 Time::currentFrame;

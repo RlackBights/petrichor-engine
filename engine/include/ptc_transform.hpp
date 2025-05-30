@@ -1,5 +1,5 @@
-#ifndef PTC_TRANSFORM_H
-#define PTC_TRANSFORM_H
+#ifndef PTC_TRANSFORM_HPP
+#define PTC_TRANSFORM_HPP
 
 #include <functional>
 #include <glm/glm.hpp>

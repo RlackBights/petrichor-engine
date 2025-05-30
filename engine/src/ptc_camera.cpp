@@ -1,10 +1,10 @@
-#include "ptc_input.h"
+#include "ptc_input.hpp"
 #include <glm/common.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/trigonometric.hpp>
-#include "ptc_camera.h"
+#include "ptc_camera.hpp"
 
 Camera::Camera(bool _perspective, bool _main) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(2.5f), MouseSensitivity(0.6f), Zoom(100.0f)
 {

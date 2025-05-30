@@ -1,5 +1,5 @@
-#include "ptc_console.h"
-#include <ptc_component.h>
+#include "ptc_console.hpp"
+#include <ptc_component.hpp>
 
 class ExampleStandaloneComponent : public Component
 {

@@ -1,5 +1,5 @@
-#ifndef PTC_INPUT_H
-#define PTC_INPUT_H
+#ifndef PTC_INPUT_HPP
+#define PTC_INPUT_HPP
 
 #include <SDL3/SDL_stdinc.h>
 #include <cstdlib>

@@ -1,5 +1,5 @@
-#ifndef PTC_FONT_H
-#define PTC_FONT_H
+#ifndef PTC_FONT_HPP
+#define PTC_FONT_HPP
 
 #include "glm/fwd.hpp"
 #include <string>

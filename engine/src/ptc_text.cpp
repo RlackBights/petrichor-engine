@@ -1,9 +1,9 @@
-#include "ptc_renderer.h"
+#include "ptc_renderer.hpp"
 #include <SDL3/SDL_log.h>
 #include <functional>
 #include <glm/detail/qualifier.hpp>
 #include <glm/fwd.hpp>
-#include "ptc_text.h"
+#include "ptc_text.hpp"
 #include <string>
 
 Text::Text(std::string _text, float _x, float _y, Font* _font, glm::vec4 _color, Shader _shader) : text(_text), font(_font), color(_color), textShader(_shader), position(_x, _y), offset(0, 0)

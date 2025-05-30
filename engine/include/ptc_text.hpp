@@ -1,15 +1,15 @@
-#ifndef PTC_TEXT_H
-#define PTC_TEXT_H
+#ifndef PTC_TEXT_HPP
+#define PTC_TEXT_HPP
 
 #include <functional>
-#include "ptc_component.h"
-#include "ptc_font.h"
+#include "ptc_component.hpp"
+#include "ptc_font.hpp"
 #include <ft2build.h>
 #include <glm/fwd.hpp>
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include <SDL3/SDL.h>
-#include "ptc_shader.h"
+#include "ptc_shader.hpp"
 #include <freetype2/freetype/freetype.h>
 
 class Text : public Component

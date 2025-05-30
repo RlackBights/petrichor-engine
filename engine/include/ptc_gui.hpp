@@ -1,8 +1,8 @@
-#ifndef PTC_GUI_H
-#define PTC_GUI_H
+#ifndef PTC_GUI_HPP
+#define PTC_GUI_HPP
 
-#include "ptc_renderer.h"
-#include "ptc_shader.h"
+#include "ptc_renderer.hpp"
+#include "ptc_shader.hpp"
 #include <functional>
 #include <glm/fwd.hpp>
 #include <glm/vec2.hpp>

@@ -1,5 +1,5 @@
-#include "ptc_texture.h"
-#include <ptc_material.h>
+#include "ptc_texture.hpp"
+#include <ptc_material.hpp>
 
 Material::Material()
 {

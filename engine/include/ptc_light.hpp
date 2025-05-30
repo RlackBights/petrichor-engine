@@ -1,9 +1,9 @@
-#ifndef PTC_LIGHT_H
-#define PTC_LIGHT_H
+#ifndef PTC_LIGHT_HPP
+#define PTC_LIGHT_HPP
 
 #include <glm/glm.hpp>
 #include <vector>
-#include "ptc_component.h"
+#include "ptc_component.hpp"
 
 typedef enum LightType
 {

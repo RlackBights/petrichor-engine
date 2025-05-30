@@ -1,4 +1,4 @@
-#include <ptc_light.h>
+#include <ptc_light.hpp>
 
 Light::Light(LightType _type, glm::vec3 _lightColor, float _cutoff, float _focus) : lightColor(_lightColor), type(_type), cutoff(_cutoff), focus(_focus) { lights.push_back(this); }
 

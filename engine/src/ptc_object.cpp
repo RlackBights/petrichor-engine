@@ -1,7 +1,7 @@
-#include "ptc_console.h"
-#include "ptc_transform.h"
-#include <ptc_object.h>
-#include <ptc_component.h>
+#include "ptc_console.hpp"
+#include "ptc_transform.hpp"
+#include <ptc_object.hpp>
+#include <ptc_component.hpp>
 Object::Object(std::string _name, bool _enabled) : name(_name), transform(this), enabled(_enabled) { }
 std::vector<std::unique_ptr<Component>>* Object::GetComponents()
 {

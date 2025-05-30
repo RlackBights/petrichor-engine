@@ -1,11 +1,11 @@
-#ifndef PTC_RENDERER_H
-#define PTC_RENDERER_H
+#ifndef PTC_RENDERER_HPP
+#define PTC_RENDERER_HPP
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <SDL3/SDL.h>
 
-#include "ptc_camera.h"
+#include "ptc_camera.hpp"
 
 class Renderer
 {

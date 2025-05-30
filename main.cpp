@@ -1,6 +1,7 @@
-#include "ptc_gui.h"
-#include "ptc_light.h"
-#include "ptc_state.h"
+#include "ptc_gui.hpp"
+#include "ptc_light.hpp"
+#include "ptc_mesh_loader.hpp"
+#include "ptc_state.hpp"
 #include <SDL3/SDL_keycode.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/fwd.hpp>
@@ -18,17 +19,17 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "scripts/game_main.cpp"
-#include <ptc_component.h>
-#include <ptc_shader.h>
-#include <ptc_time.h>
-#include <ptc_input.h>
-#include <ptc_camera.h>
-#include <ptc_text.h>
-#include <ptc_mesh.h>
-#include <ptc_renderer.h>
-#include <ptc_texture.h>
-#include <ptc_transform.h>
-#include <ptc_console.h>
+#include <ptc_component.hpp>
+#include <ptc_shader.hpp>
+#include <ptc_time.hpp>
+#include <ptc_input.hpp>
+#include <ptc_camera.hpp>
+#include <ptc_text.hpp>
+#include <ptc_mesh.hpp>
+#include <ptc_renderer.hpp>
+#include <ptc_texture.hpp>
+#include <ptc_transform.hpp>
+#include <ptc_console.hpp>
 
 // Function Definitions
 bool init();
@@ -98,6 +99,9 @@ bool init()
 
 	Console::ClearFormatting();
 	Renderer::showWindow();
+
+	MeshLoader::LoadMesh("Bench.obj");
+
 	return true;
 }
 

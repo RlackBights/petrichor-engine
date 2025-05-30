@@ -1,11 +1,11 @@
-#ifndef PTC_OBJECT_H
-#define PTC_OBJECT_H
+#ifndef PTC_OBJECT_HPP
+#define PTC_OBJECT_HPP
 
 #include <vector>
 #include <memory>
 #include <string>
 
-#include "ptc_transform.h"
+#include "ptc_transform.hpp"
 
 class Component;
 

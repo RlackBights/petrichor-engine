@@ -1,10 +1,10 @@
-#ifndef PTC_CAMERA_H
-#define PTC_CAMERA_H
+#ifndef PTC_CAMERA_HPP
+#define PTC_CAMERA_HPP
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "ptc_component.h"
+#include "ptc_component.hpp"
 
 enum Camera_Movement {
     FORWARD,

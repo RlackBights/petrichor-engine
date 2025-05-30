@@ -1,4 +1,4 @@
-#include "ptc_state.h"
+#include "ptc_state.hpp"
 
 void State::SetArguments(int _argc, char** _argv)
 {

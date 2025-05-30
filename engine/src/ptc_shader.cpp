@@ -1,8 +1,6 @@
-#include "ptc_console.h"
-#include <ptc_shader.h>
-#include <fstream>
-#include <sstream>
-#include <iostream>
+#include "ptc_console.hpp"
+#include "ptc_file_reader.hpp"
+#include <ptc_shader.hpp>
 
 Shader::Shader()
 {
@@ -25,33 +23,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	std::string fullVertexPath = SHADER_PATH + std::string(vertexPath);
 	std::string fullFragmentPath = SHADER_PATH + std::string(fragmentPath);
 
-	std::string vertexCode;
-	std::string fragmentCode;
-	std::ifstream vShaderFile;
-	std::ifstream fShaderFile;
-
-	vShaderFile.exceptions(std::ifstream::badbit);
-	fShaderFile.exceptions(std::ifstream::badbit);
-
-	try
-	{
-		vShaderFile.open(fullVertexPath);
-		fShaderFile.open(fullFragmentPath);
-		std::stringstream vShaderStream, fShaderStream;
-
-		vShaderStream << vShaderFile.rdbuf();
-		fShaderStream << fShaderFile.rdbuf();
-
-		vShaderFile.close();
-		fShaderFile.close();
-
-		vertexCode = vShaderStream.str();
-		fragmentCode = fShaderStream.str();
-	}
-	catch (std::ifstream::failure e)
-	{
-		Console::WriteLine(Console::FormatString("ERROR::SHADER::FILE_READ_ERROR\n%s", e.what()));
-	}
+	std::string vertexCode = FileReader::Read(fullVertexPath);
+	std::string fragmentCode = FileReader::Read(fullFragmentPath);
 
 	const char* vShaderCode = vertexCode.c_str();
 	const char* fShaderCode = fragmentCode.c_str();
@@ -160,30 +133,7 @@ void Shader::setMatrix4x4(const std::string& name, glm::mat4 value) const
 }
 void Shader::SetCommonFunctionsShader(const char* commonShaderPath)
 {
-	std::string fullCommonShaderPath = SHADER_PATH + std::string(commonShaderPath);
-
-	std::string commonFunctionsCode;
-	std::ifstream cShaderFile;
-	cShaderFile.exceptions(std::ifstream::badbit);
-	Console::Write("--");
-
-	try
-	{
-		cShaderFile.open(fullCommonShaderPath);
-
-		std::stringstream cShaderStream;
-		cShaderStream << cShaderFile.rdbuf();
-
-		cShaderFile.close();
-
-		commonFunctionsCode = cShaderStream.str();
-	}
-	catch (std::ifstream::failure e)
-	{
-		Console::WriteLine(Console::FormatString("ERROR::SHADER::COMMON_SHADER_FILE_READ_ERROR\n%s", e.what()));
-	}
-	Console::Write("--");
-
+	std::string commonFunctionsCode = FileReader::Read(SHADER_PATH + std::string(commonShaderPath));
 	const char* cShaderCode = commonFunctionsCode.c_str();
 
 	// Compile the common shader functions

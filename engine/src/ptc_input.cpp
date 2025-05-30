@@ -1,6 +1,6 @@
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_stdinc.h>
-#include <ptc_input.h>
+#include <ptc_input.hpp>
 
  void Input::initInput(int* inScreenWidth, int* inScreenHeight, float mouseSensitivity) {
     sensitivity = mouseSensitivity;

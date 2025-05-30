@@ -1,6 +1,6 @@
 #include <glm/common.hpp>
 #include <glm/fwd.hpp>
-#include <ptc_math.h>
+#include <ptc_math.hpp>
 
 float Math::ApplyEasing(float _x, EasingFunction _easingFunction) {
     _x = glm::clamp(_x, 0.0f, 1.0f);

@@ -1,5 +1,5 @@
 #include <freetype/fttypes.h>
-#include <ptc_font.h>
+#include <ptc_font.hpp>
 
 Font::Font(std::string _path, int _fontSize) : path(_path), fontSize(_fontSize)
 {

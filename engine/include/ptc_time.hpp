@@ -1,5 +1,5 @@
-#ifndef PTC_TIME_H
-#define PTC_TIME_H
+#ifndef PTC_TIME_HPP
+#define PTC_TIME_HPP
 
 #include <SDL3/SDL.h>
 #include <functional>

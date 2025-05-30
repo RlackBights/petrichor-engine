@@ -1,5 +1,5 @@
-#include "../include/example_header.h"
-#include "ptc_console.h"
+#include "../include/example_header.hpp"
+#include "ptc_console.hpp"
 
 void ExampleComponent::Start()
 {

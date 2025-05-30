@@ -1,4 +1,4 @@
-#include <ptc_texture.h>
+#include <ptc_texture.hpp>
 
 GLuint Texture::loadTexture(std::string texturePath)
 {

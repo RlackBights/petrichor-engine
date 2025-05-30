@@ -1,7 +1,7 @@
-#include "ptc_renderer.h"
-#include "ptc_shader.h"
+#include "ptc_renderer.hpp"
+#include "ptc_shader.hpp"
 #include <glm/fwd.hpp>
-#include <ptc_gui.h>
+#include <ptc_gui.hpp>
 #include <vector>
 
 void GUI::InitUI()

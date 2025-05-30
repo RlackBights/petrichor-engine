@@ -1,5 +1,5 @@
-#ifndef PTC_TEXTURE_H
-#define PTC_TEXTURE_H
+#ifndef PTC_TEXTURE_HPP
+#define PTC_TEXTURE_HPP
 #include <vector>
 constexpr char TEXTURE_PATH[] = "resources/textures/";
 

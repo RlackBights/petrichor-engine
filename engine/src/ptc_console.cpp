@@ -1,5 +1,5 @@
 #include <cstdarg>
-#include <ptc_console.h>
+#include <ptc_console.hpp>
 #include <string>
 
 const char* Console::GetColorCode(enum Color color) {

@@ -1,7 +1,7 @@
-#include "ptc_console.h"
-#include "ptc_shader.h"
-#include "ptc_time.h"
-#include <ptc_renderer.h>
+#include "ptc_console.hpp"
+#include "ptc_shader.hpp"
+#include "ptc_time.hpp"
+#include <ptc_renderer.hpp>
 
 Renderer::Renderer() {
 	VAO = 0;

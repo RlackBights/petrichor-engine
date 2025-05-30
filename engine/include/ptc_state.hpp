@@ -1,5 +1,5 @@
-#ifndef PTC_STATE_H
-#define PTC_STATE_H
+#ifndef PTC_STATE_HPP
+#define PTC_STATE_HPP
 
 class State
 {

@@ -1,11 +1,11 @@
-#ifndef PTC_MATERIAL_H
-#define PTC_MATERIAL_H
+#ifndef PTC_MATERIAL_HPP
+#define PTC_MATERIAL_HPP
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-#include "ptc_shader.h"
-#include "ptc_component.h"
+#include "ptc_shader.hpp"
+#include "ptc_component.hpp"
 
 class Material : public Component
 {

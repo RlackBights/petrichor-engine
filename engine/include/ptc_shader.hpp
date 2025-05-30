@@ -1,5 +1,5 @@
-#ifndef PTC_SHADER_H
-#define PTC_SHADER_H
+#ifndef PTC_SHADER_HPP
+#define PTC_SHADER_HPP
 #define SHADER_PATH "resources/shaders/"
 
 #include <glad/glad.h>

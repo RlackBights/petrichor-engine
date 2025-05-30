@@ -1,5 +1,5 @@
-#ifndef PTC_CONSOLE_H
-#define PTC_CONSOLE_H
+#ifndef PTC_CONSOLE_HPP
+#define PTC_CONSOLE_HPP
 
 #undef APIENTRY
 #include <string>
