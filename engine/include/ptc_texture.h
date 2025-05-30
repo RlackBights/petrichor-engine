@@ -1,12 +1,12 @@
 #ifndef PTC_TEXTURE_H
 #define PTC_TEXTURE_H
+#include <vector>
 constexpr char TEXTURE_PATH[] = "resources/textures/";
 
 #include <string>
 #include <glad/glad.h>
 #include <stb_image.h>
 #include <SDL3/SDL.h>
-#include <vector>
 
 class Texture
 {

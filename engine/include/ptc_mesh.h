@@ -5,13 +5,8 @@ constexpr char MODEL_PATH[] = "resources/models/";
 #include <glm/glm.hpp>
 #include <SDL3/SDL.h>
 
-#include <ptc_renderer.h>
-#include <ptc_transform.h>
-#include <ptc_camera.h>
-#include <ptc_light.h>
-#include <ptc_texture.h>
-#include <ptc_material.h>
-#include <ptc_component.h>
+#include "ptc_renderer.h"
+#include "ptc_component.h"
 
 typedef struct FaceData {
 	int vertices[3];

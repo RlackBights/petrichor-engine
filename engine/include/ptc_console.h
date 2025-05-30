@@ -3,8 +3,6 @@
 
 #undef APIENTRY
 #include <string>
-#include <cstdarg>
-#include <cstdio>
 
 #ifdef _WIN32
     #include <Windows.h>

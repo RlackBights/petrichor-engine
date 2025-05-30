@@ -1,3 +1,4 @@
+#include "ptc_console.h"
 #include <ptc_shader.h>
 #include <fstream>
 #include <sstream>

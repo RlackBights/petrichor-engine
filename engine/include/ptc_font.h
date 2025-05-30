@@ -1,11 +1,13 @@
 #ifndef PTC_FONT_H
 #define PTC_FONT_H
 
+#include "glm/fwd.hpp"
+#include <string>
 #define FONT_PATH "resources/fonts/"
 
-#include <ptc_component.h>
 #include <SDL3/SDL.h>
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 #include <map>
 #include <freetype2/freetype/freetype.h>
 

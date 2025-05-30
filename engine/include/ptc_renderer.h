@@ -5,11 +5,7 @@
 #include <glm/glm.hpp>
 #include <SDL3/SDL.h>
 
-#include <ptc_console.h>
-#include <ptc_light.h>
-#include <ptc_shader.h>
-#include <ptc_camera.h>
-#include <ptc_time.h>
+#include "ptc_camera.h"
 
 class Renderer
 {

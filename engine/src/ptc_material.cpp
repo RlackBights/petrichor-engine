@@ -1,3 +1,4 @@
+#include "ptc_texture.h"
 #include <ptc_material.h>
 
 Material::Material()

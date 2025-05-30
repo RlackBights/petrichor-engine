@@ -1,7 +1,7 @@
 #ifndef PTC_COMPONENT_H
 #define PTC_COMPONENT_H
 
-#include <ptc_object.h>
+#include "ptc_object.h"
 
 class Object;
 

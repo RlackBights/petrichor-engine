@@ -4,8 +4,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <ptc_transform.h>
-#include <ptc_component.h>
+#include "ptc_component.h"
 
 enum Camera_Movement {
     FORWARD,

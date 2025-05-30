@@ -4,9 +4,8 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-#include <ptc_shader.h>
-#include <ptc_component.h>
-#include <ptc_texture.h>
+#include "ptc_shader.h"
+#include "ptc_component.h"
 
 class Material : public Component
 {

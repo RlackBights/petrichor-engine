@@ -1,4 +1,5 @@
 #include "ptc_gui.h"
+#include "ptc_light.h"
 #include "ptc_state.h"
 #include <SDL3/SDL_keycode.h>
 #include <glm/ext/matrix_transform.hpp>

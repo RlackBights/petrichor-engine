@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <cstdio>
 #include <ptc_transform.h>
 
 Transform::Transform(Object* _object)

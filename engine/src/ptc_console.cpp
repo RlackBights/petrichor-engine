@@ -1,3 +1,4 @@
+#include <cstdarg>
 #include <ptc_console.h>
 #include <string>
 

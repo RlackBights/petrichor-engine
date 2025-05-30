@@ -1,4 +1,6 @@
 #include "ptc_console.h"
+#include "ptc_shader.h"
+#include "ptc_time.h"
 #include <ptc_renderer.h>
 
 Renderer::Renderer() {

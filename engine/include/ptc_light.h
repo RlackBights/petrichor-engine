@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-#include <ptc_component.h>
+#include "ptc_component.h"
 
 typedef enum LightType
 {

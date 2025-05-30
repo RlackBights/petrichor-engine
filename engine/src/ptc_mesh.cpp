@@ -1,3 +1,5 @@
+#include "ptc_light.h"
+#include "ptc_material.h"
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/fwd.hpp>
 #include <glm/geometric.hpp>
