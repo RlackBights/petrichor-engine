@@ -1,6 +1,8 @@
 #ifndef PTC_CONSOLE_HPP
 #define PTC_CONSOLE_HPP
 
+#include "glm/fwd.hpp"
+#include "ptc_json_structs.hpp"
 #include <cstddef>
 #include <vector>
 #undef APIENTRY
@@ -35,18 +37,34 @@ public:
     template <class T>
     static void WriteLine(T val)
     {
-        WriteLine(std::to_string(val));
+        Write(val);
+        Write("\n");
     }
     template <class T>
     static void WriteLine(std::vector<T> val)
     {
         Write("[");
-        for (size_t i = 0; i < val.size(); i++) { Write(std::to_string(val[i]) + ((i == val.size() - 1) ? "" : ", ")); }
+        Write(val);
         WriteLine("]");
     }
+    template <class T>
+    static void Write(T val)
+    {
+        Write(std::to_string(val));
+    }
+    template <class T>
+    static void Write(std::vector<T> val)
+    {
+        for (size_t i = 0; i < val.size(); i++) { Write(val[i]); Write((i == val.size() - 1) ? "" : ", "); }
+    }
+    static void Write(glm::vec2 val);
+    static void Write(glm::vec3 val);
+    static void Write(glm::vec4 val);
+    static void Write(JSONToken val);
     static void WriteLine(std::string text, Color color = Color::NOTHING, bool continuous = true);
     static void WriteLine(const char* text, Color color = Color::NOTHING, bool continuous = true);
     static void Write(std::string text, Color color = Color::NOTHING, bool continuous = true);
+    static void Write(const char* text, Color color = Color::NOTHING, bool continuous = true);
 };
 
 #endif

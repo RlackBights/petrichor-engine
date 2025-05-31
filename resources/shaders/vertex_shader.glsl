@@ -13,8 +13,6 @@ out vec3 Normal;
 out vec2 TexCoord;
 out vec3 FragPos;
 
-float random(vec2 co);
-
 void main()
 {
 	TexCoord = aTexCoord;

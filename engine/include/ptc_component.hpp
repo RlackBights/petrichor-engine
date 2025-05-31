@@ -27,10 +27,10 @@ public:
         return parentObject->AddComponent<T>(args...);
 	}
 
-    void virtual Update() {}
-    void virtual FixedUpdate() {}
-    void virtual Start() {}
-    void virtual Awake() {}
+    virtual void Update() {}
+    virtual void FixedUpdate() {}
+    virtual void Start() {}
+    virtual void Awake() {}
 };
 
 #endif

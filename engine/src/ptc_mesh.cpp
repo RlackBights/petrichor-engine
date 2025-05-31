@@ -10,7 +10,10 @@
 // #include <sstream>
 
 #include "ptc_mesh.hpp"
+#include "ptc_console.hpp"
+#include "ptc_renderer.hpp"
 #include "ptc_vertex.hpp"
+#include <cstddef>
 #include <vector>
 
 Mesh::Mesh() {}
@@ -20,6 +23,29 @@ Mesh::Mesh(std::string name, std::vector<Vertex> vertices, std::vector<int> indi
     this->name = name;
     this->vertices = vertices;
     this->indices = indices;
+}
+
+void Mesh::RegisterBuffers()
+{
+    glGenVertexArrays(1, &this->VAO);
+    glGenBuffers(1, &this->VBO);
+    glGenBuffers(1, &this->EBO);
+
+    glBindVertexArray(this->VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+
+    glBufferData(GL_ARRAY_BUFFER, this->vertices.size() * sizeof(Vertex), this->vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indices.size() * sizeof(int), this->indices.data(), GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, position));
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, texCoord));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, normal));
+    glEnableVertexAttribArray(2);
+
+    glBindVertexArray(0);
 }
 
 // Mesh Mesh::processModelCode(std::string modelCode)

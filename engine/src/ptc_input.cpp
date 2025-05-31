@@ -8,131 +8,132 @@
     screenHeight = inScreenHeight;
 }
  void Input::updateInputUnscaled() {
-    SDL_PollEvent(&e);
-
-    // Handle key events
-    if (e.type == SDL_EVENT_KEY_DOWN) {
-        lastKey = e.key.key;
-        heldKeys[e.key.scancode] = true;
-    }
-    else if (e.type == SDL_EVENT_KEY_UP) {
-        heldKeys[e.key.scancode] = false;
-        lastKeys[e.key.scancode] = false;
-    }
-
-    if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
-    {
-        heldMouseButtons[e.button.button] = true;
-    }
-    else if (e.type == SDL_EVENT_MOUSE_BUTTON_UP)
-    {
-        heldMouseButtons[e.button.button] = false;
-        lastMouseButtons[e.button.button] = false;
-    }
-
-    // Process forced key bindings
-    for (int i = 0; i < keyBindingsForced.size(); i++) {
-        switch (keyBindingsForced[i].eventType) {
-        case KEYBIND_DOWN:
-            if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == keyBindingsForced[i].key &&
-                lastKeys[e.key.scancode] != heldKeys[e.key.scancode]
-                ) {
-                lastKeys[e.key.scancode] = heldKeys[e.key.scancode];
-                keyBindingsForced[i].action();
-            }
-            break;
-        case KEYBIND_UP:
-            if (e.type == SDL_EVENT_KEY_UP && e.key.key == keyBindingsForced[i].key) {
-                keyBindingsForced[i].action();
-            }
-            break;
-        case KEYBIND_HOLD:
-            if (heldKeys[SDL_GetScancodeFromKey(keyBindingsForced[i].key, NULL)]) {
-                keyBindingsForced[i].action();
-            }
-            break;
-        case MOUSE_DOWN:
-            if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN && e.button.button == keyBindingsForced[i].key &&
-                lastMouseButtons[e.button.button] != heldMouseButtons[e.button.button]
-                ) {
-                lastMouseButtons[e.button.button] = heldMouseButtons[e.button.button];
-                keyBindingsForced[i].action();
-            }
-            break;
-        case MOUSE_UP:
-            if (e.type == SDL_EVENT_MOUSE_BUTTON_UP && e.button.button == keyBindingsForced[i].key) {
-                keyBindingsForced[i].action();
-            }
-            break;
-        case MOUSE_HOLD:
-            if (heldMouseButtons[keyBindingsForced[i].key]) {
-                keyBindingsForced[i].action();
-            }
-            break;
-        default:
-            break;
+    
+    for (const auto& binding : keyBindings) {
+        if (enabled &&
+            (binding.eventType == KEYBIND_HOLD &&
+            heldKeys[SDL_GetScancodeFromKey(binding.key, nullptr)]) || 
+            (binding.eventType == MOUSE_HOLD &&
+            heldMouseButtons[binding.key])) {
+            binding.action();
         }
     }
 
-    if (e.type == SDL_EVENT_QUIT) exit(0);
+    for (const auto& binding : keyBindingsForced) {
+        if ((binding.eventType == KEYBIND_HOLD &&
+            heldKeys[SDL_GetScancodeFromKey(binding.key, nullptr)]) || 
+            (binding.eventType == MOUSE_HOLD &&
+            heldMouseButtons[binding.key])) {
+            binding.action();
+        }
+    }
 
-    if (e.type == SDL_EVENT_WINDOW_RESIZED)
+    while (SDL_PollEvent(&e))
     {
-        SDL_GetWindowSizeInPixels(SDL_GetWindowFromEvent(&e), screenWidth, screenHeight);
-    }
+        // Handle key events
+        if (e.type == SDL_EVENT_KEY_DOWN) {
+            lastKey = e.key.key;
+            heldKeys[e.key.scancode] = true;
+        }
+        else if (e.type == SDL_EVENT_KEY_UP) {
+            heldKeys[e.key.scancode] = false;
+            lastKeys[e.key.scancode] = false;
+        }
 
-    if (!enabled) return;
+        if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN)
+        {
+            heldMouseButtons[e.button.button] = true;
+        }
+        else if (e.type == SDL_EVENT_MOUSE_BUTTON_UP)
+        {
+            heldMouseButtons[e.button.button] = false;
+            lastMouseButtons[e.button.button] = false;
+        }
 
-    if (e.type == SDL_EVENT_MOUSE_WHEEL) mouseScroll += e.wheel.y;
-
-    if (e.type == SDL_EVENT_MOUSE_MOTION) {
-        mouseXrel += e.motion.xrel * sensitivity;
-        mouseYrel += -e.motion.yrel * sensitivity;
-        mouseX = e.motion.x;
-        mouseY = e.motion.y;
-    }
-
-    // Loop through all keybindings and trigger the action
-    for (int i = 0; i < keyBindings.size(); i++) {
-        switch (keyBindings[i].eventType) {
-        case KEYBIND_DOWN:
-            if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == keyBindings[i].key &&
-                lastKeys[e.key.scancode] != heldKeys[e.key.scancode]
-            ) {
-                lastKeys[e.key.scancode] = heldKeys[e.key.scancode];
-                keyBindings[i].action();
+        // Process forced key bindings
+        for (int i = 0; i < keyBindingsForced.size(); i++) {
+            switch (keyBindingsForced[i].eventType) {
+            case KEYBIND_DOWN:
+                if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == keyBindingsForced[i].key &&
+                    lastKeys[e.key.scancode] != heldKeys[e.key.scancode]
+                    ) {
+                    lastKeys[e.key.scancode] = heldKeys[e.key.scancode];
+                    keyBindingsForced[i].action();
+                }
+                break;
+            case KEYBIND_UP:
+                if (e.type == SDL_EVENT_KEY_UP && e.key.key == keyBindingsForced[i].key) {
+                    keyBindingsForced[i].action();
+                }
+                break;
+            case MOUSE_DOWN:
+                if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN && e.button.button == keyBindingsForced[i].key &&
+                    lastMouseButtons[e.button.button] != heldMouseButtons[e.button.button]
+                    ) {
+                    lastMouseButtons[e.button.button] = heldMouseButtons[e.button.button];
+                    keyBindingsForced[i].action();
+                }
+                break;
+            case MOUSE_UP:
+                if (e.type == SDL_EVENT_MOUSE_BUTTON_UP && e.button.button == keyBindingsForced[i].key) {
+                    keyBindingsForced[i].action();
+                }
+                break;
+            default:
+                break;
             }
-            break;
-        case KEYBIND_UP:
-            if (e.type == SDL_EVENT_KEY_UP && e.key.key == keyBindings[i].key) {
-                keyBindings[i].action();
-            }
-            break;
-        case KEYBIND_HOLD:
-            if (heldKeys[SDL_GetScancodeFromKey(keyBindings[i].key, NULL)]) {
-                keyBindings[i].action();
-            }
-            break;
-        case MOUSE_DOWN:
-            if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN && e.button.button == keyBindings[i].key &&
-                lastMouseButtons[e.button.button] != heldMouseButtons[e.button.button]
+        }
+
+        if (e.type == SDL_EVENT_QUIT) exit(0);
+
+        if (e.type == SDL_EVENT_WINDOW_RESIZED)
+        {
+            SDL_GetWindowSizeInPixels(SDL_GetWindowFromEvent(&e), screenWidth, screenHeight);
+        }
+
+        if (!enabled) return;
+
+        if (e.type == SDL_EVENT_MOUSE_WHEEL) mouseScroll += e.wheel.y;
+
+        if (e.type == SDL_EVENT_MOUSE_MOTION) {
+            mouseXrel += e.motion.xrel * sensitivity;
+            mouseYrel += -e.motion.yrel * sensitivity;
+            mouseX = e.motion.x;
+            mouseY = e.motion.y;
+        }
+
+        // Loop through all keybindings and trigger the action
+        for (int i = 0; i < keyBindings.size(); i++) {
+            switch (keyBindings[i].eventType) {
+            case KEYBIND_DOWN:
+                if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == keyBindings[i].key &&
+                    lastKeys[e.key.scancode] != heldKeys[e.key.scancode]
                 ) {
-                lastMouseButtons[e.button.button] = heldMouseButtons[e.button.button];
-                keyBindings[i].action();
+                    lastKeys[e.key.scancode] = heldKeys[e.key.scancode];
+                    keyBindings[i].action();
+                }
+                break;
+            case KEYBIND_UP:
+                if (e.type == SDL_EVENT_KEY_UP && e.key.key == keyBindings[i].key) {
+                    keyBindings[i].action();
+                }
+                break;
+            case MOUSE_DOWN:
+                if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN && e.button.button == keyBindings[i].key &&
+                    lastMouseButtons[e.button.button] != heldMouseButtons[e.button.button]
+                    ) {
+                    lastMouseButtons[e.button.button] = heldMouseButtons[e.button.button];
+                    keyBindings[i].action();
+                }
+                break;
+            case MOUSE_UP:
+                if (e.type == SDL_EVENT_MOUSE_BUTTON_UP && e.button.button == keyBindings[i].key) {
+                    keyBindings[i].action();
+                }
+                break;
+            default:
+                break;
             }
-            break;
-        case MOUSE_UP:
-            if (e.type == SDL_EVENT_MOUSE_BUTTON_UP && e.button.button == keyBindings[i].key) {
-                keyBindings[i].action();
-            }
-            break;
-        case MOUSE_HOLD:
-            if (heldMouseButtons[keyBindings[i].key]) {
-                keyBindings[i].action();
-            }
-            break;
-        default:
-            break;
         }
     }
 }

@@ -19,12 +19,13 @@ public:
 	static float deltaTimeUnscaled;
 	static float timeScale;
 	static float time;
+	static float fixedAccumulator;
+	static const float fixedUpdateFrametime;
 	static std::vector<Timer> timers;
 
 	static void initTime();
 	static void updateTime();
 	static void wrapTime();
-	static bool isNextFrameReady(int FPSLimit);
 	static void createTimer(float seconds, std::function<void()> callback, bool unscaled = false);
 };
 

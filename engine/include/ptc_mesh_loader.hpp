@@ -1,7 +1,7 @@
 #ifndef PTC_MESH_LOADER_HPP
 #define PTC_MESH_LOADER_HPP
 
-#include <vector>
+#include <map>
 #define MESH_PATH "resources/models/"
 
 #include "ptc_mesh.hpp"
@@ -9,10 +9,11 @@
 class MeshLoader
 {
 private:
-    static std::vector<Mesh> LoadMeshOBJ(std::string fileContent);
+    static std::map<std::string, Mesh> LoadMeshOBJ(std::string fileContent);
 public:
-    static std::vector<Mesh> LoadMesh(std::string path);
-    static std::vector<Mesh> LoadMesh(const char* path);
+    static std::map<std::string, Mesh> LoadMesh(std::string path);
+    static std::map<std::string, Mesh> LoadMesh(const char* path);
+    static Mesh CreateEmptyMesh();
 };
 
 #endif

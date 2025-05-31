@@ -1,3 +1,7 @@
+#include "glm/glm.hpp"
+#include "glm/fwd.hpp"
+#include "ptc_json_structs.hpp"
+#include <any>
 #include <cstdarg>
 #include <ptc_console.hpp>
 #include <string>
@@ -85,6 +89,60 @@ std::string Console::FormatString(const char* format, ...) {
     delete[] buffer;
     return result;
 }
+void Console::Write(glm::vec2 val)
+{
+    Console::Write(Console::FormatString("{ %f, %f }", val.x, val.y));
+}
+void Console::Write(glm::vec3 val)
+{
+    Console::Write(Console::FormatString("{ %f, %f, %f }", val.x, val.y, val.z));
+}
+void Console::Write(glm::vec4 val)
+{
+    Console::Write(Console::FormatString("{ %f, %f, %f, %f }", val.x, val.y, val.z, val.w));
+}
+void Console::Write(JSONToken val)
+{
+    switch (val.first)
+    {
+        case LEFT_BRACE:
+            Console::Write("\'{\'");
+            break;
+        case RIGHT_BRACE:
+            Console::Write("\'}\'");
+            break;
+        case LEFT_BRACKET:
+            Console::Write("\'[\'");
+            break;
+        case RIGHT_BRACKET:
+            Console::Write("\']\'");
+            break;
+        case COMMA:
+            Console::Write("\',\'");
+            break;
+        case COLON:
+            Console::Write("\':\'");
+            break;
+        case END:
+            Console::Write("");
+            break;
+        case BOOLEAN:
+            Console::Write(std::any_cast<bool>(val.second) ? "true" : "false");
+            break;
+        case STRING:
+            Console::Write('\"' + std::any_cast<std::string>(val.second) + '\"');
+            break;
+        case INT:
+            Console::Write(std::to_string(std::any_cast<int>(val.second)));
+            break;
+        case FLOAT:
+            Console::WriteLine(std::to_string(std::any_cast<float>(val.second)));
+            break;
+        case VOID:
+            Console::Write("null");
+            break;
+        }
+}
 void Console::WriteLine(std::string text, Color color, bool continuous) {
     Write(text + '\n', color, continuous);
 }
@@ -93,4 +151,7 @@ void Console::WriteLine(const char* text, Color color, bool continuous) {
 }
 void Console::Write(std::string text, Color color, bool continuous) {
     printf("%s%s%s", GetColorCode(color), text.c_str(), continuous ? "" : "\x1b[0m");
+}
+void Console::Write(const char* text, Color color, bool continuous) {
+    printf("%s%s%s", GetColorCode(color), text, continuous ? "" : "\x1b[0m");
 }

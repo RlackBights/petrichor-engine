@@ -8,6 +8,8 @@ float Time::deltaTime;
 float Time::deltaTimeUnscaled;
 float Time::timeScale;
 float Time::time;
+float Time::fixedAccumulator;
+const float Time::fixedUpdateFrametime = 0.02f; // 50 frames a second intended, similar to Unity
 std::vector<Timer> Time::timers;
 
 void Time::initTime()
@@ -23,8 +25,9 @@ void Time::updateTime()
 {
 	lastFrame = currentFrame;
 	currentFrame = SDL_GetTicks();
-	deltaTimeUnscaled += (currentFrame - lastFrame) / 1000.0f;
-	deltaTime += ((currentFrame - lastFrame) / 1000.0f) * timeScale;
+	deltaTimeUnscaled = (currentFrame - lastFrame) / 1000.0f;
+	deltaTime = deltaTimeUnscaled * timeScale;
+	fixedAccumulator += deltaTimeUnscaled;
 }
 void Time::wrapTime()
 {
@@ -54,16 +57,6 @@ void Time::wrapTime()
 	time += deltaTime;
 	deltaTime = 0.0f;
 	deltaTimeUnscaled = 0.0f;
-}
-bool Time::isNextFrameReady(int FPSLimit)
-{
-	if ((FPSLimit > 0 && 1.0f / FPSLimit < deltaTime) || FPSLimit <= 0)
-	{
-		deltaTime *= timeScale;
-		return true;
-	}
-
-	return false;
 }
 void Time::createTimer(float seconds, std::function<void()> callback, bool unscaled)
 {

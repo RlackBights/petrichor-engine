@@ -6,9 +6,9 @@
 #include <glm/trigonometric.hpp>
 #include "ptc_camera.hpp"
 
-Camera::Camera(bool _perspective, bool _main) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(2.5f), MouseSensitivity(0.6f), Zoom(100.0f)
+Camera::Camera(bool _perspective, bool _main) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(2.5f), MouseSensitivity(1.2f), Zoom(100.0f)
 {
-    if (_perspective || main == nullptr) main = this;
+    if (_perspective && main == nullptr) main = this;
     WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
     Front = glm::vec3(0.0f);
     Up = glm::vec3(0.0f);
@@ -88,11 +88,9 @@ void Camera::FixedUpdate()
     updateCameraVectors();
 }
 
-
-
 void Camera::ProcessMouseScroll(float yoffset)
 {
-    Zoom = glm::clamp<float>(Zoom - (float)yoffset * 2.0f, 20.0f, 100.0f);
+    Zoom = glm::clamp<float>(Zoom - (float)yoffset * 10.0f, 20.0f, 100.0f);
 }
 
 void Camera::updateCameraVectors()

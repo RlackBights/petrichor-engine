@@ -115,5 +115,5 @@ void main()
 		specular = specular / (lightNum + dirLightNum + spotLightNum);
 	}
 
-	FragColor =  baseCol * vec4((ambientLight + diffuse * vec3(texture(Texture, TexCoord)) + specular * vec3(texture(SpecularMap, TexCoord))), texture(Texture, TexCoord).a);
+	FragColor = baseCol * vec4(((ambientLight + diffuse) * vec3(texture(Texture, TexCoord)) + specular * vec3(texture(SpecularMap, TexCoord))), texture(Texture, TexCoord).a);
 }

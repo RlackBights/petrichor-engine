@@ -13,8 +13,9 @@ constexpr char MODEL_PATH[] = "resources/models/";
 class Mesh
 {
 private:
-	GLuint VBO, VAO, EBO;
+	GLuint VBO, EBO;
 public:
+	GLuint VAO;
 	std::vector<Vertex> vertices;
 	std::vector<int> indices;
 	std::string name;
@@ -23,6 +24,8 @@ public:
 	Mesh();
 	Mesh(std::string name);
 	Mesh(std::string name, std::vector<Vertex> vertices, std::vector<int> indices);
+
+	void RegisterBuffers();
 };
 
 #endif

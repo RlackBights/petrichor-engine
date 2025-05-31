@@ -18,44 +18,44 @@ glm::vec3 Light::QuaternionToDirection(const glm::quat& quaternion) {
 }
 std::vector<Light*> Light::GetLights(LightType _type)
 {
-	std::vector<Light*> enabledLights;
+	std::vector<Light*> enabledLights = {};
 	for (Light* light : lights) if (light->enabled && light->parentObject->enabled && light->type == _type) enabledLights.push_back(light);
 	return enabledLights;
 }
 std::vector<glm::vec3> Light::GetLightDirections(LightType _type)
 {
-	std::vector<glm::vec3> dir;
+	std::vector<glm::vec3> dir = {};
 	for (Light* light : GetLights(_type)) dir.push_back(Light::QuaternionToDirection(light->parentObject->transform.rotation));
 	return dir;
 }
 std::vector<glm::vec3> Light::GetLightPositions(LightType _type)
 {
-	std::vector<glm::vec3> pos;
+	std::vector<glm::vec3> pos = {};
 	for (Light* light : GetLights(_type)) pos.push_back(light->parentObject->transform.position);
 	return pos;
 }
 std::vector<glm::vec3> Light::GetLightColors(LightType _type)
 {
-	std::vector<glm::vec3> col;
+	std::vector<glm::vec3> col = {};
 	for (Light* light : GetLights(_type)) col.push_back(light->lightColor);
 	return col;
 }
 std::vector<float> Light::GetSpotlightFocus()
 {
-	std::vector<float> focus;
+	std::vector<float> focus = {};
 	for (Light* light : GetLights(Spot)) focus.push_back(light->focus);
 	return focus;
 }
 std::vector<float> Light::GetSpotlightCutoff()
 {
-	std::vector<float> cutoff;
+	std::vector<float> cutoff = {};
 	for (Light* light : GetLights(Spot)) cutoff.push_back(light->cutoff);
 	return cutoff;
 
 }
 std::vector<PointLight> Light::GetPointLights()
 {
-	std::vector<PointLight> l;
+	std::vector<PointLight> l = {};
 	for (Light* light : GetLights(Point))
 	{
 		PointLight pl = PointLight();

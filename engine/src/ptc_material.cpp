@@ -1,16 +1,6 @@
 #include "ptc_texture.hpp"
 #include <ptc_material.hpp>
 
-Material::Material()
-{
-	baseColor = glm::vec4(1.0f);
-	texture = Texture::loadTexture("default_texture.jpg");
-	specularMap = texture;
-	normalMap = texture;
-	shader = Shader("vertex_shader.glsl", "fragment_shader.glsl");
-	specularStrength = 0.5f;
-	specularExponent = 5;
-}
 Material::Material(GLuint _texture, GLuint _specularMap, GLuint _normalMap, glm::vec4 _baseColor, Shader _shader, float _specularStrength, int _specularExponent)
 {
 	shader = _shader;

@@ -5,16 +5,17 @@
 #include "ptc_file_reader.hpp"
 #include "ptc_mesh.hpp"
 #include "ptc_vertex.hpp"
-#include <cstddef>
 #include <filesystem>
+#include <map>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <vector>
 
-std::vector<Mesh> MeshLoader::LoadMeshOBJ(std::string fileContent)
+std::map<std::string, Mesh> MeshLoader::LoadMeshOBJ(std::string fileContent)
 {
     std::string line = "";
-    std::vector<Mesh> meshes;
+    std::map<std::string, Mesh> meshes;
 
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
@@ -37,11 +38,11 @@ std::vector<Mesh> MeshLoader::LoadMeshOBJ(std::string fileContent)
                             vertices.push_back(glm::vec3(x, y, z));
                             break;
                         case 'n':
-                            sscanf(line.c_str(), "v %f %f %f", &x, &y, &z);
+                            sscanf(line.c_str(), "vn %f %f %f", &x, &y, &z);
                             normals.push_back(glm::vec3(x, y, z));
                             break;
                         case 't':
-                            sscanf(line.c_str(), "v %f %f", &x, &y);
+                            sscanf(line.c_str(), "vt %f %f", &x, &y);
                             texCoords.push_back(glm::vec2(x, y));
                             break;
                         default:
@@ -55,26 +56,26 @@ std::vector<Mesh> MeshLoader::LoadMeshOBJ(std::string fileContent)
                     while (stream >> token) {
                         FaceToken ft = FaceToken(token);
                         Vertex vert = Vertex(vertices[ft.v - 1], texCoords[ft.vt - 1], normals[ft.vn - 1]);
-                        meshes.back().vertices.push_back(vert);
-                        indices.push_back(meshes.back().vertices.size() - 1);
+                        meshes.rbegin()->second.vertices.push_back(vert);
+                        indices.push_back(meshes.rbegin()->second.vertices.size() - 1);
                     }
 
                     for (int i = 1; i < indices.size() - 1; i++) {
-                        meshes.back().indices.push_back(indices[0]);
-                        meshes.back().indices.push_back(indices[i]);
-                        meshes.back().indices.push_back(indices[i + 1]);
+                        meshes.rbegin()->second.indices.push_back(indices[0]);
+                        meshes.rbegin()->second.indices.push_back(indices[i]);
+                        meshes.rbegin()->second.indices.push_back(indices[i + 1]);
                     }
 
                     break;
                 case 's':   // smoothing 
                     if (line[2] == 'o') {
-                        meshes.back().smoothing = 0;
+                        meshes.rbegin()->second.smoothing = 0;
                     } else {
-                        meshes.back().smoothing = line[2] - '0';
+                        meshes.rbegin()->second.smoothing = line[2] - '0';
                     }
                     break;
                 case 'o':   // object
-                    meshes.push_back(Mesh(line.substr(2)));
+                    meshes.insert({line.substr(2), Mesh(line.substr(2))});
                     break;
                 case 'm':   // material-related stuff maybe
                     break;
@@ -94,21 +95,30 @@ std::vector<Mesh> MeshLoader::LoadMeshOBJ(std::string fileContent)
         }
     }
 
+    for (auto& [name, mesh] : meshes) {
+        mesh.RegisterBuffers();
+    }
+
     return meshes;
 }
 
-std::vector<Mesh> MeshLoader::LoadMesh(std::string path)
+std::map<std::string, Mesh> MeshLoader::LoadMesh(std::string path)
 {
     std::string ext = std::filesystem::path(MESH_PATH + path).extension().string();
     if (ext == ".obj") {
         return MeshLoader::LoadMeshOBJ(FileReader::Read(MESH_PATH + path));
     } else {
-        return { Mesh() };
+        return {{ "", MeshLoader::CreateEmptyMesh() } };
     }
     
 }
 
-std::vector<Mesh> MeshLoader::LoadMesh(const char* path)
+std::map<std::string, Mesh> MeshLoader::LoadMesh(const char* path)
 {
     return MeshLoader::LoadMesh(std::string(path));
+}
+
+Mesh MeshLoader::CreateEmptyMesh()
+{
+    return Mesh();
 }
