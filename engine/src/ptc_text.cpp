@@ -15,7 +15,7 @@ Text::Text(std::string _text, float _x, float _y, Font* _font, glm::vec4 _color,
     }
 
     textShader.setMatrix4x4("model", glm::mat4(1.0f));
-    textShader.setMatrix4x4("projection", glm::ortho(0.0f, (float)Renderer::screenWidth, 0.0f, (float)Renderer::screenHeight));
+    textShader.setMatrix4x4("projection", glm::ortho(0.0f, (float)Renderer::screen.width, 0.0f, (float)Renderer::screen.height));
     textShader.setMatrix4x4("view", glm::mat4(1.0f));
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -42,7 +42,7 @@ void Text::FixedUpdate()
     glGetIntegerv(GL_POLYGON_MODE, polygonMode);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     textShader.use();
-    textShader.setMatrix4x4("projection", glm::ortho(0.0f, (float)Renderer::screenWidth, 0.0f, (float)Renderer::screenHeight));
+    textShader.setMatrix4x4("projection", glm::ortho(0.0f, (float)Renderer::screen.width, 0.0f, (float)Renderer::screen.height));
     textShader.setInt("text", 0);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);

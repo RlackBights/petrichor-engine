@@ -1,6 +1,7 @@
 #include "glm/glm.hpp"
 #include "glm/fwd.hpp"
 #include "ptc_json_structs.hpp"
+#include "ptc_layout_structs.hpp"
 #include <any>
 #include <cstdarg>
 #include <ptc_console.hpp>
@@ -136,12 +137,18 @@ void Console::Write(JSONToken val)
             Console::Write(std::to_string(std::any_cast<int>(val.second)));
             break;
         case FLOAT:
-            Console::WriteLine(std::to_string(std::any_cast<float>(val.second)));
+            Console::Write(std::to_string(std::any_cast<float>(val.second)));
             break;
         case VOID:
             Console::Write("null");
             break;
         }
+}
+void Console::Write(char val) {
+    Write(std::string(1, val));
+}
+void Console::Write(Rect val) {
+    Write(Console::FormatString("{ x: %d, y: %d, width: %d, height: %d }", val.x, val.y, val.width, val.height));
 }
 void Console::WriteLine(std::string text, Color color, bool continuous) {
     Write(text + '\n', color, continuous);

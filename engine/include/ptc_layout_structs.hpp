@@ -1,0 +1,51 @@
+#ifndef PTC_LAYOUT_STRUCTS_HPP
+#define PTC_LAYOUT_STRUCTS_HPP
+
+#include "glm/glm.hpp"
+#include <memory>
+#include <string>
+#include <variant>
+
+struct LayoutNode;
+
+struct Rect {
+    int x = 0, y = 0, width = 0, height = 0;
+    Rect() = default;
+    Rect(int x, int y, int w, int h) : x(x), y(y), width(w), height(h) {}
+};
+
+struct Panel {
+    std::string name;
+    Rect rect;
+    glm::vec4 baseColor;
+    bool visible;
+
+    Panel(std::string name, Rect rect, glm::vec4 baseColor = glm::vec4(1.0f), bool visible = true)
+        : name(std::move(name)), rect(rect), baseColor(baseColor), visible(visible) {}
+};
+
+enum SplitDirection { SPLIT_HORIZONTAL, SPLIT_VERTICAL };
+
+struct Split {
+    SplitDirection direction;
+    float ratio;
+    std::unique_ptr<LayoutNode> childA;
+    std::unique_ptr<LayoutNode> childB;
+
+    Split ( 
+            SplitDirection dir, 
+            float r,
+            std::unique_ptr<LayoutNode> a, 
+            std::unique_ptr<LayoutNode> b
+        ) :
+        direction(dir),
+        ratio(r),
+        childA(std::move(a)),
+        childB(std::move(b)) {}
+};
+
+struct LayoutNode : std::variant<std::unique_ptr<Split>, std::shared_ptr<Panel>> {
+    using variant::variant;
+};
+
+#endif

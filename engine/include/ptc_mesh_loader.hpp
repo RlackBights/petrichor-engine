@@ -10,6 +10,7 @@ class MeshLoader
 {
 private:
     static std::map<std::string, Mesh> LoadMeshOBJ(std::string fileContent);
+    static std::map<std::string, Mesh> LoadMeshGLB(std::string fileContent);
 public:
     static std::map<std::string, Mesh> LoadMesh(std::string path);
     static std::map<std::string, Mesh> LoadMesh(const char* path);

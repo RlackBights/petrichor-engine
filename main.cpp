@@ -6,7 +6,6 @@
 #include <glm/fwd.hpp>
 #include <glm/geometric.hpp>
 #include <glm/trigonometric.hpp>
-#include <string>
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <SDL3/SDL.h>
@@ -73,7 +72,7 @@ bool init()
 	Console::WriteLine("\n[          ]\tInput");
 	Console::SetCursorPosition(1, consoleOffset++);
 
-	Input::initInput(&Renderer::screenWidth, &Renderer::screenHeight);
+	Input::initInput(&Renderer::screen.width, &Renderer::screen.height);
 	Console::Write("-----");
 	initKeybinds();
 
@@ -117,14 +116,15 @@ bool update()
 	// ENGINE
 
 	Renderer::prepareUI(Camera::main);
+	GUI::ApplyLayout();
 	GUI::RenderUI();
 
 	// GAME
 
 	// Initialize stuff for the frame
 	Time::updateTime();
-	Input::updateInputUnscaled();
-	Renderer::prepareFrame(Camera::main ? Camera::main : nullptr);
+	Input::updateInput();
+	Renderer::prepareFrame(Camera::main);
 	
 	while (Time::fixedAccumulator >= Time::fixedUpdateFrametime)
 	{
@@ -135,7 +135,6 @@ bool update()
 	
 	// Run the update functions
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) if (comp->enabled && comp->parentObject->enabled) comp->Update(); } );
-
 	// Frame cleanup
 	Time::wrapTime();
 	Input::wrapInput();
@@ -178,16 +177,14 @@ void initKeybinds()
 	Input::addBinding(SDLM_RIGHT, MOUSE_UP, []() {
 		Input::enabled = false;
 		SDL_SetWindowRelativeMouseMode(Renderer::window, false);
-		SDL_WarpMouseInWindow(Renderer::window, Renderer::screenWidth / 2.0f, Renderer::screenHeight / 2.0f);
+		SDL_WarpMouseInWindow(Renderer::window, Renderer::screen.width / 2.0f, Renderer::screen.height / 2.0f);
 	}, true);
-
-
 	
 	// Debug features, wireframe rendering and switch between orthographic and perspective rendering:
 	
 	Input::addBinding(SDLK_V, KEYBIND_DOWN, []() { glPolygonMode(GL_FRONT_AND_BACK, (Renderer::renderMode == GL_LINE) ? Renderer::renderMode = GL_FILL : Renderer::renderMode = GL_LINE); if (Renderer::renderMode == GL_LINE) glDisable(GL_CULL_FACE); else glEnable(GL_CULL_FACE); }, true);
 	Input::addBinding(SDLK_N, KEYBIND_DOWN, []() { Camera::main->perspective = !Camera::main->perspective; });
 
-	Input::enabled = true; // Was originally false, since the camera movement was locked unless the user held down the right mouse button, similar to unity
+	Input::enabled = false; // Was originally false, since the camera movement was locked unless the user held down the right mouse button, similar to unity
 	Console::Write("-----");
 }

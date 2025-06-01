@@ -54,7 +54,7 @@ public:
     static std::vector<KeyBinding> keyBindingsForced; // Keybinds that run even when the input is disabled
 
     static void initInput(int* inScreenWidth, int* inScreenHeight, float mouseSensitivity = 0.2f);
-    static void updateInputUnscaled();
+    static void updateInput();
     static void wrapInput();
     static bool getKey(uint _keyCode, ushort* _keyMod = NULL);
 

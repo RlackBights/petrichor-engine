@@ -1,3 +1,4 @@
+#include "ptc_console.hpp"
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_stdinc.h>
 #include <ptc_input.hpp>
@@ -7,7 +8,7 @@
     screenWidth = inScreenWidth;
     screenHeight = inScreenHeight;
 }
- void Input::updateInputUnscaled() {
+ void Input::updateInput() {
     
     for (const auto& binding : keyBindings) {
         if (enabled &&
@@ -30,6 +31,15 @@
 
     while (SDL_PollEvent(&e))
     {
+        if (e.type == SDL_EVENT_MOUSE_MOTION) {
+            if (!enabled) continue;
+            mouseXrel += e.motion.xrel * sensitivity;
+            mouseYrel += -e.motion.yrel * sensitivity;
+            mouseX = e.motion.x;
+            mouseY = e.motion.y;
+            continue;
+        }
+
         // Handle key events
         if (e.type == SDL_EVENT_KEY_DOWN) {
             lastKey = e.key.key;
@@ -48,6 +58,10 @@
         {
             heldMouseButtons[e.button.button] = false;
             lastMouseButtons[e.button.button] = false;
+        }
+
+        if (e.type == SDL_EVENT_DROP_FILE) {
+            Console::WriteLine(e.drop.data);
         }
 
         // Process forced key bindings
@@ -94,13 +108,6 @@
         if (!enabled) return;
 
         if (e.type == SDL_EVENT_MOUSE_WHEEL) mouseScroll += e.wheel.y;
-
-        if (e.type == SDL_EVENT_MOUSE_MOTION) {
-            mouseXrel += e.motion.xrel * sensitivity;
-            mouseYrel += -e.motion.yrel * sensitivity;
-            mouseX = e.motion.x;
-            mouseY = e.motion.y;
-        }
 
         // Loop through all keybindings and trigger the action
         for (int i = 0; i < keyBindings.size(); i++) {

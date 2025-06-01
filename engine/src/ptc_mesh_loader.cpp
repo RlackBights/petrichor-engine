@@ -102,6 +102,11 @@ std::map<std::string, Mesh> MeshLoader::LoadMeshOBJ(std::string fileContent)
     return meshes;
 }
 
+std::map<std::string, Mesh> MeshLoader::LoadMeshGLB(std::string fileContent)
+{
+    
+}
+
 std::map<std::string, Mesh> MeshLoader::LoadMesh(std::string path)
 {
     std::string ext = std::filesystem::path(MESH_PATH + path).extension().string();

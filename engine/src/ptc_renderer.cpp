@@ -22,20 +22,16 @@ void Renderer::initSDL(const char* windowName, int inScreenWidth, int inScreenHe
 	Console::Write("--");
 
 	const SDL_DisplayMode* DM = SDL_GetCurrentDisplayMode(*SDL_GetDisplays(nullptr));
-	screenWidth = (inScreenWidth <= 0) ? (int)(DM->w * 0.8f) : inScreenWidth;
-	screenHeight = (inScreenHeight <= 0) ? (int)(DM->h * 0.8f) : inScreenHeight;
-	viewportWidth = screenWidth;
-	viewportHeight = screenHeight;
-	viewportX = 0;
-	viewportY = 0;
+	screen = Rect(0, 0, (inScreenWidth <= 0) ? (int)(DM->w * 0.8f) : inScreenWidth, (inScreenHeight <= 0) ? (int)(DM->h * 0.8f) : inScreenHeight);
+	viewport = screen;
 	Console::Write("--");
 
 
 	// Create window
 	window = SDL_CreateWindow(
 		windowName,
-		screenWidth,
-		screenHeight,
+		screen.width,
+		screen.height,
 		SDL_WINDOW_OPENGL |
 		SDL_WINDOW_RESIZABLE |
 		SDL_WINDOW_HIDDEN
@@ -106,16 +102,18 @@ void Renderer::showWindow()
 }
 void Renderer::prepareUI(Camera* camera)
 {
-	if (camera == NULL) return;
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glDisable(GL_SCISSOR_TEST);
+	glViewport(0, 0, screen.width, screen.height);
+	if (camera == nullptr) return;
+	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 void Renderer::prepareFrame(Camera* camera)
 {
-	if (camera == NULL) return;
+	if (camera == nullptr) return;
 
-	glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
-	glScissor(viewportX, viewportY, viewportWidth, viewportHeight);
+	glViewport(viewport.x,viewport.y, viewport.width, viewport.height);
+	glScissor(viewport.x, viewport.y, viewport.width, viewport.height);
 	glEnable(GL_SCISSOR_TEST);
 
 	glClearColor(camera->backgroundColor.r, camera->backgroundColor.g, camera->backgroundColor.b, camera->backgroundColor.a);
@@ -128,25 +126,26 @@ void Renderer::prepareFrame(Camera* camera)
 
 		shader.setUInt("time", (GLuint)Time::currentFrame);
 		shader.setMatrix4x4("view", camera->GetViewMatrix());
-		shader.setMatrix4x4("projection", camera->GetProjectionMatrix(Renderer::screenWidth, Renderer::screenHeight));
+		shader.setMatrix4x4("projection", camera->GetProjectionMatrix(Renderer::screen.width, Renderer::screen.height));
 
 		glUseProgram(0);
 	}
 
 	glDisable(GL_SCISSOR_TEST);
-
 }
 void Renderer::wrapFrame()
 {
-	glBindVertexArray(0);
 	SDL_GL_SwapWindow(Renderer::window);
+}
+void Renderer::SetViewport(Rect rect)
+{
+	Renderer::viewport = rect;
 }
 
 GLuint Renderer::UBO;
 GLuint Renderer::VAO;
 SDL_Window* Renderer::window;
 SDL_GLContext Renderer::glContext;
-int Renderer::screenWidth, Renderer::screenHeight;
-int Renderer::viewportX, Renderer::viewportY, Renderer::viewportWidth, Renderer::viewportHeight;
+Rect Renderer::screen, Renderer::viewport;
 int Renderer::FPSLimit;
 GLint Renderer::renderMode;

@@ -3,6 +3,7 @@
 
 #include "glm/fwd.hpp"
 #include "ptc_json_structs.hpp"
+#include "ptc_layout_structs.hpp"
 #include <cstddef>
 #include <vector>
 #undef APIENTRY
@@ -61,6 +62,8 @@ public:
     static void Write(glm::vec3 val);
     static void Write(glm::vec4 val);
     static void Write(JSONToken val);
+    static void Write(char val);
+    static void Write(Rect val);
     static void WriteLine(std::string text, Color color = Color::NOTHING, bool continuous = true);
     static void WriteLine(const char* text, Color color = Color::NOTHING, bool continuous = true);
     static void Write(std::string text, Color color = Color::NOTHING, bool continuous = true);

@@ -11,7 +11,7 @@
             "src": "Images/Sun.png",
             "name": "sun1",
             "hOffset": -250,
-            "vOffset": 250,
+            "vOffset": 25.0,
             "alignment": "center"
         },
         "text": {
@@ -23,7 +23,8 @@
             "vOffset": 100,
             "alignment": "center",
             "onMouseUp": "sun1.opacity = (sun1.opacity / 100) * 90;",
-            "test": null
+            "test": null,
+            "key6": [1, 2, 3]
         }
     }
 }

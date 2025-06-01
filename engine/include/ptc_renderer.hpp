@@ -1,6 +1,7 @@
 #ifndef PTC_RENDERER_HPP
 #define PTC_RENDERER_HPP
 
+#include "ptc_layout_structs.hpp"
 #define GL_CHECK_ERROR()                                          \
     do {                                                          \
         GLenum err;                                               \
@@ -23,8 +24,8 @@ public:
 	static GLuint UBO;
 	static SDL_Window* window;
 	static SDL_GLContext glContext;
-	static int screenWidth, screenHeight;
-	static int viewportX, viewportY, viewportWidth, viewportHeight;
+	static Rect screen;
+	static Rect viewport;
 	static int FPSLimit;
 	static GLint renderMode;
 
@@ -36,6 +37,7 @@ public:
 	static void prepareUI(Camera* camera);
 	static void prepareFrame(Camera* camera);
 	static void wrapFrame();
+	static void SetViewport(Rect rect);
 };
 
 #endif

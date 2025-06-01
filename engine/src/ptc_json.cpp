@@ -44,39 +44,112 @@ std::string JSON::ReadStringToken(std::string input)
     return "";
 }
 
-JSONValue JSON::ParseValue(std::vector<JSONToken> tokens, size_t index)
+JSONValue JSON::ParseValue(std::vector<JSONToken> tokens, size_t& index)
 {
-    JSONValue val;
-    for (size_t i = index; i < tokens.size(); i ++) {
-        
+    auto [type, val] = tokens[index];
+    
+    switch (type) {
+        case LEFT_BRACE:
+            return ParseObject(tokens, ++index);
+        case LEFT_BRACKET:
+            return ParseArray(tokens, ++index);
+        case STRING:
+            index++;
+            return std::any_cast<std::string>(val);
+        case INT:
+            index++;
+            return std::any_cast<int>(val);
+        case FLOAT:
+            index++;
+            return std::any_cast<float>(val);
+        case BOOLEAN:
+            index++;
+            return std::any_cast<bool>(val);
+        case VOID:
+            index++;
+            return JSONValue{};
+        default:
+            index++;
+            Console::Write("Unexpected token: ");
+            Console::WriteLine(tokens[index]);
+            return JSONValue{};
     }
-    return val;
 }
 
-JSONValue JSON::ParseObject(std::vector<JSONToken> tokens, size_t index)
+JSONValue JSON::ParseObject(std::vector<JSONToken> tokens, size_t& index)
 {
     auto obj = std::make_shared<JSONObject>();
 
-    for (size_t i = index; i < tokens.size(); i++) {
-        
+    while (index < tokens.size()) {
+        auto [keyType, keyVal] = tokens[index];
+
+        if (keyType == RIGHT_BRACE) {
+            ++index;
+            break;
+        }
+
+        if (keyType != STRING) {
+            Console::WriteLine("Expected string key in object");
+        }
+
+        std::string key = std::any_cast<std::string>(keyVal);
+        index++;
+
+        if (tokens[index].first != COLON)
+            Console::WriteLine("Expected ':' after key in object");
+        index++;
+
+        JSONValue value = ParseValue(tokens, index);
+        (*obj)[key] = value;
+
+        if (tokens[index].first == COMMA) {
+            ++index;
+        } else if (tokens[index].first == RIGHT_BRACE) {
+            ++index;
+            break;
+        } else {
+            Console::Write("Expected ',' or '}' in object: ");
+            Console::WriteLine(tokens[index - 1]);
+        }
     }
+
     return JSONValue(obj);
 }
 
-JSONValue JSON::ParseArray(std::vector<JSONToken> tokens, size_t index)
+JSONValue JSON::ParseArray(std::vector<JSONToken> tokens, size_t& index)
 {
+    auto arr = std::make_shared<JSONArray>();
 
+    while (index < tokens.size()) {
+        if (tokens[index].first == RIGHT_BRACKET) {
+            ++index;
+            break;
+        }
+
+        JSONValue val = ParseValue(tokens, index);
+        arr->push_back(val);
+
+        if (tokens[index].first == COMMA) {
+            ++index;
+        } else if (tokens[index].first == RIGHT_BRACKET) {
+            ++index;
+            break;
+        } else {
+            Console::WriteLine("Expected ',' or ']' in array");
+        }
+    }
+
+    return JSONValue(arr);
 }
 
 JSONValue JSON::Parse(std::string input)
 {
-    return JSON::ParseValue(JSON::Tokenize(input), 0);
+    size_t index = 0;
+    return JSON::ParseValue(JSON::Tokenize(input), index);
 }
 
 std::vector<JSONToken> JSON::Tokenize(std::string input)
-{
-    Console::WriteLine(input);
-    
+{    
     std::vector<JSONToken> tokens = {};
     std::any token;
 
@@ -115,7 +188,7 @@ std::vector<JSONToken> JSON::Tokenize(std::string input)
                     if (input.substr(i, input.substr(i).find(',')).find('.') != std::variant_npos) {
                         token = JSON::ReadFloatToken(input.substr(i));
                         tokens.push_back(JSONToken(FLOAT, std::any_cast<float>(token)));
-                        i += std::to_string(std::any_cast<float>(token)).size() - 1;
+                        i += input.substr(i, (input.substr(i).find(',') < input.substr(i).find('}')) ? input.substr(i).find(',') : input.substr(i).find('}')).size() - 1;
                     } else {
                         token = JSON::ReadIntToken(input.substr(i));
                         tokens.push_back(JSONToken(INT, std::any_cast<int>(token)));
@@ -132,6 +205,5 @@ std::vector<JSONToken> JSON::Tokenize(std::string input)
         }
     }
 
-    Console::WriteLine(tokens);
     return tokens;
 }
