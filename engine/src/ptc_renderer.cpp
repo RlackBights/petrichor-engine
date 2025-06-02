@@ -104,16 +104,17 @@ void Renderer::prepareUI(Camera* camera)
 {
 	glDisable(GL_SCISSOR_TEST);
 	glViewport(0, 0, screen.width, screen.height);
+	
 	if (camera == nullptr) return;
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 void Renderer::prepareFrame(Camera* camera)
 {
 	if (camera == nullptr) return;
 
-	glViewport(viewport.x,viewport.y, viewport.width, viewport.height);
-	glScissor(viewport.x, viewport.y, viewport.width, viewport.height);
+	glViewport(viewport.x,Renderer::screen.height - viewport.y - viewport.height, viewport.width, viewport.height);
+	glScissor(viewport.x, Renderer::screen.height - viewport.y - viewport.height, viewport.width, viewport.height);
 	glEnable(GL_SCISSOR_TEST);
 
 	glClearColor(camera->backgroundColor.r, camera->backgroundColor.g, camera->backgroundColor.b, camera->backgroundColor.a);
@@ -126,7 +127,7 @@ void Renderer::prepareFrame(Camera* camera)
 
 		shader.setUInt("time", (GLuint)Time::currentFrame);
 		shader.setMatrix4x4("view", camera->GetViewMatrix());
-		shader.setMatrix4x4("projection", camera->GetProjectionMatrix(Renderer::screen.width, Renderer::screen.height));
+		shader.setMatrix4x4("projection", camera->GetProjectionMatrix(Renderer::viewport.width, Renderer::viewport.height));
 
 		glUseProgram(0);
 	}

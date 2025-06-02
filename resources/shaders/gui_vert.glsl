@@ -9,7 +9,7 @@ out vec4 vCol;
 void main()
 {
     float x = (aPos.x / screenSize.x) * 2.0 - 1.0;
-    float y = 1.0 - (aPos.y / screenSize.y) * 2.0;
+    float y = (aPos.y / screenSize.y) * 2.0 - 1.0;
 
     gl_Position = vec4(x, y, aPos.z, 1.0);
     vCol = aCol;

@@ -1,10 +1,12 @@
 #ifndef PTC_INPUT_HPP
 #define PTC_INPUT_HPP
 
+#include "glm/fwd.hpp"
 #include <SDL3/SDL_stdinc.h>
 #include <cstdlib>
 #include <SDL3/SDL.h>
 #include <functional>
+#include <string>
 #include <vector>
 
 constexpr Uint8 SDLM_LEFT   = 1; /* Left mouse button */
@@ -24,6 +26,7 @@ enum KeyBindingEventType {
 
 // Define the KeyBinding structure to hold a function and its parameters
 typedef struct KeyBinding {
+    std::string name;
     Uint32 key;                            // Key for binding
     KeyBindingEventType eventType;         // Event type (Down, Up, Hold)
     std::function<void()> action;          // Function to call (using std::function for flexibility)
@@ -31,6 +34,7 @@ typedef struct KeyBinding {
 
 class Input {
 public:
+    static glm::vec2 lastSceneMousePosition;
     static bool enabled;
     static bool heldKeys[SDL_SCANCODE_COUNT];
     static bool lastKeys[SDL_SCANCODE_COUNT];
@@ -42,6 +46,7 @@ public:
     static float mouseYrel;
     static float mouseX;
     static float mouseY;
+    static float mouseScrollRel;
     static float mouseScroll;
     static Uint32 lastKey;
 
@@ -59,7 +64,7 @@ public:
     static bool getKey(uint _keyCode, ushort* _keyMod = NULL);
 
     // Add a new keybinding
-    static void addBinding(Uint32 key, KeyBindingEventType eventType, std::function<void()> action, bool isForced = false);
+    static void addBinding(std::string name, Uint32 key, KeyBindingEventType eventType, std::function<void()> action, bool isForced = false);
 };
 
 #endif

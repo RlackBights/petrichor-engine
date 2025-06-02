@@ -1,7 +1,7 @@
 #include "glm/glm.hpp"
 #include "glm/fwd.hpp"
 #include "ptc_json_structs.hpp"
-#include "ptc_layout_structs.hpp"
+#include "ptc_gui_structs.hpp"
 #include <any>
 #include <cstdarg>
 #include <ptc_console.hpp>

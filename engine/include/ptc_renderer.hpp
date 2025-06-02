@@ -1,7 +1,7 @@
 #ifndef PTC_RENDERER_HPP
 #define PTC_RENDERER_HPP
 
-#include "ptc_layout_structs.hpp"
+#include "ptc_gui_structs.hpp"
 #define GL_CHECK_ERROR()                                          \
     do {                                                          \
         GLenum err;                                               \

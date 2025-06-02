@@ -1,6 +1,7 @@
 #ifndef PTC_LAYOUT_STRUCTS_HPP
 #define PTC_LAYOUT_STRUCTS_HPP
 
+#include "glm/fwd.hpp"
 #include "glm/glm.hpp"
 #include <memory>
 #include <string>
@@ -17,6 +18,8 @@ struct Rect {
 struct Panel {
     std::string name;
     Rect rect;
+    float scrollOffset;
+    float currentHeight;
     glm::vec4 baseColor;
     bool visible;
 
@@ -46,6 +49,23 @@ struct Split {
 
 struct LayoutNode : std::variant<std::unique_ptr<Split>, std::shared_ptr<Panel>> {
     using variant::variant;
+};
+
+struct TextDrawEntry {
+    const std::string text;
+    glm::vec2 position;
+    Rect clipRect;
+    float& scrollOffset;
+    TextDrawEntry(const std::string text, const glm::vec2 position, const Rect clipRect, float& scrollOffset) : text(text), position(position), clipRect(clipRect), scrollOffset(scrollOffset) {}
+};
+
+struct QuadDrawEntry {
+    const Rect quad;
+    Rect clipRect;
+    float z;
+    const glm::vec4 color;
+    float* scrollOffset;
+    QuadDrawEntry(const Rect quad, Rect clipRect, float z, const glm::vec4 color, float* scrollOffset) : quad(quad), clipRect(clipRect), z(z), color(color), scrollOffset(scrollOffset) {} 
 };
 
 #endif

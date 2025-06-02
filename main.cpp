@@ -1,3 +1,4 @@
+#include "SDL3/SDL_mouse.h"
 #include "ptc_gui.hpp"
 #include "ptc_light.hpp"
 #include "ptc_state.hpp"
@@ -117,6 +118,39 @@ bool update()
 
 	Renderer::prepareUI(Camera::main);
 	GUI::ApplyLayout();
+
+	GUI::Begin("Hierarchy");
+
+	for (int i = 0; i < 100; i++) {
+		GUI::Label("HELLOOO");
+	}
+	
+	GUI::End();
+
+	GUI::Begin("Console");
+	GUI::Label("woah");
+	if (GUI::Button("YIppee", glm::vec2(100, 50)))
+	{
+		Console::WriteLine("Yippee");
+	}
+	GUI::Label("YIppee");
+	GUI::Label("YIppee");
+	GUI::Label("YIppee");
+	GUI::Label("YIppee");
+	GUI::Label("YIppee");
+	GUI::Label("YIppee");
+	GUI::End();
+	
+	GUI::Begin("Inspector");
+	GUI::Label("YIppee");
+	GUI::Label("YIppee");
+	GUI::Label("YIppee");
+	GUI::Label("YIppee");
+	GUI::Label("YIppee");
+	GUI::Label("YIppee");
+	GUI::Label("YIppee");
+	GUI::End();
+
 	GUI::RenderUI();
 
 	// GAME
@@ -135,10 +169,12 @@ bool update()
 	
 	// Run the update functions
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) if (comp->enabled && comp->parentObject->enabled) comp->Update(); } );
+	
 	// Frame cleanup
 	Time::wrapTime();
 	Input::wrapInput();
 	Renderer::wrapFrame();
+	GUI::wrapFrame();
 
 	return true;
 }
@@ -154,36 +190,42 @@ void cleanup(int exitCode)
 
 void initKeybinds()
 {
-	Input::addBinding(SDLK_ESCAPE, KEYBIND_DOWN, []() { cleanup(1); }, true); // Closes the application on escape
+	Input::addBinding("Close", SDLK_ESCAPE, KEYBIND_DOWN, []() { cleanup(1); }, true); // Closes the application on escape
 	// Switches between fullscreen and windowed mode on F11
-	Input::addBinding(SDLK_F11, KEYBIND_DOWN, []() { SDL_SetWindowFullscreen(Renderer::window, !(SDL_GetWindowFlags(Renderer::window) & SDL_WINDOW_FULLSCREEN)); }, true);
+	Input::addBinding("Fullscreen", SDLK_F11, KEYBIND_DOWN, []() { SDL_SetWindowFullscreen(Renderer::window, !(SDL_GetWindowFlags(Renderer::window) & SDL_WINDOW_FULLSCREEN)); }, true);
 
 	// These act as the engine camera controls:
 
-	Input::addBinding(SDLK_W, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(FORWARD, Time::deltaTime); });
-	Input::addBinding(SDLK_A, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(LEFT, Time::deltaTime); });
-	Input::addBinding(SDLK_S, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(BACKWARD, Time::deltaTime); });
-	Input::addBinding(SDLK_D, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(RIGHT, Time::deltaTime); });
-	Input::addBinding(SDLK_SPACE, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(UP, Time::deltaTime); });
-	Input::addBinding(SDLK_LALT, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(DOWN, Time::deltaTime); });
-	Input::addBinding(SDLK_LSHIFT, KEYBIND_DOWN, []() { Camera::main->GetComponent<Camera>()->isBoosting = true; });
-	Input::addBinding(SDLK_LSHIFT, KEYBIND_UP, []() { Camera::main->GetComponent<Camera>()->isBoosting = false; });
+	Input::addBinding("EditorCameraForward", SDLK_W, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(FORWARD, Time::deltaTime); });
+	Input::addBinding("EditorCameraLeft", SDLK_A, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(LEFT, Time::deltaTime); });
+	Input::addBinding("EditorCameraBackward", SDLK_S, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(BACKWARD, Time::deltaTime); });
+	Input::addBinding("EditorCameraRight", SDLK_D, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(RIGHT, Time::deltaTime); });
+	Input::addBinding("EditorCameraUp", SDLK_SPACE, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(UP, Time::deltaTime); });
+	Input::addBinding("EditorCameraDown", SDLK_LALT, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(DOWN, Time::deltaTime); });
+	Input::addBinding("EditorCameraBoostStart", SDLK_LSHIFT, KEYBIND_DOWN, []() { Camera::main->GetComponent<Camera>()->isBoosting = true; });
+	Input::addBinding("EditorCameraBoostEnd", SDLK_LSHIFT, KEYBIND_UP, []() { Camera::main->GetComponent<Camera>()->isBoosting = false; });
 
-	Input::addBinding(SDLM_RIGHT, MOUSE_DOWN, []() {
+	Input::addBinding("EditorFocusSceneStart", SDLM_RIGHT, MOUSE_DOWN, []() {
+		if (!GUI::isHovered(Renderer::viewport)) return;
 		Input::enabled = true;
+		Input::lastSceneMousePosition = glm::vec2(Input::mouseX, Input::mouseY);
 		SDL_SetWindowRelativeMouseMode(Renderer::window, true);
 	}, true);
 
-	Input::addBinding(SDLM_RIGHT, MOUSE_UP, []() {
+	Input::addBinding("EditorFocusSceneEnd", SDLM_RIGHT, MOUSE_UP, []() {
+		if (!SDL_GetWindowRelativeMouseMode(Renderer::window)) return;
 		Input::enabled = false;
 		SDL_SetWindowRelativeMouseMode(Renderer::window, false);
-		SDL_WarpMouseInWindow(Renderer::window, Renderer::screen.width / 2.0f, Renderer::screen.height / 2.0f);
+		SDL_WarpMouseInWindow(Renderer::window, Input::lastSceneMousePosition.x, Input::lastSceneMousePosition.y);
 	}, true);
+
+
+	
 	
 	// Debug features, wireframe rendering and switch between orthographic and perspective rendering:
 	
-	Input::addBinding(SDLK_V, KEYBIND_DOWN, []() { glPolygonMode(GL_FRONT_AND_BACK, (Renderer::renderMode == GL_LINE) ? Renderer::renderMode = GL_FILL : Renderer::renderMode = GL_LINE); if (Renderer::renderMode == GL_LINE) glDisable(GL_CULL_FACE); else glEnable(GL_CULL_FACE); }, true);
-	Input::addBinding(SDLK_N, KEYBIND_DOWN, []() { Camera::main->perspective = !Camera::main->perspective; });
+	Input::addBinding("EditorRenderWireframe", SDLK_V, KEYBIND_DOWN, []() { glPolygonMode(GL_FRONT_AND_BACK, (Renderer::renderMode == GL_LINE) ? Renderer::renderMode = GL_FILL : Renderer::renderMode = GL_LINE); if (Renderer::renderMode == GL_LINE) glDisable(GL_CULL_FACE); else glEnable(GL_CULL_FACE); });
+	Input::addBinding("EditorSwitchPerspective", SDLK_N, KEYBIND_DOWN, []() { Camera::main->perspective = !Camera::main->perspective; });
 
 	Input::enabled = false; // Was originally false, since the camera movement was locked unless the user held down the right mouse button, similar to unity
 	Console::Write("-----");

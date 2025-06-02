@@ -9,11 +9,14 @@
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include <SDL3/SDL.h>
+#include "ptc_gui.hpp"
+#include "ptc_gui_structs.hpp"
 #include "ptc_shader.hpp"
 #include <freetype2/freetype/freetype.h>
 
 class Text : public Component
 {
+friend class GUI;
 private:
 	std::string text;
 	glm::vec2 position;
@@ -22,12 +25,14 @@ private:
 	Font* font;
 	glm::vec4 color;
 	std::function<float(float _x)> animationFunction;
+	int getPixelWidthSelf(int _index = 0, bool _ignoreLinebreak = false);
 
 	void FixedUpdate() override;
 public:
     Shader textShader;
 
-	int getPixelWidth(int _index = 0, bool _ignoreLinebreak = false);
+	int getPixelWidth(const std::string& text, int _index = 0, bool _ignoreLinebreak = false);
+	Text();
     Text(std::string _text, float _x = 0.0f, float _y = 0.0f, Font* _font = Font::LoadFont("arial.ttf", 48), glm::vec4 _color = glm::vec4(1.0f), Shader _shader = Shader("text_vert.glsl", "text_frag.glsl"));
 	void SetTextAnimation(std::function<float(float _x)> _animationFunction);
 	void MoveText(int _x, int _y, bool _centered = true);
@@ -38,6 +43,7 @@ public:
 	std::string GetText();
 	void Awake() override;
 	Font* GetFont();
+	void ForceDrawText(const glm::vec2& position, const Rect& scissor);
 };
 
 #endif

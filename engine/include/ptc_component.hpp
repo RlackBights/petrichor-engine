@@ -9,6 +9,7 @@ class Component
 {
 public:
     Object* parentObject = nullptr;
+    Transform* transform = nullptr;
     bool enabled = true;
     virtual ~Component() = default;
 

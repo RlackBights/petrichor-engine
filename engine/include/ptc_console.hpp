@@ -3,7 +3,7 @@
 
 #include "glm/fwd.hpp"
 #include "ptc_json_structs.hpp"
-#include "ptc_layout_structs.hpp"
+#include "ptc_gui_structs.hpp"
 #include <cstddef>
 #include <vector>
 #undef APIENTRY

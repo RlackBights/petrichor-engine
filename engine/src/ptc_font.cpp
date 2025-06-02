@@ -1,5 +1,6 @@
 #include <freetype/fttypes.h>
 #include <ptc_font.hpp>
+#include <vector>
 
 Font::Font(std::string _path, int _fontSize) : path(_path), fontSize(_fontSize)
 {
@@ -48,6 +49,9 @@ Font::Font(std::string _path, int _fontSize) : path(_path), fontSize(_fontSize)
         unsigned int texture;
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
+        
+        int width = face->glyph->bitmap.width;
+        
         glTexImage2D(
             GL_TEXTURE_2D,
             0,
@@ -64,6 +68,11 @@ Font::Font(std::string _path, int _fontSize) : path(_path), fontSize(_fontSize)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_R, GL_ONE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_G, GL_ONE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_B, GL_ONE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_A, GL_RED);
         // now store character for later use
         Character character = {
             texture,

@@ -2,6 +2,7 @@
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_stdinc.h>
 #include <ptc_input.hpp>
+#include <string>
 
  void Input::initInput(int* inScreenWidth, int* inScreenHeight, float mouseSensitivity) {
     sensitivity = mouseSensitivity;
@@ -29,14 +30,17 @@
         }
     }
 
+    if (e.type == SDL_EVENT_MOUSE_WHEEL) mouseScrollRel = e.wheel.y;
+    else mouseScrollRel = 0;
+
     while (SDL_PollEvent(&e))
     {
         if (e.type == SDL_EVENT_MOUSE_MOTION) {
+            mouseX = e.motion.x;
+            mouseY = e.motion.y;
             if (!enabled) continue;
             mouseXrel += e.motion.xrel * sensitivity;
             mouseYrel += -e.motion.yrel * sensitivity;
-            mouseX = e.motion.x;
-            mouseY = e.motion.y;
             continue;
         }
 
@@ -151,15 +155,16 @@
     mouseScroll = 0;
     lastKey = 0;
 }
- void Input::addBinding(Uint32 key, KeyBindingEventType eventType, std::function<void()> action, bool isForced) {
-    if (isForced) keyBindingsForced.push_back(KeyBinding{ key, eventType, action});
-    else keyBindings.push_back(KeyBinding{ key, eventType, action });
+ void Input::addBinding(std::string name, Uint32 key, KeyBindingEventType eventType, std::function<void()> action, bool isForced) {
+    if (isForced) keyBindingsForced.push_back(KeyBinding{ name, key, eventType, action});
+    else keyBindings.push_back(KeyBinding{ name, key, eventType, action });
 }
 bool Input::getKey(uint _keyCode, ushort* _keyMod)
 {
     return heldKeys[SDL_GetScancodeFromKey(_keyCode, _keyMod)];
 }
 
+glm::vec2 Input::lastSceneMousePosition;
 bool Input::enabled;
 bool Input::heldKeys[SDL_SCANCODE_COUNT];
 bool Input::lastKeys[SDL_SCANCODE_COUNT];
@@ -171,6 +176,7 @@ float Input::mouseXrel;
 float Input::mouseYrel;
 float Input::mouseX;
 float Input::mouseY;
+float Input::mouseScrollRel;
 float Input::mouseScroll;
 Uint32 Input::lastKey;
 
