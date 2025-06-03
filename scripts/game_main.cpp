@@ -14,7 +14,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-Object camera("camera"), test("test"), test2("test2"), text("text");
+Object camera("camera"), test("test"), test2("test2"), text("text"), idk("idk");
 void game_main()
 {
     Camera* ref = camera.AddComponent<Camera>();
@@ -31,4 +31,6 @@ void game_main()
     std::vector<uint8_t> bytes = FileReader::ReadBytes("resources/models/Cube.glb");
     auto text = FileReader::ProcessBytes<char>(std::vector<uint8_t>(bytes.begin(),bytes.begin() + 4));
     Console::WriteLine(std::string(text.begin(), text.end()));
+
+    test.transform.AddChild(&idk.transform);
 }

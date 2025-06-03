@@ -1,12 +1,15 @@
 #include "SDL3/SDL_mouse.h"
+#include "SDL3/SDL_video.h"
 #include "ptc_gui.hpp"
 #include "ptc_light.hpp"
 #include "ptc_state.hpp"
 #include <SDL3/SDL_keycode.h>
+#include <cstddef>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/fwd.hpp>
 #include <glm/geometric.hpp>
 #include <glm/trigonometric.hpp>
+#include <string>
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <SDL3/SDL.h>
@@ -116,15 +119,25 @@ bool update()
 
 	// ENGINE
 
-	Renderer::prepareUI(Camera::main);
+	Renderer::prepareUI();
 	GUI::ApplyLayout();
 
 	GUI::Begin("Hierarchy");
-
-	for (int i = 0; i < 100; i++) {
-		GUI::Label("HELLOOO");
-	}
 	
+	Transform::GetRoot()->PreorderTraversal([](Transform* node) { 
+		std::string hierarchyEntry = "";
+		Transform* currNode = node->parent;
+		while (currNode->parent) {
+			hierarchyEntry += "|  ";
+			currNode = currNode->parent;
+		}
+		hierarchyEntry += node->object->name;
+		if (GUI::Button(hierarchyEntry, glm::vec2(Text::getStaticPixelWidth(hierarchyEntry, 20), 20), true))
+		{
+			Console::WriteLine("Inspector: " + node->object->name);
+		}
+	});
+
 	GUI::End();
 
 	GUI::Begin("Console");
@@ -151,14 +164,12 @@ bool update()
 	GUI::Label("YIppee");
 	GUI::End();
 
-	GUI::RenderUI();
-
 	// GAME
 
 	// Initialize stuff for the frame
 	Time::updateTime();
 	Input::updateInput();
-	Renderer::prepareFrame(Camera::main);
+	Renderer::prepareFrame();
 	
 	while (Time::fixedAccumulator >= Time::fixedUpdateFrametime)
 	{
@@ -169,8 +180,10 @@ bool update()
 	
 	// Run the update functions
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { for (const auto& comp : *node->object->GetComponents()) if (comp->enabled && comp->parentObject->enabled) comp->Update(); } );
-	
+
+
 	// Frame cleanup
+	GUI::RenderUI();
 	Time::wrapTime();
 	Input::wrapInput();
 	Renderer::wrapFrame();
@@ -196,24 +209,24 @@ void initKeybinds()
 
 	// These act as the engine camera controls:
 
-	Input::addBinding("EditorCameraForward", SDLK_W, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(FORWARD, Time::deltaTime); });
-	Input::addBinding("EditorCameraLeft", SDLK_A, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(LEFT, Time::deltaTime); });
-	Input::addBinding("EditorCameraBackward", SDLK_S, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(BACKWARD, Time::deltaTime); });
-	Input::addBinding("EditorCameraRight", SDLK_D, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(RIGHT, Time::deltaTime); });
-	Input::addBinding("EditorCameraUp", SDLK_SPACE, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(UP, Time::deltaTime); });
-	Input::addBinding("EditorCameraDown", SDLK_LALT, KEYBIND_HOLD, []() { Camera::main->GetComponent<Camera>()->MoveCamera(DOWN, Time::deltaTime); });
-	Input::addBinding("EditorCameraBoostStart", SDLK_LSHIFT, KEYBIND_DOWN, []() { Camera::main->GetComponent<Camera>()->isBoosting = true; });
-	Input::addBinding("EditorCameraBoostEnd", SDLK_LSHIFT, KEYBIND_UP, []() { Camera::main->GetComponent<Camera>()->isBoosting = false; });
+	Input::addBinding("EditorCameraForward", SDLK_W, KEYBIND_HOLD, []() { if (Camera::main) Camera::main->GetComponent<Camera>()->MoveCamera(FORWARD, Time::deltaTime); });
+	Input::addBinding("EditorCameraLeft", SDLK_A, KEYBIND_HOLD, []() { if (Camera::main) Camera::main->GetComponent<Camera>()->MoveCamera(LEFT, Time::deltaTime); });
+	Input::addBinding("EditorCameraBackward", SDLK_S, KEYBIND_HOLD, []() { if (Camera::main) Camera::main->GetComponent<Camera>()->MoveCamera(BACKWARD, Time::deltaTime); });
+	Input::addBinding("EditorCameraRight", SDLK_D, KEYBIND_HOLD, []() { if (Camera::main) Camera::main->GetComponent<Camera>()->MoveCamera(RIGHT, Time::deltaTime); });
+	Input::addBinding("EditorCameraUp", SDLK_SPACE, KEYBIND_HOLD, []() { if (Camera::main) Camera::main->GetComponent<Camera>()->MoveCamera(UP, Time::deltaTime); });
+	Input::addBinding("EditorCameraDown", SDLK_LALT, KEYBIND_HOLD, []() { if (Camera::main) Camera::main->GetComponent<Camera>()->MoveCamera(DOWN, Time::deltaTime); });
+	Input::addBinding("EditorCameraBoostStart", SDLK_LSHIFT, KEYBIND_DOWN, []() { if (Camera::main) Camera::main->GetComponent<Camera>()->isBoosting = true; });
+	Input::addBinding("EditorCameraBoostEnd", SDLK_LSHIFT, KEYBIND_UP, []() { if (Camera::main) Camera::main->GetComponent<Camera>()->isBoosting = false; });
 
 	Input::addBinding("EditorFocusSceneStart", SDLM_RIGHT, MOUSE_DOWN, []() {
-		if (!GUI::isHovered(Renderer::viewport)) return;
+		if (!GUI::isHovered(Renderer::viewport) || !Camera::main) return;
 		Input::enabled = true;
 		Input::lastSceneMousePosition = glm::vec2(Input::mouseX, Input::mouseY);
 		SDL_SetWindowRelativeMouseMode(Renderer::window, true);
 	}, true);
 
 	Input::addBinding("EditorFocusSceneEnd", SDLM_RIGHT, MOUSE_UP, []() {
-		if (!SDL_GetWindowRelativeMouseMode(Renderer::window)) return;
+		if (!SDL_GetWindowRelativeMouseMode(Renderer::window) || !Camera::main) return;
 		Input::enabled = false;
 		SDL_SetWindowRelativeMouseMode(Renderer::window, false);
 		SDL_WarpMouseInWindow(Renderer::window, Input::lastSceneMousePosition.x, Input::lastSceneMousePosition.y);

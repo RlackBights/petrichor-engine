@@ -1,5 +1,11 @@
+#include "SDL3/SDL_mouse.h"
+#include "glm/ext/matrix_clip_space.hpp"
+#include "glm/fwd.hpp"
+#include "ptc_camera.hpp"
 #include "ptc_console.hpp"
+#include "ptc_gui_structs.hpp"
 #include "ptc_shader.hpp"
+#include "ptc_text.hpp"
 #include "ptc_time.hpp"
 #include <ptc_renderer.hpp>
 
@@ -100,37 +106,39 @@ void Renderer::showWindow()
 {
 	SDL_ShowWindow(window);
 }
-void Renderer::prepareUI(Camera* camera)
+void Renderer::prepareUI()
 {
 	glDisable(GL_SCISSOR_TEST);
 	glViewport(0, 0, screen.width, screen.height);
 	
-	if (camera == nullptr) return;
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
-void Renderer::prepareFrame(Camera* camera)
+void Renderer::prepareFrame()
 {
-	if (camera == nullptr) return;
-
 	glViewport(viewport.x,Renderer::screen.height - viewport.y - viewport.height, viewport.width, viewport.height);
 	glScissor(viewport.x, Renderer::screen.height - viewport.y - viewport.height, viewport.width, viewport.height);
 	glEnable(GL_SCISSOR_TEST);
 
-	glClearColor(camera->backgroundColor.r, camera->backgroundColor.g, camera->backgroundColor.b, camera->backgroundColor.a);
+	if (Camera::main) glClearColor(Camera::main->backgroundColor.r, Camera::main->backgroundColor.g, Camera::main->backgroundColor.b, Camera::main->backgroundColor.a);
+	else glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(VAO);
 
 	for (Shader shader : Shader::shaders)
 	{
 		shader.use();
-
 		shader.setUInt("time", (GLuint)Time::currentFrame);
-		shader.setMatrix4x4("view", camera->GetViewMatrix());
-		shader.setMatrix4x4("projection", camera->GetProjectionMatrix(Renderer::viewport.width, Renderer::viewport.height));
+		shader.setMatrix4x4("view", (Camera::main) ? Camera::main->GetViewMatrix() : glm::mat4(1.0f));
+		glm::mat4 projMatrix;
+		if (Camera::main) projMatrix = Camera::main->GetProjectionMatrix(Renderer::viewport.width, Renderer::viewport.height);
+		else projMatrix = glm::ortho(0.0f, (float)Renderer::viewport.width, (float)Renderer::viewport.height, 0.0f, -1.0f, 1.0f);
+		shader.setMatrix4x4("projection", projMatrix);
 
 		glUseProgram(0);
 	}
+
+	if (!Camera::main) Text::StaticDrawText("No Main Camera found!", glm::vec2(Renderer::screen.width / 2, Renderer::screen.height / 2), Renderer::viewport);
 
 	glDisable(GL_SCISSOR_TEST);
 }
@@ -142,7 +150,18 @@ void Renderer::SetViewport(Rect rect)
 {
 	Renderer::viewport = rect;
 }
+void Renderer::SetCursor(SDL_SystemCursor cursor)
+{
+	if (!cursors[cursor]) {
+        cursors[cursor] = SDL_CreateSystemCursor(cursor);
+    }
 
+    if (SDL_GetCursor() != cursors[cursor]) {
+        SDL_SetCursor(cursors[cursor]);
+    }
+}
+
+SDL_Cursor* Renderer::cursors[SDL_SYSTEM_CURSOR_COUNT];
 GLuint Renderer::UBO;
 GLuint Renderer::VAO;
 SDL_Window* Renderer::window;

@@ -23,13 +23,13 @@ struct Panel {
     glm::vec4 baseColor;
     bool visible;
 
-    Panel(std::string name, Rect rect, glm::vec4 baseColor = glm::vec4(1.0f), bool visible = true)
+    Panel(std::string name, Rect rect, glm::vec4 baseColor = glm::vec4(-1.0f), bool visible = true)
         : name(std::move(name)), rect(rect), baseColor(baseColor), visible(visible) {}
 };
 
 enum SplitDirection { SPLIT_HORIZONTAL, SPLIT_VERTICAL };
 
-struct Split {
+typedef struct Split {
     SplitDirection direction;
     float ratio;
     std::unique_ptr<LayoutNode> childA;
@@ -45,7 +45,7 @@ struct Split {
         ratio(r),
         childA(std::move(a)),
         childB(std::move(b)) {}
-};
+} Split;
 
 struct LayoutNode : std::variant<std::unique_ptr<Split>, std::shared_ptr<Panel>> {
     using variant::variant;

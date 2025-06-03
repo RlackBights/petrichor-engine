@@ -6,6 +6,10 @@
 #include <glm/trigonometric.hpp>
 #include "ptc_camera.hpp"
 
+Camera::~Camera()
+{
+    if (Camera::main == this) Camera::main = nullptr;
+}
 Camera::Camera(bool _perspective, bool _main) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(2.5f), MouseSensitivity(1.2f), Zoom(100.0f)
 {
     if (_perspective && main == nullptr) main = this;

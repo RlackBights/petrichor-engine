@@ -104,7 +104,7 @@ std::map<std::string, Mesh> MeshLoader::LoadMeshOBJ(std::string fileContent)
 
 std::map<std::string, Mesh> MeshLoader::LoadMeshGLB(std::string fileContent)
 {
-    
+    return {};
 }
 
 std::map<std::string, Mesh> MeshLoader::LoadMesh(std::string path)

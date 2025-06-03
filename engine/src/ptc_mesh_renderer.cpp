@@ -23,7 +23,7 @@ void MeshRenderer::Start()
 }
 void MeshRenderer::Update()
 {
-    if (!this->filterRef) return;
+    if (!this->filterRef || !Camera::main) return;
 
     Mesh* mesh = &filterRef->mesh;
 

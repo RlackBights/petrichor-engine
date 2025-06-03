@@ -1,6 +1,7 @@
 #ifndef PTC_INPUT_HPP
 #define PTC_INPUT_HPP
 
+#include "SDL3/SDL_events.h"
 #include "glm/fwd.hpp"
 #include <SDL3/SDL_stdinc.h>
 #include <cstdlib>
@@ -49,6 +50,8 @@ public:
     static float mouseScrollRel;
     static float mouseScroll;
     static Uint32 lastKey;
+    static Uint32 lastKeyDown;
+    static std::string lastCharacter;
 
     static int* screenWidth;
     static int* screenHeight;

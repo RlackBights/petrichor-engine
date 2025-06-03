@@ -60,7 +60,6 @@ void Time::wrapTime()
 }
 void Time::createTimer(float seconds, std::function<void()> callback, bool unscaled)
 {
-
     if (!callback)
     {
         Console::WriteLine("ERROR: Received empty callback!");

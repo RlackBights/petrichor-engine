@@ -1,4 +1,6 @@
+#include "SDL3/SDL_keyboard.h"
 #include "ptc_console.hpp"
+#include "ptc_renderer.hpp"
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_stdinc.h>
 #include <ptc_input.hpp>
@@ -8,6 +10,7 @@
     sensitivity = mouseSensitivity;
     screenWidth = inScreenWidth;
     screenHeight = inScreenHeight;
+    SDL_StartTextInput(Renderer::window);
 }
  void Input::updateInput() {
     
@@ -33,6 +36,9 @@
     if (e.type == SDL_EVENT_MOUSE_WHEEL) mouseScrollRel = e.wheel.y;
     else mouseScrollRel = 0;
 
+    lastCharacter = "";
+    lastKeyDown = 0;
+
     while (SDL_PollEvent(&e))
     {
         if (e.type == SDL_EVENT_MOUSE_MOTION) {
@@ -44,10 +50,15 @@
             continue;
         }
 
+        if (e.type == SDL_EVENT_TEXT_INPUT) {
+            lastCharacter = e.text.text;
+        }
+
         // Handle key events
         if (e.type == SDL_EVENT_KEY_DOWN) {
             lastKey = e.key.key;
             heldKeys[e.key.scancode] = true;
+            lastKeyDown = e.key.key;
         }
         else if (e.type == SDL_EVENT_KEY_UP) {
             heldKeys[e.key.scancode] = false;
@@ -179,6 +190,8 @@ float Input::mouseY;
 float Input::mouseScrollRel;
 float Input::mouseScroll;
 Uint32 Input::lastKey;
+Uint32 Input::lastKeyDown;
+std::string Input::lastCharacter;
 
 int* Input::screenWidth;
 int* Input::screenHeight;

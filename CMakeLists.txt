@@ -17,7 +17,6 @@ if(WIN32)
     add_compile_options(/EHsc)
 endif()
 
-# =========================
 # Vendored Dependencies
 # =========================
 add_subdirectory(vendor/glm)

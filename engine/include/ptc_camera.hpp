@@ -17,6 +17,8 @@ enum Camera_Movement {
 
 class Camera : public Component
 {
+private:
+    void updateCameraVectors();
 public:
     glm::vec3 Front;
     glm::vec3 Up;
@@ -31,15 +33,13 @@ public:
     bool isBoosting;
     bool perspective;
 
+    ~Camera();
     Camera(bool _perspective = true, bool isMain = false);
     glm::mat4 GetViewMatrix();
     glm::mat4 GetProjectionMatrix(int screenWidth, int screenHeight);
     void MoveCamera(Camera_Movement direction, float deltaTime);
     void FixedUpdate() override;
     void ProcessMouseScroll(float yoffset);
-
-private:
-    void updateCameraVectors();
 };
 
 #endif

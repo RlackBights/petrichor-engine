@@ -1,6 +1,7 @@
 #ifndef PTC_RENDERER_HPP
 #define PTC_RENDERER_HPP
 
+#include "SDL3/SDL_mouse.h"
 #include "ptc_gui_structs.hpp"
 #define GL_CHECK_ERROR()                                          \
     do {                                                          \
@@ -19,6 +20,8 @@
 
 class Renderer
 {
+private:
+	static SDL_Cursor* cursors[SDL_SYSTEM_CURSOR_COUNT];
 public:
 	static GLuint VAO;
 	static GLuint UBO;
@@ -34,10 +37,11 @@ public:
 	static void initOpenGL();
 	static void initRenderer();
 	static void showWindow();
-	static void prepareUI(Camera* camera);
-	static void prepareFrame(Camera* camera);
+	static void prepareUI();
+	static void prepareFrame();
 	static void wrapFrame();
 	static void SetViewport(Rect rect);
+	static void SetCursor(SDL_SystemCursor cursor);
 };
 
 #endif

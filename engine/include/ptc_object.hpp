@@ -42,6 +42,19 @@ public:
 		return GetComponent<T>();
 	}
 
+	template <class T>
+	void RemoveComponent()
+	{
+		for (auto i = components.begin(); i != components.end(); i++) 
+		{
+			if (T* comp = dynamic_cast<T*>(i->get()))
+			{
+				components.erase(i);
+				return;
+			}
+		}
+	}
+
 	static Object* Find(std::string name);
 };
 

@@ -26,6 +26,7 @@ private:
 	glm::vec4 color;
 	std::function<float(float _x)> animationFunction;
 	int getPixelWidthSelf(int _index = 0, bool _ignoreLinebreak = false);
+	static Text staticText;
 
 	void FixedUpdate() override;
 public:
@@ -44,6 +45,8 @@ public:
 	void Awake() override;
 	Font* GetFont();
 	void ForceDrawText(const glm::vec2& position, const Rect& scissor);
+	static void StaticDrawText(const std::string& text, const glm::vec2& position, const Rect& scissor);
+	static int getStaticPixelWidth(const std::string& text, const int fontSize);
 };
 
 #endif
