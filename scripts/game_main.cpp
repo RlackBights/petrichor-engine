@@ -1,6 +1,7 @@
 
 #include "ptc_camera.hpp"
 #include "ptc_console.hpp"
+#include "ptc_debug.hpp"
 #include "ptc_file_reader.hpp"
 #include "ptc_json.hpp"
 #include "ptc_json_structs.hpp"
@@ -30,7 +31,13 @@ void game_main()
 
     std::vector<uint8_t> bytes = FileReader::ReadBytes("resources/models/Cube.glb");
     auto text = FileReader::ProcessBytes<char>(std::vector<uint8_t>(bytes.begin(),bytes.begin() + 4));
-    Console::WriteLine(std::string(text.begin(), text.end()));
+    for (int i = 0; i < 100; i++) {
+        Debug::Log(std::string(text.begin(), text.end()));
+        Debug::Warn("Test");
+        Debug::Error("Woah");
+    }
 
     test.transform.AddChild(&idk.transform);
+
+    test.AddComponent<ExampleStandaloneComponent>();
 }

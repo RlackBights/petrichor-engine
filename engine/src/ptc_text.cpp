@@ -3,6 +3,7 @@
 #include "ptc_renderer.hpp"
 #include "ptc_transform.hpp"
 #include <SDL3/SDL_log.h>
+#include <cmath>
 #include <cstddef>
 #include <functional>
 #include <glm/detail/qualifier.hpp>
@@ -155,7 +156,7 @@ void Text::ForceDrawText(const glm::vec2& position, const Rect& scissor)
     float x = (position.x + offset.x), y = (position.y + offset.y);
     // iterate through all characters
     std::string::const_iterator c, i;
-    int index = 0, newlineNum;
+    int index = 0, newlineNum, tabNum;
     glm::vec4 renderColor = color;
     for (c = text.begin(); c != text.end(); c++)
     {
@@ -184,11 +185,16 @@ void Text::ForceDrawText(const glm::vec2& position, const Rect& scissor)
                 } else {
                     break;
                 }
+            case '\t':
+                tabNum = 0;
+                for (i = c; *i == '\t'; i++) tabNum++;
+                x = (((int(x / getPixelWidth(" ")) / 4) + tabNum) * 4) * getPixelWidth(" ");
+                c += tabNum;
             default:
                 break;
         }
 
-        textShader.setFloat4("textColor", glm::vec4(1.0f));
+        textShader.setFloat4("textColor", renderColor);
 
         Character ch = font->characters[*c];
 

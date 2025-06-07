@@ -1,15 +1,21 @@
 #include "SDL3/SDL_mouse.h"
 #include "SDL3/SDL_video.h"
+#include "ptc_debug.hpp"
+#include "ptc_debug_structs.hpp"
 #include "ptc_gui.hpp"
 #include "ptc_light.hpp"
 #include "ptc_state.hpp"
 #include <SDL3/SDL_keycode.h>
+#include <algorithm>
+#include <asm-generic/errno.h>
 #include <cstddef>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/fwd.hpp>
 #include <glm/geometric.hpp>
 #include <glm/trigonometric.hpp>
+#include <map>
 #include <string>
+#include <utility>
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <SDL3/SDL.h>
@@ -141,27 +147,42 @@ bool update()
 	GUI::End();
 
 	GUI::Begin("Console");
-	GUI::Label("woah");
-	if (GUI::Button("YIppee", glm::vec2(100, 50)))
+
+	if (GUI::Button("group", {300, 40}))
 	{
-		Console::WriteLine("Yippee");
+		Debug::SwitchLogGrouping();
 	}
-	GUI::Label("YIppee");
-	GUI::Label("YIppee");
-	GUI::Label("YIppee");
-	GUI::Label("YIppee");
-	GUI::Label("YIppee");
-	GUI::Label("YIppee");
-	GUI::End();
 	
+	if (Debug::GetLogGrouping()) {
+		std::map<std::pair<LogType, std::string>, int> groups = {};
+		for (auto& log : Debug::GetLogs()) {
+			bool exists = false;
+			for (auto& [key, value] : groups) {
+				if (log == key) 
+				{
+					exists = true;
+					value++;
+					break;
+				}
+			}
+			if (!exists) groups.insert({log, 1});
+		}
+
+		for (auto& log : groups) {
+			GUI::Label(((log.first.first == LogType::INFO) ? "Info: \t\t\t" : ((log.first.first == LogType::WARNING) ? "[ffff22]Warning: \t" : "[ff5555]Error: \t\t\t")) + log.first.second + Console::FormatString((log.second > 999) ? " (%d+)" : " (%d)", std::clamp(log.second, 1, 999)));
+			GUI::Divider();
+		}
+
+	} else {
+		for (auto& log : Debug::GetLogs()) {
+			GUI::Label(((log.first == LogType::INFO) ? "Info: \t\t\t" : ((log.first == LogType::WARNING) ? "[ffff22]Warning: \t" : "[ff5555]Error: \t\t\t")) + log.second);
+			GUI::Divider();
+		}
+	}
+
+	GUI::End();
+
 	GUI::Begin("Inspector");
-	GUI::Label("YIppee");
-	GUI::Label("YIppee");
-	GUI::Label("YIppee");
-	GUI::Label("YIppee");
-	GUI::Label("YIppee");
-	GUI::Label("YIppee");
-	GUI::Label("YIppee");
 	GUI::End();
 
 	// GAME
@@ -203,7 +224,7 @@ void cleanup(int exitCode)
 
 void initKeybinds()
 {
-	Input::addBinding("Close", SDLK_ESCAPE, KEYBIND_DOWN, []() { cleanup(1); }, true); // Closes the application on escape
+	//Input::addBinding("Close", SDLK_ESCAPE, KEYBIND_DOWN, []() { cleanup(1); }, true); // Closes the application on escape
 	// Switches between fullscreen and windowed mode on F11
 	Input::addBinding("Fullscreen", SDLK_F11, KEYBIND_DOWN, []() { SDL_SetWindowFullscreen(Renderer::window, !(SDL_GetWindowFlags(Renderer::window) & SDL_WINDOW_FULLSCREEN)); }, true);
 

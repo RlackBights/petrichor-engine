@@ -55,8 +55,8 @@ struct TextDrawEntry {
     const std::string text;
     glm::vec2 position;
     Rect clipRect;
-    float& scrollOffset;
-    TextDrawEntry(const std::string text, const glm::vec2 position, const Rect clipRect, float& scrollOffset) : text(text), position(position), clipRect(clipRect), scrollOffset(scrollOffset) {}
+    float scrollOffset;
+    TextDrawEntry(const std::string text, const glm::vec2 position, const Rect clipRect, float scrollOffset) : text(text), position(position), clipRect(clipRect), scrollOffset(scrollOffset) {}
 };
 
 struct QuadDrawEntry {

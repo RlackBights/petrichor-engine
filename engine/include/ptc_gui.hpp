@@ -36,8 +36,8 @@ private:
     static Text GUIText;
 
     static void SetColors();
-    static void DrawText(const std::string& text, const glm::vec2& position, const Rect* clipOverride = nullptr);
-    static void DrawQuad(float _x, float _y, float _z, float _w, float _h, glm::vec4 _color, bool ignoreOffset = false);
+    static void DrawText(const std::string& text, const glm::vec2& position, const Rect* clipOverride = nullptr, const bool ignoreOffset = false);
+    static void DrawQuad(float _x, float _y, float _z, float _w, float _h, glm::vec4 _color, const bool ignoreOffset = false);
     static void CalculateRects(LayoutNode& node, Rect area);
     static std::shared_ptr<Panel> GetPanelFromLayout(const std::string& name, LayoutNode& node = GUI::layout);
     static void Scrollbar(const int width = 10);

@@ -144,11 +144,11 @@ void GUI::CalculateRects(LayoutNode& node, Rect area) {
     CalculateRects(*a, rectA);
     CalculateRects(*b, rectB);
 }
-void GUI::DrawText(const std::string& text, const glm::vec2& position, const Rect* clipOverride)
+void GUI::DrawText(const std::string& text, const glm::vec2& position, const Rect* clipOverride, const bool ignoreOffset)
 {
-    batchedTextEntries.push_back(TextDrawEntry(text, position, (clipOverride) ? *clipOverride : ((activePanel) ? activePanel->rect : Renderer::screen), activePanel->scrollOffset));
+    batchedTextEntries.push_back(TextDrawEntry(text, position, (clipOverride) ? *clipOverride : ((activePanel) ? activePanel->rect : Renderer::screen), ((!ignoreOffset) ? activePanel->scrollOffset : 0)));
 }
-void GUI::DrawQuad(float _x, float _y, float _z, float _w, float _h, glm::vec4 _color, bool ignoreOffset)
+void GUI::DrawQuad(float _x, float _y, float _z, float _w, float _h, glm::vec4 _color, const bool ignoreOffset)
 {
     batchedQuadEntries.push_back(QuadDrawEntry(Rect(_x, _y, _w, _h), (activePanel) ? activePanel->rect : Renderer::screen, _z, _color, (!ignoreOffset) ? &activePanel->scrollOffset : nullptr));
 }
@@ -241,8 +241,7 @@ void GUI::RenderUI()
 }
 void GUI::wrapFrame()
 {
-    if (GUI::Hovered != 0) Renderer::SetCursor(SDL_SYSTEM_CURSOR_POINTER);
-    else Renderer::SetCursor(SDL_SYSTEM_CURSOR_DEFAULT);
+    if (GUI::Hovered == 0) Renderer::SetCursor(SDL_SYSTEM_CURSOR_DEFAULT);
     GUI::Hovered = 0;
     cursorPos = glm::vec2(100, 0);
 }
@@ -277,7 +276,7 @@ bool GUI::isHovered(const Rect &rect)
 }
 void GUI::Divider()
 {
-    DrawQuad(activePanel->rect.x, cursorPos.y, 0, activePanel->rect.width, 2, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
+    DrawQuad(activePanel->rect.x, cursorPos.y - ((activePanel) ? activePanel->scrollOffset : 0), 0, activePanel->rect.width, 2, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), true);
     cursorPos.y += 7;
 }
 void GUI::Label(const std::string& text, const bool centered)
@@ -314,7 +313,9 @@ bool GUI::Button(const std::string &text, const glm::vec2& size, const bool invi
         GUI::Active = 0;
     }
 
-    if (!invisible) DrawQuad(cursorPos.x, cursorPos.y, 0, size.x, size.y, quadCol);
+    if (hovered) Renderer::SetCursor(SDL_SYSTEM_CURSOR_POINTER);
+
+    if (!invisible) DrawQuad(cursorPos.x, cursorPos.y - activePanel->scrollOffset, 0, size.x, size.y, quadCol, true);
     DrawText(text, {cursorPos.x + (size.x - GUIText.getPixelWidth(text)) / 2.0f, Renderer::screen.height - cursorPos.y - (GUIText.font->fontSize + size.y) / 2.0f});
 
     cursorPos.y += size.y + 5;
@@ -324,20 +325,18 @@ void GUI::Scrollbar(const int width)
 {
     std::size_t id = std::hash<std::string>{}(activePanel->name);
     glm::vec4 quadCol = colors["buttonNormal"];
+    bool hovered = isHovered(Rect(activePanel->rect.x + activePanel->rect.width - width, activePanel->rect.y, width, activePanel->rect.height));
 
-    if (isHovered(activePanel->rect))
+    if (hovered)
     {
-        if (isHovered(Rect(activePanel->rect.x + activePanel->rect.width - width, activePanel->rect.y, width, activePanel->rect.height)))
-        {
-            quadCol = colors["buttonHovered"];
-            GUI::Hovered = id;
-            if (GUI::Active == 0 && Input::heldMouseButtons[SDLM_LEFT]) {
-                GUI::Active = id;
-            }
-            activePanel->scrollOffset = std::clamp(activePanel->scrollOffset + Input::mouseScrollRel * 50, 0.0f, std::max(0.0f, activePanel->currentHeight - activePanel->rect.height));
-        } else {
-            activePanel->scrollOffset = std::clamp(activePanel->scrollOffset + Input::mouseScrollRel * 10, 0.0f, std::max(0.0f, activePanel->currentHeight - activePanel->rect.height));
+        quadCol = colors["buttonHovered"];
+        GUI::Hovered = id;
+        if (GUI::Active == 0 && Input::heldMouseButtons[SDLM_LEFT]) {
+            GUI::Active = id;
         }
+        activePanel->scrollOffset = std::clamp(activePanel->scrollOffset + Input::mouseScrollRel * 50, 0.0f, std::max(0.0f, activePanel->currentHeight - activePanel->rect.height));
+    } else {
+        activePanel->scrollOffset = std::clamp(activePanel->scrollOffset + Input::mouseScrollRel * 10, 0.0f, std::max(0.0f, activePanel->currentHeight - activePanel->rect.height));
     }
 
     if (GUI::Active == id)
@@ -348,6 +347,8 @@ void GUI::Scrollbar(const int width)
         quadCol = colors["buttonPressed"];
         activePanel->scrollOffset = std::clamp((float)std::clamp((int)(Input::mouseY - activePanel->rect.height * activePanel->rect.height / activePanel->currentHeight / 2) - activePanel->rect.y, 0, activePanel->rect.height) / activePanel->rect.height * activePanel->currentHeight, 0.0f, std::max(0.0f, activePanel->currentHeight - activePanel->rect.height));
     }
+
+    if (hovered) Renderer::SetCursor(SDL_SYSTEM_CURSOR_POINTER);
 
     DrawQuad(activePanel->rect.x + activePanel->rect.width - width, activePanel->rect.y, -0.1, width, activePanel->rect.height, glm::vec4(0.1f, 0.1f, 0.1f, 1.0f), true);
     DrawQuad(activePanel->rect.x + activePanel->rect.width - width * 0.75f, activePanel->rect.y + (activePanel->rect.height - activePanel->rect.height * activePanel->rect.height / activePanel->currentHeight) * (activePanel->scrollOffset / std::max(0.1f, activePanel->currentHeight - activePanel->rect.height)), -0.2, width * 0.75f, activePanel->rect.height * activePanel->rect.height / activePanel->currentHeight, quadCol, true);
@@ -383,6 +384,8 @@ void GUI::TextInput(const glm::vec2 &size, std::string &text)
         }
     }
 
+    if (hovered) Renderer::SetCursor(SDL_SYSTEM_CURSOR_POINTER);
+
     DrawQuad(cursorPos.x, cursorPos.y, 0, std::max(size.x, (float)GUIText.getPixelWidth(text)) + 10, size.y, quadCol);
     DrawText(text, {cursorPos.x + 5, Renderer::screen.height - cursorPos.y - (GUIText.font->fontSize + size.y) / 2.0f});
     cursorPos.y += size.y + 5;
@@ -408,6 +411,9 @@ void GUI::GUISplitter(const Rect& splitter, const SplitDirection direction, floa
     } else if (GUI::Active == id && !Input::heldMouseButtons[SDLM_LEFT]) {
         GUI::Active = 0;
     }
+
+    if (hovered && direction == SplitDirection::SPLIT_HORIZONTAL) Renderer::SetCursor(SDL_SYSTEM_CURSOR_NS_RESIZE);
+    else if (hovered) Renderer::SetCursor(SDL_SYSTEM_CURSOR_EW_RESIZE);
     
     DrawQuad(splitter.x, splitter.y, -0.2, splitter.width, splitter.height, colors["splitter"], true);
 }

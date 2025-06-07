@@ -6,6 +6,7 @@
 #include <cstdarg>
 #include <ptc_console.hpp>
 #include <string>
+#include <vector>
 
 const char* Console::GetColorCode(enum Color color) {
     switch (color) {
@@ -160,5 +161,5 @@ void Console::Write(std::string text, Color color, bool continuous) {
     printf("%s%s%s", GetColorCode(color), text.c_str(), continuous ? "" : "\x1b[0m");
 }
 void Console::Write(const char* text, Color color, bool continuous) {
-    printf("%s%s%s", GetColorCode(color), text, continuous ? "" : "\x1b[0m");
+    Write(std::string(text));
 }
