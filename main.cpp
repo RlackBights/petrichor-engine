@@ -7,8 +7,6 @@
 #include "ptc_state.hpp"
 #include <SDL3/SDL_keycode.h>
 #include <algorithm>
-#include <asm-generic/errno.h>
-#include <cstddef>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/fwd.hpp>
 #include <glm/geometric.hpp>
@@ -169,13 +167,13 @@ bool update()
 		}
 
 		for (auto& log : groups) {
-			GUI::Label(((log.first.first == LogType::INFO) ? "Info: \t\t\t" : ((log.first.first == LogType::WARNING) ? "[ffff22]Warning: \t" : "[ff5555]Error: \t\t\t")) + log.first.second + Console::FormatString((log.second > 999) ? " (%d+)" : " (%d)", std::clamp(log.second, 1, 999)));
+			GUI::Label(((log.first.first == LogType::LOG_INFO) ? "Info: \t\t\t" : ((log.first.first == LogType::LOG_WARNING) ? "[ffff22]Warning: \t" : "[ff5555]Error: \t\t\t")) + log.first.second + Console::FormatString((log.second > 999) ? " (%d+)" : " (%d)", std::clamp(log.second, 1, 999)));
 			GUI::Divider();
 		}
 
 	} else {
 		for (auto& log : Debug::GetLogs()) {
-			GUI::Label(((log.first == LogType::INFO) ? "Info: \t\t\t" : ((log.first == LogType::WARNING) ? "[ffff22]Warning: \t" : "[ff5555]Error: \t\t\t")) + log.second);
+			GUI::Label(((log.first == LogType::LOG_INFO) ? "Info: \t\t\t" : ((log.first == LogType::LOG_WARNING) ? "[ffff22]Warning: \t" : "[ff5555]Error: \t\t\t")) + log.second);
 			GUI::Divider();
 		}
 	}

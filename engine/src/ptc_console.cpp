@@ -1,4 +1,3 @@
-#include "glm/glm.hpp"
 #include "glm/fwd.hpp"
 #include "ptc_json_structs.hpp"
 #include "ptc_gui_structs.hpp"
@@ -6,7 +5,6 @@
 #include <cstdarg>
 #include <ptc_console.hpp>
 #include <string>
-#include <vector>
 
 const char* Console::GetColorCode(enum Color color) {
     switch (color) {
@@ -107,40 +105,40 @@ void Console::Write(JSONToken val)
 {
     switch (val.first)
     {
-        case LEFT_BRACE:
+        case JSON_LEFT_BRACE:
             Console::Write("\'{\'");
             break;
-        case RIGHT_BRACE:
+        case JSON_RIGHT_BRACE:
             Console::Write("\'}\'");
             break;
         case LEFT_BRACKET:
             Console::Write("\'[\'");
             break;
-        case RIGHT_BRACKET:
+        case JSON_RIGHT_BRACKET:
             Console::Write("\']\'");
             break;
-        case COMMA:
+        case JSON_COMMA:
             Console::Write("\',\'");
             break;
-        case COLON:
+        case JSON_COLON:
             Console::Write("\':\'");
             break;
-        case END:
+        case JSON_END:
             Console::Write("");
             break;
-        case BOOLEAN:
+        case JSON_BOOLEAN:
             Console::Write(std::any_cast<bool>(val.second) ? "true" : "false");
             break;
-        case STRING:
+        case JSON_STRING:
             Console::Write('\"' + std::any_cast<std::string>(val.second) + '\"');
             break;
-        case INT:
+        case JSON_INT:
             Console::Write(std::to_string(std::any_cast<int>(val.second)));
             break;
-        case FLOAT:
+        case JSON_FLOAT:
             Console::Write(std::to_string(std::any_cast<float>(val.second)));
             break;
-        case VOID:
+        case JSON_VOID:
             Console::Write("null");
             break;
         }

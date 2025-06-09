@@ -49,23 +49,23 @@ JSONValue JSON::ParseValue(std::vector<JSONToken> tokens, size_t& index)
     auto [type, val] = tokens[index];
     
     switch (type) {
-        case LEFT_BRACE:
+        case JSON_LEFT_BRACE:
             return ParseObject(tokens, ++index);
         case LEFT_BRACKET:
             return ParseArray(tokens, ++index);
-        case STRING:
+        case JSON_STRING:
             index++;
             return std::any_cast<std::string>(val);
-        case INT:
+        case JSON_INT:
             index++;
             return std::any_cast<int>(val);
-        case FLOAT:
+        case JSON_FLOAT:
             index++;
             return std::any_cast<float>(val);
-        case BOOLEAN:
+        case JSON_BOOLEAN:
             index++;
             return std::any_cast<bool>(val);
-        case VOID:
+        case JSON_VOID:
             index++;
             return JSONValue{};
         default:
@@ -83,28 +83,28 @@ JSONValue JSON::ParseObject(std::vector<JSONToken> tokens, size_t& index)
     while (index < tokens.size()) {
         auto [keyType, keyVal] = tokens[index];
 
-        if (keyType == RIGHT_BRACE) {
+        if (keyType == JSON_RIGHT_BRACE) {
             ++index;
             break;
         }
 
-        if (keyType != STRING) {
+        if (keyType != JSON_STRING) {
             Console::WriteLine("Expected string key in object");
         }
 
         std::string key = std::any_cast<std::string>(keyVal);
         index++;
 
-        if (tokens[index].first != COLON)
+        if (tokens[index].first != JSON_COLON)
             Console::WriteLine("Expected ':' after key in object");
         index++;
 
         JSONValue value = ParseValue(tokens, index);
         (*obj)[key] = value;
 
-        if (tokens[index].first == COMMA) {
+        if (tokens[index].first == JSON_COMMA) {
             ++index;
-        } else if (tokens[index].first == RIGHT_BRACE) {
+        } else if (tokens[index].first == JSON_RIGHT_BRACE) {
             ++index;
             break;
         } else {
@@ -121,7 +121,7 @@ JSONValue JSON::ParseArray(std::vector<JSONToken> tokens, size_t& index)
     auto arr = std::make_shared<JSONArray>();
 
     while (index < tokens.size()) {
-        if (tokens[index].first == RIGHT_BRACKET) {
+        if (tokens[index].first == JSON_RIGHT_BRACKET) {
             ++index;
             break;
         }
@@ -129,9 +129,9 @@ JSONValue JSON::ParseArray(std::vector<JSONToken> tokens, size_t& index)
         JSONValue val = ParseValue(tokens, index);
         arr->push_back(val);
 
-        if (tokens[index].first == COMMA) {
+        if (tokens[index].first == JSON_COMMA) {
             ++index;
-        } else if (tokens[index].first == RIGHT_BRACKET) {
+        } else if (tokens[index].first == JSON_RIGHT_BRACKET) {
             ++index;
             break;
         } else {
@@ -158,47 +158,47 @@ std::vector<JSONToken> JSON::Tokenize(std::string input)
         switch (c)
         {
             case '{':
-                tokens.push_back(JSONToken(LEFT_BRACE, NULL));
+                tokens.push_back(JSONToken(JSON_LEFT_BRACE, NULL));
                 break;
             case '}':
-                tokens.push_back(JSONToken(RIGHT_BRACE, NULL));
+                tokens.push_back(JSONToken(JSON_RIGHT_BRACE, NULL));
                 break;
             case '[':
                 tokens.push_back(JSONToken(LEFT_BRACKET, NULL));
                 break;
             case ']':
-                tokens.push_back(JSONToken(RIGHT_BRACKET, NULL));
+                tokens.push_back(JSONToken(JSON_RIGHT_BRACKET, NULL));
                 break;
             case ',':
-                tokens.push_back(JSONToken(COMMA, NULL));
+                tokens.push_back(JSONToken(JSON_COMMA, NULL));
                 break;
             case ':':
-                tokens.push_back(JSONToken(COLON, NULL));
+                tokens.push_back(JSONToken(JSON_COLON, NULL));
                 break;
             case '\0':
-                tokens.push_back(JSONToken(END, NULL));
+                tokens.push_back(JSONToken(JSON_END, NULL));
                 break;
             case '\"':
                 token = JSON::ReadStringToken(input.substr(i + 1));
-                tokens.push_back(JSONToken(STRING, std::any_cast<std::string>(token)));
+                tokens.push_back(JSONToken(JSON_STRING, std::any_cast<std::string>(token)));
                 i += std::any_cast<std::string>(token).size() + 1;
                 break;
             default:
                 if ((c >= '0' && c <= '9') || c == '-') {
                     if (input.substr(i, input.substr(i).find(',')).find('.') != std::variant_npos) {
                         token = JSON::ReadFloatToken(input.substr(i));
-                        tokens.push_back(JSONToken(FLOAT, std::any_cast<float>(token)));
+                        tokens.push_back(JSONToken(JSON_FLOAT, std::any_cast<float>(token)));
                         i += input.substr(i, (input.substr(i).find(',') < input.substr(i).find('}')) ? input.substr(i).find(',') : input.substr(i).find('}')).size() - 1;
                     } else {
                         token = JSON::ReadIntToken(input.substr(i));
-                        tokens.push_back(JSONToken(INT, std::any_cast<int>(token)));
+                        tokens.push_back(JSONToken(JSON_INT, std::any_cast<int>(token)));
                         i += std::to_string(std::any_cast<int>(token)).size() - 1;
                     }
                 } else if (c == 't' || c == 'f') {
-                    tokens.push_back(JSONToken(BOOLEAN, std::any_cast<bool>(c == 't')));
+                    tokens.push_back(JSONToken(JSON_BOOLEAN, std::any_cast<bool>(c == 't')));
                     i += (c == 't') ? 3 : 4;
                 } else if (c == 'n') {
-                    tokens.push_back(JSONToken(VOID, NULL));
+                    tokens.push_back(JSONToken(JSON_VOID, NULL));
                     i += 3;
                 }
                 break;

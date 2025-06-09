@@ -170,7 +170,7 @@
     if (isForced) keyBindingsForced.push_back(KeyBinding{ name, key, eventType, action});
     else keyBindings.push_back(KeyBinding{ name, key, eventType, action });
 }
-bool Input::getKey(uint _keyCode, ushort* _keyMod)
+bool Input::getKey(unsigned int _keyCode, unsigned short* _keyMod)
 {
     return heldKeys[SDL_GetScancodeFromKey(_keyCode, _keyMod)];
 }

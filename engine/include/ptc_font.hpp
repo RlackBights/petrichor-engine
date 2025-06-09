@@ -9,7 +9,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <map>
-#include <freetype2/freetype/freetype.h>
+#include <freetype/freetype.h> 
 
 struct Character {
 	unsigned int TextureID;  // ID handle of the glyph texture

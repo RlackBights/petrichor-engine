@@ -18,17 +18,17 @@ const bool Debug::GetLogGrouping()
 }
 void Debug::Log(std::string message)
 {
-    logs.push_back({LogType::INFO, message});
+    logs.push_back({LogType::LOG_INFO, message});
 }
 
 void Debug::Warn(std::string message)
 {
-    logs.push_back({LogType::WARNING, message});
+    logs.push_back({LogType::LOG_WARNING, message});
 }
 
 void Debug::Error(std::string message)
 {
-    logs.push_back({LogType::ERROR, message});
+    logs.push_back({LogType::LOG_ERROR, message});
 }
 
 void Debug::Clear()

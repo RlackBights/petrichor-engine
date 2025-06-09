@@ -27,18 +27,18 @@ struct JSONValue : std::variant<
 
 enum JSONTokenType
 {
-    LEFT_BRACE,
-    RIGHT_BRACE,
+    JSON_LEFT_BRACE,
+    JSON_RIGHT_BRACE,
     LEFT_BRACKET,
-    RIGHT_BRACKET,
-    COMMA,
-    COLON,
-    END,
-    STRING,
-    INT,
-    FLOAT,
-    BOOLEAN,
-    VOID
+    JSON_RIGHT_BRACKET,
+    JSON_COMMA,
+    JSON_COLON,
+    JSON_END,
+    JSON_STRING,
+    JSON_INT,
+    JSON_FLOAT,
+    JSON_BOOLEAN,
+    JSON_VOID
 };
 
 struct JSONToken : std::pair<JSONTokenType, std::any>

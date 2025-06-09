@@ -1,5 +1,9 @@
-list=$(ldd bin/petrichor_engine | awk '{print $3}' | grep -v '^$')
-libs="./bin/libs"
+#!/bin/bash
+
+list=$(ldd bin/linux/petrichor_engine | awk '{print $3}' | grep -v '^$')
+libs="./bin/linux/libs"
+
+mkdir -p bin/linux/libs
 
 # Whitelist of libs to vendor (just filenames, not paths)
 whitelist=(
@@ -28,7 +32,7 @@ done
 
 echo "Patching libraries to use the correct path..." 
 
-for lib in bin/libs/*.so*; do
+for lib in bin/linux/libs/*.so*; do
     [ -f "$lib" ] && patchelf --set-rpath '$ORIGIN' "$lib" && echo "Patched: $lib"
 done
 

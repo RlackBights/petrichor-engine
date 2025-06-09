@@ -12,7 +12,7 @@
 #include "ptc_gui.hpp"
 #include "ptc_gui_structs.hpp"
 #include "ptc_shader.hpp"
-#include <freetype2/freetype/freetype.h>
+#include <freetype/freetype.h>
 
 class Text : public Component
 {

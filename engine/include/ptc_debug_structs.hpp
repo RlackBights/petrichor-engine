@@ -3,9 +3,9 @@
 
 enum LogType
 {
-    INFO,
-    WARNING,
-    ERROR
+    LOG_INFO,
+    LOG_WARNING,
+    LOG_ERROR
 };
 
 #endif

@@ -2,7 +2,11 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 project(petrichor_engine C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+if (WIN32)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/windows")
+elseif (UNIX)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/linux")
+endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(BUILD_SHARED_LIBS ON CACHE BOOL "Build shared libraries")
 
@@ -12,10 +16,6 @@ set(CMAKE_BUILD_RPATH "$ORIGIN/libs")
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 set(CMAKE_SKIP_INSTALL_RPATH FALSE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
-
-if(WIN32)
-    add_compile_options(/EHsc)
-endif()
 
 # Vendored Dependencies
 # =========================
@@ -67,11 +67,18 @@ target_link_libraries(petrichor_engine LibsModule)
 # =========================
 # Resource Copy (Post-Build)
 # =========================
-
-add_custom_target(copy_resources ALL
-    COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_SOURCE_DIR}/bin/resources
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources ${CMAKE_SOURCE_DIR}/bin/resources
-    COMMAND ${CMAKE_SOURCE_DIR}/update_libraries.sh
-    COMMENT "Copying resources and updating libraries"
-)
+if (WIN32)
+    add_custom_target(copy_resources ALL
+        COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_SOURCE_DIR}/bin/windows/resources
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources ${CMAKE_SOURCE_DIR}/bin/windows/resources
+    )
+elseif(UNIX)
+    add_custom_target(copy_resources ALL
+        COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_SOURCE_DIR}/bin/linux/resources
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/resources ${CMAKE_SOURCE_DIR}/bin/linux/resources
+        COMMAND ${CMAKE_COMMAND} -E rm -rf ${CMAKE_SOURCE_DIR}/bin/linux/libs
+        COMMAND ${CMAKE_SOURCE_DIR}/update_libraries.sh
+        COMMENT "Copying resources and updating libraries"
+    )
+endif()
 add_dependencies(copy_resources petrichor_engine)

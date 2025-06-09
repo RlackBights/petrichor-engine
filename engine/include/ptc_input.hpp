@@ -64,7 +64,7 @@ public:
     static void initInput(int* inScreenWidth, int* inScreenHeight, float mouseSensitivity = 0.2f);
     static void updateInput();
     static void wrapInput();
-    static bool getKey(uint _keyCode, ushort* _keyMod = NULL);
+    static bool getKey(unsigned int _keyCode, unsigned short* _keyMod = NULL);
 
     // Add a new keybinding
     static void addBinding(std::string name, Uint32 key, KeyBindingEventType eventType, std::function<void()> action, bool isForced = false);
