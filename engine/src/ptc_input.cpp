@@ -41,12 +41,19 @@
 
     while (SDL_PollEvent(&e))
     {
+        
         if (e.type == SDL_EVENT_MOUSE_MOTION) {
             mouseX = e.motion.x;
             mouseY = e.motion.y;
             if (!enabled) continue;
             mouseXrel += e.motion.xrel * sensitivity;
             mouseYrel += -e.motion.yrel * sensitivity;
+            continue;
+        }
+
+        if (e.type == SDL_EVENT_MOUSE_WHEEL && enabled) 
+        {
+            mouseScroll += e.wheel.y;
             continue;
         }
 
@@ -121,8 +128,6 @@
         }
 
         if (!enabled) return;
-
-        if (e.type == SDL_EVENT_MOUSE_WHEEL) mouseScroll += e.wheel.y;
 
         // Loop through all keybindings and trigger the action
         for (int i = 0; i < keyBindings.size(); i++) {

@@ -111,15 +111,19 @@ bool init()
 
 bool update()
 {
-	// Need rendering passes separately for the engine UI, and for the game preview
-	// Need a hierarchy (Should be easy since the nodes already exist), an inspector (sounds like absolute hell), and a console (idk)
+	// RESOLVED??: Need rendering passes separately for the engine UI, and for the game preview
+	// Need an inspector (sounds like absolute hell) - hierarchy and console are done :33
 	// Might want a file manager too, but it can wait
+	// Tabs perchance, ability to rearrange the UI elements
+	
 	// Engine-level features required:
 	// Sound system (Probably the easiest)
 	// Fix 3d rendering (Not too hard, but quite a bit of work)
 	// Add bone-based animation support (Sounds like absolute hell unless there's some very obvious way how to handle it)
 	// Add a particle system  (Heard a bunch about it, probably not the worst)
 	// Scripting language??? Maybe add Lua(4/10)/Python(8/10)/Js(6/10)
+
+	// Probably index the GUI vertices with an EBO
 
 	// ENGINE
 
@@ -181,6 +185,14 @@ bool update()
 	GUI::End();
 
 	GUI::Begin("Inspector");
+
+	
+	GUI::End();
+
+	GUI::Begin("Scene", false, false);
+
+	GUI::Label(std::to_string(1 / Time::deltaTime));
+
 	GUI::End();
 
 	// GAME

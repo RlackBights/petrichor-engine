@@ -1,10 +1,11 @@
 
+#include "glm/fwd.hpp"
 #include "ptc_camera.hpp"
-#include "ptc_console.hpp"
 #include "ptc_debug.hpp"
 #include "ptc_file_reader.hpp"
 #include "ptc_json.hpp"
 #include "ptc_json_structs.hpp"
+#include "ptc_light.hpp"
 #include "ptc_mesh.hpp"
 #include "ptc_mesh_filter.hpp"
 #include "ptc_mesh_loader.hpp"
@@ -15,7 +16,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-Object camera("camera"), test("test"), test2("test2"), text("text"), idk("idk");
+Object camera("camera"), test("test"), test2("test2"), text("text"), idk("idk"), light("light");
 void game_main()
 {
     Camera* ref = camera.AddComponent<Camera>();
@@ -26,6 +27,12 @@ void game_main()
     test.AddComponent<MeshFilter>(cube);
     MeshRenderer* rf = test.AddComponent<MeshRenderer>();
     rf->material.texture = Texture::loadTexture("house.png");
+
+    // Mesh sphere = MeshLoader::LoadMesh("Sphere.obj")["Sphere"];
+    // light.AddComponent<MeshFilter>(sphere);
+    // light.AddComponent<MeshRenderer>();
+    // Light* lightRef = light.AddComponent<Light>(LightType::Point);
+    // light.transform.position = glm::vec3(0, 1, 0);
 
     JSONValue json = JSON::Parse(FileReader::Read("resources/other/example.json"));
 

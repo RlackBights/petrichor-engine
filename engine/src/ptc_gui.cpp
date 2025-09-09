@@ -146,10 +146,19 @@ void GUI::CalculateRects(LayoutNode& node, Rect area) {
 }
 void GUI::DrawText(const std::string& text, const glm::vec2& position, const Rect* clipOverride, const bool ignoreOffset)
 {
+    // Skip offscreen elements
+    if ((!ignoreOffset && (position.y + activePanel->scrollOffset < 0 || position.y + activePanel->scrollOffset > Renderer::screen.height))
+        || (ignoreOffset && (position.y < 0 || position.y > Renderer::screen.height))
+        || position.x < 0 || position.x > Renderer::screen.width) return;
+
     batchedTextEntries.push_back(TextDrawEntry(text, position, (clipOverride) ? *clipOverride : ((activePanel) ? activePanel->rect : Renderer::screen), ((!ignoreOffset) ? activePanel->scrollOffset : 0)));
 }
 void GUI::DrawQuad(float _x, float _y, float _z, float _w, float _h, glm::vec4 _color, const bool ignoreOffset)
 {
+    // Skip offscreen elements
+    if ((!ignoreOffset && (_y + activePanel->scrollOffset < 0 || _y + activePanel->scrollOffset > Renderer::screen.height))
+        || (ignoreOffset && (_y < 0 || _y > Renderer::screen.height))
+        || _x < 0 || _x > Renderer::screen.width) return;
     batchedQuadEntries.push_back(QuadDrawEntry(Rect(_x, _y, _w, _h), (activePanel) ? activePanel->rect : Renderer::screen, _z, _color, (!ignoreOffset) ? &activePanel->scrollOffset : nullptr));
 }
 void GUI::RenderUI()
@@ -245,7 +254,7 @@ void GUI::wrapFrame()
     GUI::Hovered = 0;
     cursorPos = glm::vec2(100, 0);
 }
-void GUI::Begin(const std::string& name, const bool scrollable)
+void GUI::Begin(const std::string& name, const bool scrollable, const bool hasHeader)
 {
     if (activePanel) return;
     auto panel = GetPanelFromLayout(name);
@@ -255,8 +264,11 @@ void GUI::Begin(const std::string& name, const bool scrollable)
     } else {
         cursorPos = glm::vec2(5, 0);
     }
-	GUI::Title(name);
-	GUI::Divider();
+    if (hasHeader)
+    {
+        GUI::Title(name);
+        GUI::Divider();
+    }
     if (scrollable || panel->rect.height < panel->currentHeight) GUI::Scrollbar();
 }
 void GUI::End()

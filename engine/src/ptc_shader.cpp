@@ -143,7 +143,7 @@ void Shader::SetCommonFunctionsShader(const char* commonShaderPath)
 	CommonFunctionsShaderID = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(CommonFunctionsShaderID, 1, &cShaderCode, NULL);
 	glCompileShader(CommonFunctionsShaderID);
-	Console::Write("---");
+	Console::Write("-----");
 
 	glGetShaderiv(CommonFunctionsShaderID, GL_COMPILE_STATUS, &success);
 	if (!success)
@@ -151,7 +151,7 @@ void Shader::SetCommonFunctionsShader(const char* commonShaderPath)
 		glGetShaderInfoLog(CommonFunctionsShaderID, 512, NULL, infoLog);
 		Console::WriteLine(Console::FormatString("ERROR::SHADER::COMMON_SHADER::COMPILATION_FAILED\n%s", infoLog));
 	}
-	Console::Write("---");
+	Console::Write("-----");
 }
 
 GLuint Shader::CommonFunctionsShaderID;

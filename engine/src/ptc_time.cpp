@@ -55,8 +55,6 @@ void Time::wrapTime()
 		else i++;
 	}
 	time += deltaTime;
-	deltaTime = 0.0f;
-	deltaTimeUnscaled = 0.0f;
 }
 void Time::createTimer(float seconds, std::function<void()> callback, bool unscaled)
 {

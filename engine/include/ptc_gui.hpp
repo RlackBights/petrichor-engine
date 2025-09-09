@@ -50,7 +50,7 @@ public:
     static void RenderUI();
     static void wrapFrame();
 
-    static void Begin(const std::string& name, const bool scrollable = false);
+    static void Begin(const std::string& name, const bool scrollable = false, const bool hasHeader = true);
     static void End();
 
     static bool isHovered(const Rect& rect);
