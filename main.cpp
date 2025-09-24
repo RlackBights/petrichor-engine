@@ -1,41 +1,5 @@
-#include "SDL3/SDL_mouse.h"
-#include "SDL3/SDL_video.h"
-#include "ptc_debug.hpp"
-#include "ptc_debug_structs.hpp"
-#include "ptc_gui.hpp"
-#include "ptc_light.hpp"
-#include "ptc_state.hpp"
-#include <SDL3/SDL_keycode.h>
-#include <algorithm>
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/fwd.hpp>
-#include <glm/geometric.hpp>
-#include <glm/trigonometric.hpp>
-#include <map>
-#include <string>
-#include <utility>
-#define STB_IMAGE_IMPLEMENTATION
-
-#include <SDL3/SDL.h>
-#include <glad/glad.h>
-#include <GL/gl.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
+#include "ptc_engine.hpp"
 #include "scripts/game_main.cpp"
-#include <ptc_component.hpp>
-#include <ptc_shader.hpp>
-#include <ptc_time.hpp>
-#include <ptc_input.hpp>
-#include <ptc_camera.hpp>
-#include <ptc_text.hpp>
-#include <ptc_mesh.hpp>
-#include <ptc_renderer.hpp>
-#include <ptc_texture.hpp>
-#include <ptc_transform.hpp>
-#include <ptc_console.hpp>
 
 // Function Definitions
 bool init();
@@ -189,6 +153,8 @@ bool update()
 	
 	GUI::End();
 
+
+	
 	GUI::Begin("Scene", false, false);
 
 	GUI::Label(std::to_string(1 / Time::deltaTime));
