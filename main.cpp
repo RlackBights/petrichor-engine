@@ -1,4 +1,5 @@
 #include "ptc_engine.hpp"
+#include "ptc_renderer.hpp"
 #include "scripts/game_main.cpp"
 
 // Function Definitions
@@ -91,6 +92,7 @@ bool update()
 
 	// ENGINE
 
+
 	Renderer::prepareUI();
 	GUI::ApplyLayout();
 
@@ -99,18 +101,21 @@ bool update()
 	Transform::GetRoot()->PreorderTraversal([](Transform* node) { 
 		std::string hierarchyEntry = "";
 		Transform* currNode = node->parent;
-		while (currNode->parent) {
+		while (currNode != Transform::GetRoot() && currNode->parent) {
 			hierarchyEntry += "|  ";
 			currNode = currNode->parent;
 		}
 		hierarchyEntry += node->object->name;
+		GL_CHECK_ERROR();
 		if (GUI::Button(hierarchyEntry, glm::vec2(Text::getStaticPixelWidth(hierarchyEntry, 20), 20), true))
 		{
 			Console::WriteLine("Inspector: " + node->object->name);
 		}
+		GL_CHECK_ERROR();
 	});
 
 	GUI::End();
+	GL_CHECK_ERROR();
 
 	GUI::Begin("Console");
 
@@ -181,10 +186,15 @@ bool update()
 
 	// Frame cleanup
 	GUI::RenderUI();
+	GL_CHECK_ERROR();
 	Time::wrapTime();
+	GL_CHECK_ERROR();
 	Input::wrapInput();
+	GL_CHECK_ERROR();
 	Renderer::wrapFrame();
+	GL_CHECK_ERROR();
 	GUI::wrapFrame();
+	GL_CHECK_ERROR();
 
 	return true;
 }

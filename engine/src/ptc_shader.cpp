@@ -1,5 +1,6 @@
 #include "ptc_console.hpp"
 #include "ptc_file_reader.hpp"
+#include "ptc_renderer.hpp"
 #include <ptc_shader.hpp>
 
 Shader::Shader()
@@ -130,6 +131,7 @@ void Shader::setMatrix4x4(const std::string& name, glm::mat4 value) const
 {
 	GLint uniformLocation = glGetUniformLocation(ShaderProgramID, name.c_str());
 	if (uniformLocation != -1) glUniformMatrix4fv(glGetUniformLocation(ShaderProgramID, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
+	GL_CHECK_ERROR();
 }
 void Shader::SetCommonFunctionsShader(const char* commonShaderPath)
 {

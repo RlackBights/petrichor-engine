@@ -4,7 +4,11 @@
 #include "glm/fwd.hpp"
 #include "ptc_json_structs.hpp"
 #include "ptc_gui_structs.hpp"
+#include <algorithm>
 #include <cstddef>
+#include <cstdio>
+#include <iomanip>
+#include <sstream>
 #include <vector>
 #undef APIENTRY
 #include <string>
@@ -44,9 +48,14 @@ public:
     template <class T>
     static void WriteLine(std::vector<T> val)
     {
-        Write("[");
         Write(val);
-        WriteLine("]");
+        std::printf("\n");
+    }
+    template <class T>
+    static void WriteLine(T val[])
+    {
+        Write(val);
+        std::printf("\n");
     }
     template <class T>
     static void Write(T val)
@@ -56,7 +65,23 @@ public:
     template <class T>
     static void Write(std::vector<T> val)
     {
-        for (size_t i = 0; i < val.size(); i++) { Write(val[i]); Write((i == val.size() - 1) ? "" : ", "); }
+        Write('[');
+        for (size_t i = 0; i < val.size(); i++) { Write(val[i]); Write((i == val.size() - 1) ? "]" : ", "); }
+    }
+    template <class T>
+    static void Write(T val[])
+    {
+        Write('[');
+        for (size_t i = 0; val[i] != NULL; i++) { Write(val[i]); Write((val[i] + 1 == NULL) ? "]" : ", "); }
+    }
+    template< typename T >
+    static std::string ToHex( T i )
+    {
+        std::stringstream stream;
+        stream << "0x" 
+                << std::setfill ('0') << std::setw(sizeof(T)*2) 
+                << std::hex << i;
+        return stream.str();
     }
     static void Write(glm::vec2 val);
     static void Write(glm::vec3 val);

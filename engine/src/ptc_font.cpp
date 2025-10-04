@@ -1,3 +1,4 @@
+#include "ptc_renderer.hpp"
 #include <freetype/fttypes.h>
 #include <ptc_font.hpp>
 #include <vector>
@@ -85,11 +86,13 @@ Font::Font(std::string _path, int _fontSize) : path(_path), fontSize(_fontSize)
 }
 Font* Font::LoadFont(std::string _path, int _fontSize)
 {
+    GL_CHECK_ERROR();
     for (const auto& [cachePath, cacheFont] : fontCache) {
         if (cachePath == _path && fontCache[_path]->fontSize == _fontSize) {
             return fontCache[_path];
         }
     }
+    GL_CHECK_ERROR();
     return new Font(_path, _fontSize);
 }
 

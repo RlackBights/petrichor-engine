@@ -1,4 +1,5 @@
 #include "ptc_console.hpp"
+#include "ptc_font.hpp"
 #include "ptc_gui_structs.hpp"
 #include "ptc_renderer.hpp"
 #include "ptc_transform.hpp"
@@ -14,6 +15,7 @@
 Text::Text() {};
 Text::Text(std::string _text, float _x, float _y, Font* _font, glm::vec4 _color, Shader _shader) : text(_text), font(_font), color(_color), textShader(_shader), position(_x, _y), offset(0, 0)
 {
+    
     offset = glm::vec2(0);
     if (_shader.ShaderProgramID == -1)
     {
@@ -21,24 +23,25 @@ Text::Text(std::string _text, float _x, float _y, Font* _font, glm::vec4 _color,
         return;
     }
 
-    textShader.setMatrix4x4("model", glm::mat4(1.0f));
-    textShader.setMatrix4x4("projection", glm::ortho(0.0f, (float)Renderer::screen.width, 0.0f, (float)Renderer::screen.height));
-    textShader.setMatrix4x4("view", glm::mat4(1.0f));
+    textShader.setMatrix4x4("model", glm::mat4(1.0f)); 
+    textShader.setMatrix4x4("projection", glm::ortho(0.0f, (float)Renderer::screen.width, 0.0f, (float)Renderer::screen.height)); 
+    textShader.setMatrix4x4("view", glm::mat4(1.0f)); 
 
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND); 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    glGenVertexArrays(1, &VAO); 
+    glGenBuffers(1, &VBO); 
+    glBindVertexArray(VAO); 
+    glBindBuffer(GL_ARRAY_BUFFER, VBO); 
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW); 
+    glEnableVertexAttribArray(0); 
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0); 
+    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    glBindVertexArray(0); 
 
     animationFunction = [](float _) -> float { return 0; };
 }
@@ -133,20 +136,18 @@ void Text::FixedUpdate()
 }
 void Text::ForceDrawText(const glm::vec2& position, const Rect& scissor)
 {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glScissor(scissor.x, Renderer::screen.height - scissor.y - scissor.height, scissor.width, scissor.height);
-    glEnable(GL_SCISSOR_TEST);
+    glEnable(GL_BLEND); 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+    glScissor(scissor.x, Renderer::screen.height - scissor.y - scissor.height, scissor.width, scissor.height); 
+    glEnable(GL_SCISSOR_TEST); 
 
     // activate corresponding render state
-    GLint polygonMode[2];
-    glGetIntegerv(GL_POLYGON_MODE, polygonMode);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); 
     textShader.use();
     textShader.setMatrix4x4("projection", glm::ortho(0.0f, (float)Renderer::screen.width, 0.0f, (float)Renderer::screen.height));
     textShader.setInt("text", 0);
-    glActiveTexture(GL_TEXTURE0);
-    glBindVertexArray(VAO);
+    glActiveTexture(GL_TEXTURE0); 
+    glBindVertexArray(VAO); 
 
     //glDisable(GL_DEPTH_TEST);
 
@@ -214,21 +215,20 @@ void Text::ForceDrawText(const glm::vec2& position, const Rect& scissor)
             { xpos + w, ypos + h,   1.0f, 0.0f }
         };
         // render glyph texture over quad
-        glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+        glBindTexture(GL_TEXTURE_2D, ch.TextureID); 
         // update content of VBO memory
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO); 
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); 
+        glBindBuffer(GL_ARRAY_BUFFER, 0); 
         // render quad
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawArrays(GL_TRIANGLES, 0, 6); 
         // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
         x += (ch.Advance >> 6); // bitshift by 6 to get value in pixels (2^6 = 64)
         index++;
     }
-    glBindVertexArray(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glPolygonMode(GL_FRONT_AND_BACK, polygonMode[1]);
-    glDisable(GL_SCISSOR_TEST);
+    glBindVertexArray(0); 
+    glBindTexture(GL_TEXTURE_2D, 0); 
+    glDisable(GL_SCISSOR_TEST); 
 }
 void Text::StaticDrawText(const std::string& text, const glm::vec2& position, const Rect& scissor)
 {
@@ -328,8 +328,11 @@ void Text::StaticDrawText(const std::string& text, const glm::vec2& position, co
 }
 int Text::getStaticPixelWidth(const std::string &text, const int fontSize)
 {
+    
     if (Text::staticText.text == "") Text::staticText = Text(text, 0, 0, Font::LoadFont("arial.ttf", 100));
+    
     Text::staticText.SetText(text);
+    
     int width = 0;
 
     std::string::const_iterator c;
@@ -351,7 +354,7 @@ int Text::getStaticPixelWidth(const std::string &text, const int fontSize)
             width += (int)((ch.Advance >> 6) * ((Text::staticText.transform != nullptr) ? Text::staticText.transform->scale.x : 1));
         }
     }
-
+    
     return width * fontSize / Text::staticText.font->fontSize;
 }
 void Text::Awake()
