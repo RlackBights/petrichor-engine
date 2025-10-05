@@ -3,8 +3,13 @@
 #include "ptc_gui_structs.hpp"
 #include <any>
 #include <cstdarg>
+#include <cstdio>
+#include <iterator>
+#include <map>
 #include <ptc_console.hpp>
 #include <string>
+#include <utility>
+#include <variant>
 
 const char* Console::GetColorCode(enum Color color) {
     switch (color) {
@@ -89,65 +94,98 @@ std::string Console::FormatString(const char* format, ...) {
     delete[] buffer;
     return result;
 }
-void Console::Write(glm::vec2 val)
+std::string Console::ToString(const char* val)
 {
-    Console::Write(Console::FormatString("{ %f, %f }", val.x, val.y));
+    return std::string(val);
 }
-void Console::Write(glm::vec3 val)
+std::string Console::ToString(std::string& val)
 {
-    Console::Write(Console::FormatString("{ %f, %f, %f }", val.x, val.y, val.z));
+    return val;
 }
-void Console::Write(glm::vec4 val)
+std::string Console::ToString(glm::vec2& val)
 {
-    Console::Write(Console::FormatString("{ %f, %f, %f, %f }", val.x, val.y, val.z, val.w));
+    return Console::FormatString("{ %f, %f }", val.x, val.y);
 }
-void Console::Write(JSONToken val)
+std::string Console::ToString(glm::vec3& val)
+{
+    return Console::FormatString("{ %f, %f, %f }", val.x, val.y, val.z);
+}
+std::string Console::ToString(glm::vec4& val)
+{
+    return Console::FormatString("{ %f, %f, %f, %f }", val.x, val.y, val.z, val.w);
+}
+std::string Console::ToString(JSONToken val)
 {
     switch (val.first)
     {
         case JSON_LEFT_BRACE:
-            Console::Write("\'{\'");
+            return ("\'{\'");
             break;
         case JSON_RIGHT_BRACE:
-            Console::Write("\'}\'");
+            return ("\'}\'");
             break;
         case LEFT_BRACKET:
-            Console::Write("\'[\'");
+            return ("\'[\'");
             break;
         case JSON_RIGHT_BRACKET:
-            Console::Write("\']\'");
+            return ("\']\'");
             break;
         case JSON_COMMA:
-            Console::Write("\',\'");
+            return ("\',\'");
             break;
         case JSON_COLON:
-            Console::Write("\':\'");
+            return ("\':\'");
             break;
         case JSON_END:
-            Console::Write("");
+            return ("");
             break;
         case JSON_BOOLEAN:
-            Console::Write(std::any_cast<bool>(val.second) ? "true" : "false");
+            return (std::any_cast<bool>(val.second) ? "true" : "false");
             break;
         case JSON_STRING:
-            Console::Write('\"' + std::any_cast<std::string>(val.second) + '\"');
+            return ('\"' + std::any_cast<std::string>(val.second) + '\"');
             break;
         case JSON_INT:
-            Console::Write(std::to_string(std::any_cast<int>(val.second)));
+            return (std::to_string(std::any_cast<int>(val.second)));
             break;
         case JSON_FLOAT:
-            Console::Write(std::to_string(std::any_cast<float>(val.second)));
+            return (std::to_string(std::any_cast<float>(val.second)));
             break;
         case JSON_VOID:
-            Console::Write("null");
+            return ("null");
             break;
-        }
+    }
+    Console::WriteLine("TOKEN PROCESSING ERROR");
+    return "";
 }
-void Console::Write(char val) {
-    Write(std::string(1, val));
+std::string Console::ToString(JSONValue val) {
+    std::string out("");
+    switch (val.index()) {
+        case 1: {
+            auto _val = std::get<std::map<std::string, JSONValue>>(val);
+            int size = _val.size();
+            int i = 0;
+            for (auto& pair : _val) {
+                out += "{ \"" + pair.first + "\": " + ToString(pair.second) + " }" + (++i == size ? "" : ",");
+            }
+            break; }
+        case 2:
+            out += '\"' + std::get<std::string>(val) + '\"';
+            break;
+        case 5:
+            out += std::get<bool>(val) ? "true" : "false";
+            break;
+        default:
+            std::visit([&](auto& v) { out += ToString(v); }, val);
+            break;
+    }
+    return out;
 }
-void Console::Write(Rect val) {
-    Write(Console::FormatString("{ x: %d, y: %d, width: %d, height: %d }", val.x, val.y, val.width, val.height));
+std::string Console::ToString(char val) {
+    return std::string(1, val);
+}
+std::string Console::ToString(Rect val) {
+    return Console::FormatString("{ x: %d, y: %d, width: %d, height: %d }", val.x, val.y, val.width, val.height);
 }
 void Console::WriteLine(std::string text, Color color, bool continuous) {
     Write(text + '\n', color, continuous);
@@ -155,9 +193,11 @@ void Console::WriteLine(std::string text, Color color, bool continuous) {
 void Console::WriteLine(const char* text, Color color, bool continuous) {
     Write(std::string(text) + '\n', color, continuous);
 }
-void Console::Write(std::string text, Color color, bool continuous) {
-    printf("%s%s%s", GetColorCode(color), text.c_str(), continuous ? "" : "\x1b[0m");
+void Console::Write(std::string text, Color color, bool continuous)
+{
+    Write(Console::FormatString("%s%s%s", GetColorCode(color), text.c_str(), GetColorCode(Color::NOTHING)));
 }
-void Console::Write(const char* text, Color color, bool continuous) {
-    Write(std::string(text));
+void Console::Write(const char* text, Color color, bool continuous)
+{
+    Write(std::string(text), color, continuous);
 }

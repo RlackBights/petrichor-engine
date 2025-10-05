@@ -1,6 +1,9 @@
+#include "ptc_component.hpp"
 #include "ptc_engine.hpp"
 #include "ptc_renderer.hpp"
 #include "scripts/game_main.cpp"
+#include <typeindex>
+#include <typeinfo>
 
 // Function Definitions
 bool init();
@@ -76,6 +79,8 @@ bool init()
 
 bool update()
 {
+	// JSON PARSING ERROR: Crashes if last number of an array is a float???????
+
 	// RESOLVED??: Need rendering passes separately for the engine UI, and for the game preview
 	// Need an inspector (sounds like absolute hell) - hierarchy and console are done :33
 	// Might want a file manager too, but it can wait
@@ -110,6 +115,9 @@ bool update()
 		if (GUI::Button(hierarchyEntry, glm::vec2(Text::getStaticPixelWidth(hierarchyEntry, 20), 20), true))
 		{
 			Console::WriteLine("Inspector: " + node->object->name);
+			for (auto& c : *node->object->GetComponents()) {
+				//Console::WriteLine(c.get());
+			}
 		}
 		GL_CHECK_ERROR();
 	});

@@ -1,11 +1,11 @@
-#ifndef PTC_FILE_READER_HPP
-#define PTC_FILE_READER_HPP
+#ifndef PTC_FILE_PROCESSOR_HPP
+#define PTC_FILE_PROCESSOR_HPP
 
 #include "glm/fwd.hpp"
 #include <cstddef>
 #include <string>
 #include <vector>
-class FileReader
+class FileProcessor
 {
 public:
     static std::string Read(std::string path); 

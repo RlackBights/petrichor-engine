@@ -2,6 +2,7 @@
 #define PTC_DEBUG_HPP
 
 #include "ptc_component.hpp"
+#include "ptc_console.hpp"
 #include "ptc_debug_structs.hpp"
 #include <string>
 
@@ -14,9 +15,22 @@ public:
     static void SwitchLogGrouping();
     static void SetLogGroupimg(bool groupLogs);
     static const bool GetLogGrouping();
-    static void Log(std::string message);
-    static void Warn(std::string message);
-    static void Error(std::string message);
+    template <class T>
+    static void Log(T message)
+    {
+        logs.push_back({LogType::LOG_INFO, Console::ToString(message)});
+    }
+    template <class T>
+    static void Warn(T message)
+    {
+        logs.push_back({LogType::LOG_WARNING, Console::ToString(message)});
+    }
+    template <class T>
+    static void Error(T message)
+    {
+        logs.push_back({LogType::LOG_ERROR, Console::ToString(message)});
+    }
+
     static void Clear();
     static std::vector<std::pair<LogType, std::string>>& GetLogs();
 };

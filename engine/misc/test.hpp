@@ -1,0 +1,120 @@
+#include "../include/ptc_engine.hpp"
+#define _Bool bool
+
+class GeneratedClassDefinitions
+{
+private:
+	FT_Face face;
+	std::string path;
+	GLuint VBO;
+	GLuint EBO;
+	MeshFilter * filterRef;
+	std::vector<std::unique_ptr<Component> > components;
+	std::string text;
+	glm::vec2 position;
+	glm::vec2 offset;
+	unsigned int VAO;
+	unsigned int VBO;
+	Font * font;
+	glm::vec4 color;
+	std::function<float (float)> animationFunction;
+protected:
+public:
+	glm::vec3 Front;
+	glm::vec3 Up;
+	glm::vec3 Right;
+	glm::vec4 backgroundColor;
+	float MovementSpeed;
+	float MouseSensitivity;
+	float Zoom;
+	_Bool isBoosting;
+	_Bool perspective;
+	Object * parentObject;
+	Transform * transform;
+	_Bool enabled;
+	int v;
+	int vt;
+	int vn;
+	unsigned int TextureID;
+	glm::ivec2 Size;
+	glm::ivec2 Bearing;
+	unsigned int Advance;
+	int fontSize;
+	std::map<char, Character> characters;
+	int x;
+	int y;
+	int width;
+	int height;
+	std::string name;
+	Rect rect;
+	float scrollOffset;
+	float currentHeight;
+	glm::vec4 baseColor;
+	_Bool visible;
+	SplitDirection direction;
+	float ratio;
+	std::unique_ptr<LayoutNode> childA;
+	std::unique_ptr<LayoutNode> childB;
+	const std::string text;
+	glm::vec2 position;
+	Rect clipRect;
+	float scrollOffset;
+	const Rect quad;
+	Rect clipRect;
+	float z;
+	const glm::vec4 color;
+	float * scrollOffset;
+	std::string name;
+	Uint32 key;
+	KeyBindingEventType eventType;
+	std::function<void (void)> action;
+	glm::vec4 pos;
+	glm::vec4 col;
+	glm::vec4 dir;
+	glm::vec4 col;
+	glm::vec4 pos;
+	glm::vec4 dir;
+	glm::vec4 col;
+	glm::vec3 lightColor;
+	LightType type;
+	float cutoff;
+	float focus;
+	glm::vec4 baseColor;
+	GLuint texture;
+	GLuint specularMap;
+	GLuint normalMap;
+	Shader shader;
+	float specularStrength;
+	int specularExponent;
+	Mesh mesh;
+	GLuint VAO;
+	std::vector<Vertex> vertices;
+	std::vector<int> indices;
+	std::string name;
+	int smoothing;
+	Material material;
+	std::string name;
+	std::vector<std::string> tags;
+	Transform transform;
+	_Bool enabled;
+	GLuint ShaderProgramID;
+	_Bool renderAsWireframe;
+	Shader textShader;
+	float seconds;
+	std::function<void (void)> callback;
+	_Bool unscaled;
+	glm::vec3 position;
+	glm::quat rotation;
+	glm::vec3 scale;
+	Transform * parent;
+	std::vector<Transform *> children;
+	int childCount;
+	Object * object;
+	glm::vec3 position;
+	glm::vec2 texCoord;
+	glm::vec3 normal;
+	static void ProcessToken(const char* _token)
+	{
+		return;
+	}
+};

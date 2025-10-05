@@ -21,6 +21,10 @@
 
 using namespace clang::ast_matchers;
 
+std::string publicOut("");
+std::string privateOut("");
+std::string protectedOut(""); 
+
 const char* location;
 static llvm::cl::OptionCategory MyToolCategory("class-naming-check options");
 
@@ -31,17 +35,11 @@ public:
     {
         auto Matcher = cxxRecordDecl(isExpansionInMainFile(), isDefinition()).bind("class");
         auto Matches = match(Matcher, Context);
-        
-        std::ofstream generatedSource(std::filesystem::current_path().string() + "/../" + std::string(location).substr(0, std::string(location).find_last_of('/')) + "/test.hpp");
+        // std::string(location).substr(0, std::string(location).find_last_of('/')) + 
+        //printf("%s\n", (std::filesystem::current_path().string() + "/../engine/test.hpp").c_str());
 
-        generatedSource << 
-            "class GeneratedClassDefinitions\n{\n";
 
         const auto &SM = Context.getSourceManager();
-
-        std::string publicOut("");
-        std::string privateOut("");
-        std::string protectedOut(""); 
 
         for (const auto &Match : Matches)
         {
@@ -59,17 +57,6 @@ public:
                 }
             }
         }
-
-        generatedSource <<
-            "private:\n" <<
-            privateOut <<
-            "protected:\n" <<
-            protectedOut <<
-            "public:\n" <<
-            publicOut <<
-            "\tstatic void ProcessToken(const char* _token)\n\t{\n" <<
-            "\t\treturn;\n\t}\n};";
-        generatedSource.close();
     }
 };
 
@@ -84,15 +71,16 @@ public:
     }
 };
 
-class oopsBadName
-{
-
-};
-
 int main(int argc, const char **argv)
 {
     location = argv[0];
     auto ExpectedParser = clang::tooling::CommonOptionsParser::create(argc, argv, MyToolCategory, llvm::cl::OneOrMore);
+
+    std::ofstream generatedSource(std::filesystem::current_path().string() + "/engine/misc/test.hpp");
+    generatedSource <<
+        "#include \"../include/ptc_engine.hpp\"\n"
+        "#define _Bool bool\n\n"
+        "class GeneratedClassDefinitions\n{\n";
 
     if (!ExpectedParser)
     {
@@ -103,5 +91,18 @@ int main(int argc, const char **argv)
     auto &OptionsParser = ExpectedParser.get();
     clang::tooling::ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
     
-    return Tool.run(clang::tooling::newFrontendActionFactory<ClassNamingCheckAction>().get());
+    Tool.run(clang::tooling::newFrontendActionFactory<ClassNamingCheckAction>().get());
+
+    generatedSource <<
+        "private:\n" <<
+        privateOut <<
+        "protected:\n" <<
+        protectedOut <<
+        "public:\n" <<
+        publicOut <<
+        "\tstatic void ProcessToken(const char* _token)\n\t{\n" <<
+        "\t\treturn;\n\t}\n};";
+    generatedSource.close();
+
+    return 0;
 }

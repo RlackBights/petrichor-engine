@@ -2,7 +2,7 @@
 #include "glm/fwd.hpp"
 #include "ptc_console.hpp"
 #include "ptc_face_token.hpp"
-#include "ptc_file_reader.hpp"
+#include "ptc_file_processor.hpp"
 #include "ptc_mesh.hpp"
 #include "ptc_vertex.hpp"
 #include <filesystem>
@@ -111,7 +111,7 @@ std::map<std::string, Mesh> MeshLoader::LoadMesh(std::string path)
 {
     std::string ext = std::filesystem::path(MESH_PATH + path).extension().string();
     if (ext == ".obj") {
-        return MeshLoader::LoadMeshOBJ(FileReader::Read(MESH_PATH + path));
+        return MeshLoader::LoadMeshOBJ(FileProcessor::Read(MESH_PATH + path));
     } else {
         return {{ "", MeshLoader::CreateEmptyMesh() } };
     }

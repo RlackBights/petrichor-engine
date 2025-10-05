@@ -1,4 +1,4 @@
-#include "ptc_file_reader.hpp"
+#include "ptc_file_processor.hpp"
 #include "ptc_console.hpp"
 #include <cstddef>
 #include <iomanip>
@@ -8,7 +8,7 @@
 #include <fstream>
 #include <string>
 
-std::string FileReader::Read(std::string path)
+std::string FileProcessor::Read(std::string path)
 {
 
 	std::string content;
@@ -29,12 +29,12 @@ std::string FileReader::Read(std::string path)
 	}
 	catch (std::ifstream::failure e)
 	{
-		Console::WriteLine(Console::FormatString("ERROR::FILEREADER::FILE_READ_ERROR\n%s", e.what()));
+		Console::WriteLine(Console::FormatString("ERROR::FILEPROCESSOR::FILE_READ_ERROR\n%s", e.what()));
 	}
 
 	return content;
 }
-std::vector<uint8_t> FileReader::ReadBytes(std::string path)
+std::vector<uint8_t> FileProcessor::ReadBytes(std::string path)
 {
 
 	std::vector<uint8_t> content;
@@ -53,7 +53,7 @@ std::vector<uint8_t> FileReader::ReadBytes(std::string path)
 	}
 	catch (std::ifstream::failure e)
 	{
-		Console::WriteLine(Console::FormatString("ERROR::FILEREADER::FILE_READ_ERROR\n%s", e.what()));
+		Console::WriteLine(Console::FormatString("ERROR::FILEPROCESSOR::FILE_READ_ERROR\n%s", e.what()));
 	}
 
 	return content;

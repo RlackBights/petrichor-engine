@@ -78,7 +78,7 @@ JSONValue JSON::ParseValue(std::vector<JSONToken> tokens, size_t& index)
 
 JSONValue JSON::ParseObject(std::vector<JSONToken> tokens, size_t& index)
 {
-    auto obj = std::make_shared<JSONObject>();
+    auto obj = JSONObject();
 
     while (index < tokens.size()) {
         auto [keyType, keyVal] = tokens[index];
@@ -100,7 +100,7 @@ JSONValue JSON::ParseObject(std::vector<JSONToken> tokens, size_t& index)
         index++;
 
         JSONValue value = ParseValue(tokens, index);
-        (*obj)[key] = value;
+        obj[key] = value;
 
         if (tokens[index].first == JSON_COMMA) {
             ++index;
@@ -118,7 +118,7 @@ JSONValue JSON::ParseObject(std::vector<JSONToken> tokens, size_t& index)
 
 JSONValue JSON::ParseArray(std::vector<JSONToken> tokens, size_t& index)
 {
-    auto arr = std::make_shared<JSONArray>();
+    auto arr = JSONArray();
 
     while (index < tokens.size()) {
         if (tokens[index].first == JSON_RIGHT_BRACKET) {
@@ -127,7 +127,7 @@ JSONValue JSON::ParseArray(std::vector<JSONToken> tokens, size_t& index)
         }
 
         JSONValue val = ParseValue(tokens, index);
-        arr->push_back(val);
+        arr.push_back(val);
 
         if (tokens[index].first == JSON_COMMA) {
             ++index;
@@ -146,6 +146,11 @@ JSONValue JSON::Parse(std::string input)
 {
     size_t index = 0;
     return JSON::ParseValue(JSON::Tokenize(input), index);
+}
+
+std::string JSON::Stringify(JSONValue input)
+{
+    return Console::ToString(input);
 }
 
 std::vector<JSONToken> JSON::Tokenize(std::string input)

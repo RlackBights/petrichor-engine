@@ -1,5 +1,5 @@
 #include "ptc_console.hpp"
-#include "ptc_file_reader.hpp"
+#include "ptc_file_processor.hpp"
 #include "ptc_renderer.hpp"
 #include <ptc_shader.hpp>
 
@@ -24,8 +24,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	std::string fullVertexPath = SHADER_PATH + std::string(vertexPath);
 	std::string fullFragmentPath = SHADER_PATH + std::string(fragmentPath);
 
-	std::string vertexCode = FileReader::Read(fullVertexPath);
-	std::string fragmentCode = FileReader::Read(fullFragmentPath);
+	std::string vertexCode = FileProcessor::Read(fullVertexPath);
+	std::string fragmentCode = FileProcessor::Read(fullFragmentPath);
 
 	const char* vShaderCode = vertexCode.c_str();
 	const char* fShaderCode = fragmentCode.c_str();
@@ -135,7 +135,7 @@ void Shader::setMatrix4x4(const std::string& name, glm::mat4 value) const
 }
 void Shader::SetCommonFunctionsShader(const char* commonShaderPath)
 {
-	std::string commonFunctionsCode = FileReader::Read(SHADER_PATH + std::string(commonShaderPath));
+	std::string commonFunctionsCode = FileProcessor::Read(SHADER_PATH + std::string(commonShaderPath));
 	const char* cShaderCode = commonFunctionsCode.c_str();
 
 	// Compile the common shader functions

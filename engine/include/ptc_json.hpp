@@ -17,6 +17,7 @@ private:
     static JSONValue ParseArray(std::vector<JSONToken> tokens, size_t& index);
 public:
     static JSONValue Parse(std::string input);
+    static std::string Stringify(JSONValue input);
     static std::vector<JSONToken> Tokenize(std::string input);
 };
 

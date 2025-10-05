@@ -14,13 +14,12 @@ using JSONArray = std::vector<JSONValue>;
 using JSONObject = std::map<std::string, JSONValue>;
 
 struct JSONValue : std::variant<
-    std::shared_ptr<JSONArray>,
-    std::shared_ptr<JSONObject>,
+    JSONArray,
+    JSONObject,
     std::string,
     int,
     float,
-    bool,
-    std::monostate
+    bool
 > {
     using variant::variant;
 };

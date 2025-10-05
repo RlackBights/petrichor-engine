@@ -5,10 +5,13 @@
 #include "ptc_json_structs.hpp"
 #include "ptc_gui_structs.hpp"
 #include <algorithm>
+#include <array>
 #include <cstddef>
 #include <cstdio>
 #include <iomanip>
+#include <map>
 #include <sstream>
+#include <utility>
 #include <vector>
 #undef APIENTRY
 #include <string>
@@ -46,33 +49,38 @@ public:
         Write("\n");
     }
     template <class T>
-    static void WriteLine(std::vector<T> val)
-    {
-        Write(val);
-        std::printf("\n");
-    }
-    template <class T>
-    static void WriteLine(T val[])
-    {
-        Write(val);
-        std::printf("\n");
-    }
-    template <class T>
     static void Write(T val)
     {
-        Write(std::to_string(val));
+        printf("%s", ToString(val).c_str());
+        std::fflush(stdout);
     }
     template <class T>
-    static void Write(std::vector<T> val)
+    static std::string ToString(T val)
     {
-        Write('[');
-        for (size_t i = 0; i < val.size(); i++) { Write(val[i]); Write((i == val.size() - 1) ? "]" : ", "); }
+        return std::to_string(val);
     }
     template <class T>
-    static void Write(T val[])
+    static std::string ToString(std::vector<T> val)
     {
-        Write('[');
-        for (size_t i = 0; val[i] != NULL; i++) { Write(val[i]); Write((val[i] + 1 == NULL) ? "]" : ", "); }
+        std::string out("[ ");
+        if (val.size() == 0) out += ']';
+        else for (size_t i = 0; i < val.size(); i++) { out += ToString(val[i]) + ((i == val.size() - 1) ? " ]" : ", "); }
+        return out;
+    }
+    template <class T>
+    static std::string ToString(T* val)
+    {
+        return ToString(*val);
+    }
+    template <class T1, class T2>
+    static std::string ToString(std::map<T1, T2> val)
+    {
+        std::string out("{ ");
+        int c = val.size();
+        for (std::pair<T1, T2> pair : val) {
+            out += ToString(pair.first) + ": " + ToString(pair.second) + (--c == 0 ? " }" : ", ");
+        }
+        return out;
     }
     template< typename T >
     static std::string ToHex( T i )
@@ -83,16 +91,19 @@ public:
                 << std::hex << i;
         return stream.str();
     }
-    static void Write(glm::vec2 val);
-    static void Write(glm::vec3 val);
-    static void Write(glm::vec4 val);
-    static void Write(JSONToken val);
-    static void Write(char val);
-    static void Write(Rect val);
-    static void WriteLine(std::string text, Color color = Color::NOTHING, bool continuous = true);
-    static void WriteLine(const char* text, Color color = Color::NOTHING, bool continuous = true);
-    static void Write(std::string text, Color color = Color::NOTHING, bool continuous = true);
-    static void Write(const char* text, Color color = Color::NOTHING, bool continuous = true);
+    static std::string ToString(const char* val);
+    static std::string ToString(std::string& val);
+    static std::string ToString(glm::vec2& val);
+    static std::string ToString(glm::vec3& val);
+    static std::string ToString(glm::vec4& val);
+    static std::string ToString(JSONToken val);
+    static std::string ToString(JSONValue val);
+    static std::string ToString(char val);
+    static std::string ToString(Rect val);
+    static void WriteLine(std::string text, Color color, bool continuous = true);
+    static void WriteLine(const char* text, Color color, bool continuous = true);
+    static void Write(std::string text, Color color, bool continuous = true);
+    static void Write(const char* text, Color color, bool continuous = true);
 };
 
 #endif

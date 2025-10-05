@@ -1,21 +1,14 @@
 
 #include "glm/fwd.hpp"
-#include "ptc_camera.hpp"
-#include "ptc_debug.hpp"
-#include "ptc_file_reader.hpp"
-#include "ptc_json.hpp"
-#include "ptc_json_structs.hpp"
-#include "ptc_light.hpp"
-#include "ptc_mesh.hpp"
-#include "ptc_mesh_filter.hpp"
-#include "ptc_mesh_loader.hpp"
-#include "ptc_mesh_renderer.hpp"
-#include "ptc_object.hpp"
+#include "ptc_console.hpp"
+#include "ptc_engine.hpp"
 #include "./standalone/example_standalone.cpp"
-#include "ptc_texture.hpp"
 #include <cstdint>
+#include <map>
 #include <string>
+#include <utility>
 #include <vector>
+
 Object camera("camera"), test("test"), test2("test2"), text("text"), idk("idk"), light("light");
 void game_main()
 {
@@ -34,17 +27,21 @@ void game_main()
     // Light* lightRef = light.AddComponent<Light>(LightType::Point);
     // light.transform.position = glm::vec3(0, 1, 0);
 
-    JSONValue json = JSON::Parse(FileReader::Read("resources/other/example.json"));
+    JSONValue json = JSON::Parse(FileProcessor::Read("resources/other/example.json"));
 
-    std::vector<uint8_t> bytes = FileReader::ReadBytes("resources/models/Cube.glb");
-    auto text = FileReader::ProcessBytes<char>(std::vector<uint8_t>(bytes.begin(),bytes.begin() + 4));
+    int idk2[] = {1, 2, 0, 3, 5};
+    Console::WriteLine(json);
+
+    std::vector<uint8_t> bytes = FileProcessor::ReadBytes("resources/models/Cube.glb");
+    auto _text = FileProcessor::ProcessBytes<char>(std::vector<uint8_t>(bytes.begin(),bytes.begin() + 4));
     for (int i = 0; i < 100; i++) {
-        Debug::Log(std::string(text.begin(), text.end()));
-        Debug::Warn("Test");
+        Debug::Log(std::string(_text.begin(), _text.end()));
+        Debug::Warn((std::vector<int>){1, 2, 0, 3, 5});
         Debug::Error("Woah");
     }
 
     test.transform.AddChild(&idk.transform);
 
     test.AddComponent<ExampleStandaloneComponent>();
+
 }
