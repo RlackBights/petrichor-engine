@@ -1,8 +1,12 @@
 #include "ptc_console.hpp"
 #include "ptc_transform.hpp"
+#include <memory>
 #include <ptc_object.hpp>
 #include <ptc_component.hpp>
-Object::Object(std::string _name, bool _enabled) : name(_name), transform(this), enabled(_enabled) { }
+Object::Object(std::string _name, bool _enabled) : name(_name), transform(this), enabled(_enabled)
+{
+    Object::objects.push_back(std::make_unique<Object>(this));
+}
 std::vector<std::unique_ptr<Component>>* Object::GetComponents()
 {
     return &components;

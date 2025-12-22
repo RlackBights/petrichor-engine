@@ -7,6 +7,7 @@
 
 class MeshRenderer : public Component
 {
+friend class Reflection;
 private:
     MeshFilter* filterRef;
 

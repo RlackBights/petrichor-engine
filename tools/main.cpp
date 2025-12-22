@@ -9,7 +9,6 @@
 #include <clang/Tooling/Tooling.h>
 #include <clang/Tooling/CommonOptionsParser.h>
 #include <cstddef>
-#include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <llvm/ADT/StringRef.h>
@@ -33,7 +32,7 @@ class ClassNamingCheckConsumer : public clang::ASTConsumer
 public:
     void HandleTranslationUnit(clang::ASTContext &Context) override
     {
-        auto Matcher = cxxRecordDecl(isExpansionInMainFile(), isDefinition()).bind("class");
+        auto Matcher = cxxRecordDecl(isExpansionInMainFile(), isDefinition(), isDerivedFrom("Component")).bind("component");
         auto Matches = match(Matcher, Context);
         // std::string(location).substr(0, std::string(location).find_last_of('/')) + 
         //printf("%s\n", (std::filesystem::current_path().string() + "/../engine/test.hpp").c_str());
@@ -43,12 +42,12 @@ public:
 
         for (const auto &Match : Matches)
         {
-            const auto *Class = Match.getNodeAs<clang::CXXRecordDecl>("class");
+            const auto *Class = Match.getNodeAs<clang::CXXRecordDecl>("component");
             if (!Class || !SM.isInMainFile(Class->getLocation())) continue;
-
+            
+            protectedOut += "// " + Class->getNameAsString() + '\n';
 
             for (auto field : Class->fields()) {
-
                 switch (field->getAccess()) {
                     case clang::AS_public:    publicOut += "\t" + field->getType().getAsString() + " " + field->getNameAsString() + ";\n"; break;
                     case clang::AS_protected: protectedOut += "\t" + field->getType().getAsString() + " " + field->getNameAsString() + ";\n"; break;

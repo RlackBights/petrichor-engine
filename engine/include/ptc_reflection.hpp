@@ -1,6 +1,7 @@
 #ifndef PTC_REFLECTION_HPP
 #define PTC_REFLECTION_HPP
 
+#include "ptc_json_structs.hpp"
 #include "ptc_object.hpp"
 #include <string>
 class Reflection
@@ -8,8 +9,10 @@ class Reflection
 private:
     
 public:
-    static std::string SerializeObject(Object& object);
-    static Object DeserializeObject(std::string& src);
+    static JSONValue SerializeJSONObject(const Object& object);
+    static std::string SerializeObject(const Object& object);
+    static Object DeserializeJSONObject(const JSONValue& object);
+    static Object DeserializeObject(const std::string& src);
 };
 
 #endif

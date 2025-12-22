@@ -2,8 +2,6 @@
 #include "ptc_engine.hpp"
 #include "ptc_renderer.hpp"
 #include "scripts/game_main.cpp"
-#include <typeindex>
-#include <typeinfo>
 
 // Function Definitions
 bool init();
@@ -58,7 +56,7 @@ bool init()
 	Renderer::initRenderer();
 	GUI::InitUI();
 	Light::ambientLight = glm::vec4(1.0f);
-	Light::ambientLightIntensity = 1.0f;
+	Light::ambientLightIntensity = 0.1f;
 
 	Console::WriteLine("\n[          ]\tTime");
 	Console::SetCursorPosition(1, consoleOffset++);
@@ -79,7 +77,7 @@ bool init()
 
 bool update()
 {
-	// JSON PARSING ERROR: Crashes if last number of an array is a float???????
+	// JSON PARSING ERROR: Crashes if last number of an array is a float??????? Also probably doesn't parse numbers properly at all...
 
 	// RESOLVED??: Need rendering passes separately for the engine UI, and for the game preview
 	// Need an inspector (sounds like absolute hell) - hierarchy and console are done :33
@@ -92,6 +90,20 @@ bool update()
 	// Add bone-based animation support (Sounds like absolute hell unless there's some very obvious way how to handle it)
 	// Add a particle system  (Heard a bunch about it, probably not the worst)
 	// Scripting language??? Maybe add Lua(4/10)/Python(8/10)/Js(6/10)
+
+	// Need to implement a system where the clang tool generates some txt/json file,
+	// which the engine can re-read on the fly, making it possible to re-render
+	// the related UI elements, including but not limited to the Inspector
+
+	// Some dynamic linkink perhaps? Definitely one way to go, and probably closer to how the founding fathers intented
+	// this language be used, but who really knows anymore
+
+	// Also probably find a way how to support floating tabs, ot just tabs in general. And a file manager would be nice sometime soon
+
+	// Also also let users create projects wherever they wish, probably not a bad idea. Maybe a registry of sorts? Or just some .ptcproj file
+	// like c# csproj files could also work. Maybe a Unity-like project hub if needed, probably not
+
+	// A tool strip, since SDL3 cannot handle it on its own
 
 	// Probably index the GUI vertices with an EBO
 

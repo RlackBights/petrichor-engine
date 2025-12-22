@@ -11,11 +11,13 @@
 #include <SDL3/SDL.h>
 #include "ptc_gui.hpp"
 #include "ptc_gui_structs.hpp"
+#include "ptc_reflection.hpp"
 #include "ptc_shader.hpp"
 #include <freetype/freetype.h>
 
 class Text : public Component
 {
+friend class Reflection;
 friend class GUI;
 private:
 	std::string text;

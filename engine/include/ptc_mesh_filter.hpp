@@ -3,9 +3,11 @@
 
 #include "ptc_component.hpp"
 #include "ptc_mesh.hpp"
+#include "ptc_reflection.hpp"
 
 class MeshFilter : public Component
 {
+friend class Reflection;
 private:
     
 public:

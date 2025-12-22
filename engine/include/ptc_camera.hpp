@@ -17,6 +17,7 @@ enum Camera_Movement {
 
 class Camera : public Component
 {
+friend class Reflection;
 private:
     void updateCameraVectors();
 public:

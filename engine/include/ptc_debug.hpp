@@ -1,12 +1,11 @@
 #ifndef PTC_DEBUG_HPP
 #define PTC_DEBUG_HPP
 
-#include "ptc_component.hpp"
 #include "ptc_console.hpp"
 #include "ptc_debug_structs.hpp"
 #include <string>
 
-class Debug : public Component
+class Debug
 {
 private:
     static bool groupLogs;

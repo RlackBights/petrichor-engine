@@ -1,6 +1,9 @@
+#include "glm/fwd.hpp"
+#include "glm/trigonometric.hpp"
 #include "ptc_console.hpp"
 #include "ptc_debug.hpp"
 #include "ptc_text.hpp"
+#include "ptc_time.hpp"
 #include <ptc_component.hpp>
 
 class ExampleStandaloneComponent : public Component
@@ -12,6 +15,6 @@ class ExampleStandaloneComponent : public Component
 
     void Update() override
     {
-        Debug::Log("Hellooo");
+        transform->position =  {glm::sin(Time::time) * 3, 2, glm::cos(Time::time) * 3 };
     }
 };

@@ -10,6 +10,7 @@
 
 class Material : public Component
 {
+friend class Reflection;
 public:
 	glm::vec4 baseColor;
 	GLuint texture;

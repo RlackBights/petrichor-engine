@@ -1,5 +1,8 @@
 # echo $(dirname $0)/build/ClassNamingCheckTool $1
 
+startDir=`pwd`
+cd $(dirname $0)/build && cmake .. && make && cd $startDir
+
 if [[ -d $1 ]]; then
     for i in "$1*.hpp"; do
         $(dirname $0)/build/ClassNamingCheckTool $i -p=/home/hunor/Yippee/petrichor-engine -extra-arg=-I/usr/lib/clang/20/include/

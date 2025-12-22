@@ -1,12 +1,11 @@
 #ifndef PTC_JSON_HPP
 #define PTC_JSON_HPP
 
-#include "ptc_component.hpp"
 #include "ptc_json_structs.hpp"
 #include <string>
 #include <vector>
 
-class JSON : public Component
+class JSON
 {
 private:
     static std::string ReadStringToken(std::string input);

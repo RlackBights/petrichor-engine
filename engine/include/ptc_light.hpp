@@ -33,6 +33,7 @@ typedef struct SpotLight
 
 class Light : public Component
 {
+friend class Reflection;
 private:
 	static std::vector<Light*> lights;
 public:
@@ -43,7 +44,7 @@ public:
 	float cutoff;
 	float focus;
 
-	Light(LightType _type, glm::vec3 _lightColor = glm::vec3(1.0f), float _cutoff = 0.2f, float _focus = 50.0f);
+	Light(LightType _type = LightType::Point, glm::vec3 _lightColor = glm::vec3(1.0f), float _cutoff = 0.2f, float _focus = 50.0f);
 
 	static glm::vec3 EulerToDirection(const glm::vec3& eulerAngles);
 	static glm::vec3 QuaternionToDirection(const glm::quat& quaternion);

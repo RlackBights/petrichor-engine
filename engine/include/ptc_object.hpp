@@ -13,6 +13,7 @@ class Object
 {
 private:
 	std::vector<std::unique_ptr<Component>> components;
+	static std::vector<std::unique_ptr<Object>> objects;
 public:
 	std::string name;
 	std::vector<std::string> tags;
@@ -20,6 +21,7 @@ public:
 	bool enabled;
 
 	Object(std::string _name = "", bool _enabled = true);
+	~Object();
 
 	template <class T>
 	T* GetComponent()
