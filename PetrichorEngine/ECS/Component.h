@@ -1,15 +1,16 @@
 #pragma once
 
 #include "Object.h"
+#include "Scene/Transform.h"
 
-namespace PetrichorEngine {
+namespace PetrichorEngine::ECS {
     class Object;
 
     class Component
     {
     public:
         Object* parentObject = nullptr;
-        Transform* transform = nullptr;
+        Scene::Transform* transform = nullptr;
         bool enabled = true;
         virtual ~Component() = default;
 

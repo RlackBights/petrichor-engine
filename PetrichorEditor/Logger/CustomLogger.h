@@ -5,7 +5,7 @@
 using namespace PetrichorEngine;
 
 namespace PetrichorEditor {
-    class CustomLogger : public ILogger
+    class CustomLogger : public Core::ILogger
     {
         public:
             void Info(const std::string& message) override;

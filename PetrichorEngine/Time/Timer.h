@@ -2,7 +2,7 @@
 
 #include <functional>
 
-namespace PetrichorEngine {
+namespace PetrichorEngine::Time {
 	struct Timer {
 		float seconds;
 		std::function<void()> callback;

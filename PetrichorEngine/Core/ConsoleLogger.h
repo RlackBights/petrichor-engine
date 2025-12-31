@@ -3,7 +3,7 @@
 #include "Core/ILogger.h"
 #include <string>
 
-namespace PetrichorEngine
+namespace PetrichorEngine::Core
 {
     class ConsoleLogger : public ILogger
     {

@@ -1,29 +1,30 @@
 #include "Scene/Camera.h"
+#include "Math/Math.h"
 
-namespace PetrichorEngine
+namespace PetrichorEngine::Scene
 {
     Camera::~Camera()
     {
         if (Camera::main == this) Camera::main = nullptr;
     }
-    Camera::Camera(bool _perspective, bool _main) : Front(Vector3(0.0f, 0.0f, -1.0f)), MovementSpeed(2.5f), MouseSensitivity(1.2f), Zoom(100.0f)
+    Camera::Camera(bool _perspective, bool _main) : Front(Math::Vector3(0.0f, 0.0f, -1.0f)), MovementSpeed(2.5f), MouseSensitivity(1.2f), Zoom(100.0f)
     {
         if (_perspective && main == nullptr) main = this;
-        WorldUp = Vector3(0.0f, 1.0f, 0.0f);
-        Front = Vector3(0.0f);
-        Up = Vector3(0.0f);
-        Right = Vector3(0.0f);
-        backgroundColor = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+        WorldUp = Math::Vector3(0.0f, 1.0f, 0.0f);
+        Front = Math::Vector3(0.0f);
+        Up = Math::Vector3(0.0f);
+        Right = Math::Vector3(0.0f);
+        backgroundColor = Math::Vector4(0.0f, 0.0f, 0.0f, 0.0f);
         isBoosting = false;
         perspective = _perspective;
     }
 
-    Matrix4x4 Camera::GetViewMatrix()
+    Math::Matrix4x4 Camera::GetViewMatrix()
     {
-        return glm::lookAt(parentObject->transform.position, parentObject->transform.position + Front, Up);
+        return glm::lookAt(parentObject->transform->position, parentObject->transform->position + Front, Up);
     }
 
-    Matrix4x4 Camera::GetProjectionMatrix(int screenWidth, int screenHeight)
+    Math::Matrix4x4 Camera::GetProjectionMatrix(int screenWidth, int screenHeight)
     {
         if (perspective) {
             return glm::perspective(glm::radians(Zoom), (float)screenWidth / screenHeight, 0.1f, 100.0f);
@@ -97,12 +98,12 @@ namespace PetrichorEngine
 
     void Camera::updateCameraVectors()
     {
-        glm::quat rotation = parentObject->transform.rotation;
+        glm::quat rotation = parentObject->transform->rotation;
 
-        Vector3 front = rotation * Vector3(0.0f, 0.0f, -1.0f);
+        Math::Vector3 front = rotation * Math::Vector3(0.0f, 0.0f, -1.0f);
 
-        Vector3 right = rotation * Vector3(1.0f, 0.0f, 0.0f);
-        Vector3 up = rotation * Vector3(0.0f, 1.0f, 0.0f);
+        Math::Vector3 right = rotation * Math::Vector3(1.0f, 0.0f, 0.0f);
+        Math::Vector3 up = rotation * Math::Vector3(0.0f, 1.0f, 0.0f);
 
         Front = glm::normalize(front);
         Right = glm::normalize(right);
@@ -110,5 +111,5 @@ namespace PetrichorEngine
     }
 
     Camera* Camera::main;
-    Vector3 Camera::WorldUp;
+    Math::Vector3 Camera::WorldUp;
 }

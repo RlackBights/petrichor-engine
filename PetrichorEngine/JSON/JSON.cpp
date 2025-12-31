@@ -1,7 +1,7 @@
 #include "JSON/JSON.h"
 #include "Core/Log.h"
 
-namespace PetrichorEngine {
+namespace PetrichorEngine::JSON {
     int JSON::ReadIntToken(std::string input)
     {
         for (size_t i = 0; i < input.size(); i++) {
@@ -64,8 +64,8 @@ namespace PetrichorEngine {
                 return JSONValue{};
             default:
                 index++;
-                Log::Error("Unexpected token: ");
-                Log::Error(tokens[index]);
+                Core::Log::Error("Unexpected token: ");
+                Core::Log::Error(tokens[index]);
                 return JSONValue{};
         }
     }
@@ -83,14 +83,14 @@ namespace PetrichorEngine {
             }
 
             if (keyType != JSON_STRING) {
-                Log::Error("Expected string key in object");
+                Core::Log::Error("Expected string key in object");
             }
 
             std::string key = std::any_cast<std::string>(keyVal);
             index++;
 
             if (tokens[index].first != JSON_COLON)
-                Log::Error("Expected ':' after key in object");
+                Core::Log::Error("Expected ':' after key in object");
             index++;
 
             JSONValue value = ParseValue(tokens, index);
@@ -102,8 +102,8 @@ namespace PetrichorEngine {
                 ++index;
                 break;
             } else {
-                Log::Error("Expected ',' or '}' in object: ");
-                Log::Error(tokens[index - 1]);
+                Core::Log::Error("Expected ',' or '}' in object: ");
+                Core::Log::Error(tokens[index - 1]);
             }
         }
 
@@ -129,7 +129,7 @@ namespace PetrichorEngine {
                 ++index;
                 break;
             } else {
-                Log::Error("Expected ',' or ']' in array");
+                Core::Log::Error("Expected ',' or ']' in array");
             }
         }
 

@@ -6,8 +6,9 @@
 
 #include "Scene/Transform.h"
 
+namespace PetrichorEngine::Scene { class Transform; }
 
-namespace PetrichorEngine {
+namespace PetrichorEngine::ECS {
 	class Component;
 	
 	class Object
@@ -18,7 +19,7 @@ namespace PetrichorEngine {
 	public:
 		std::string name;
 		std::vector<std::string> tags;
-		Transform transform;
+		std::unique_ptr<Scene::Transform> transform;
 		bool enabled;
 
 		Object(std::string _name = "", bool _enabled = true);

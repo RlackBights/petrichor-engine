@@ -1,30 +1,36 @@
 #include "Time.h"
 #include "Core/Log.h"
+#include <cstdint>
 #include <string>
 
-namespace PetrichorEngine {
-	void Time::initTime()
+namespace PetrichorEngine::Time {
+	void Time::SetTimeFunction(std::function<uint64_t ()> fn)
+	{
+		_getTime = fn;
+	}
+	uint64_t Time::GetTime()
+	{
+		if (!_getTime) _getTime = []()->uint64_t { return std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - startTime).count(); };
+		return _getTime();
+	}
+	void Time::InitializeTime()
 	{
 		lastFrame = 0;
 		timeScale = 1.0f;
-
-		Log::Error("CURRENT TIME IS UNIMPLEMENTED!!!!");
-		currentFrame = 0; //SDL_GetTicks();
+		currentFrame = GetTime();
 		time = 0.0f;
 		deltaTimeUnscaled = (currentFrame - lastFrame) / 1000.0f;
 		deltaTime = deltaTimeUnscaled * timeScale;
 	}
-	void Time::updateTime()
+	void Time::UpdateTime()
 	{
 		lastFrame = currentFrame;
-
-		Log::Error("CURRENT TIME IS UNIMPLEMENTED!!!!");
-		currentFrame = 0; //SDL_GetTicks();
+		currentFrame = GetTime();
 		deltaTimeUnscaled = (currentFrame - lastFrame) / 1000.0f;
 		deltaTime = deltaTimeUnscaled * timeScale;
 		fixedAccumulator += deltaTimeUnscaled;
 	}
-	void Time::wrapTime()
+	void Time::WrapTime()
 	{
 		for (std::vector<Timer>::iterator i = timers.begin(); i != timers.end();)
 		{
@@ -38,11 +44,11 @@ namespace PetrichorEngine {
 						i->callback();
 					} catch (const std::exception e) 
 					{
-						Log::Error("Timer error: " + std::string(e.what()));
+						Core::Log::Error("Timer error: " + std::string(e.what()));
 					}
 				} else
 				{
-					Log::Error("Timer callback function not found");
+					Core::Log::Error("Timer callback function not found");
 				}
 
 				i = timers.erase(i);
@@ -51,11 +57,11 @@ namespace PetrichorEngine {
 		}
 		time += deltaTime;
 	}
-	void Time::createTimer(float seconds, std::function<void()> callback, bool unscaled)
+	void Time::CreateTimer(float seconds, std::function<void()> callback, bool unscaled)
 	{
 		if (!callback)
 		{
-			Log::Error("Received empty callback!");
+			Core::Log::Error("Received empty callback!");
 			return;
 		}
 		timers.push_back(Timer{ seconds, std::move(callback), unscaled });
@@ -70,5 +76,6 @@ namespace PetrichorEngine {
 	float Time::fixedAccumulator;
 	const float Time::fixedUpdateFrametime = 0.02f; // 50 frames a second intended, similar to Unity
 	std::vector<Timer> Time::timers;
+	TimePoint Time::startTime = Clock::now();
 }
 

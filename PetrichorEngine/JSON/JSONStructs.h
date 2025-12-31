@@ -8,7 +8,7 @@
 #include <variant>
 #include <vector>
 
-namespace PetrichorEngine {
+namespace PetrichorEngine::JSON {
     struct JSONValue;
     using JSONArray = std::vector<JSONValue>;
     using JSONObject = std::map<std::string, JSONValue>;

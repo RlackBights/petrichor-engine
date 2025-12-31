@@ -2,7 +2,7 @@
 
 #include "JSON/JSONStructs.h"
 
-namespace PetrichorEngine {
+namespace PetrichorEngine::JSON {
     class JSON
     {
     private:

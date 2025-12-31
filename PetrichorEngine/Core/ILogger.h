@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace PetrichorEngine
+namespace PetrichorEngine::Core
 {
     class ILogger
     {

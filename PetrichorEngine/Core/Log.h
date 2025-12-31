@@ -4,7 +4,7 @@
 #include "Core/ILogger.h"
 #include <sstream>
 
-namespace PetrichorEngine
+namespace PetrichorEngine::Core
 {
     class Log
     {
