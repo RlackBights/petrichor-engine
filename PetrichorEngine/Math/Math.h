@@ -1,18 +1,35 @@
 #pragma once
 
+#include <glm/detail/qualifier.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
 namespace PetrichorEngine::Math
 {
-    using Vector2 = glm::vec2;
-    using Vector3 = glm::vec3;
-    using Vector4 = glm::vec4;
-    using Vector2i = glm::ivec2;
-    using Vector3i = glm::ivec3;
-    using Vector4i = glm::ivec4;
+    template <glm::length_t L, typename T>
+    using TVector = glm::vec<L, T>;
 
-    using Matrix4x4 = glm::mat4x4;
+    template <typename T = float>
+    using TVector2 = TVector<2, T>;
+    template <typename T = float>
+    using TVector3 = TVector<3, T>;
+    template <typename T = float>
+    using TVector4 = TVector<4, T>;
+
+    using Vector2 = TVector2<>;
+    using Vector3 = TVector3<>;
+    using Vector4 = TVector4<>;
+
+    using Vector2i = TVector2<int>;
+    using Vector3i = TVector3<int>;
+    using Vector4i = TVector4<int>;
+
+    template <glm::length_t C, glm::length_t R, typename T>
+    using TMatrix = glm::mat<C, R, T>;
+
+    using Matrix4x4 = TMatrix<4, 4, float>;
+
+    
     using Quaternion = glm::quat;
 
     enum EasingFunction {

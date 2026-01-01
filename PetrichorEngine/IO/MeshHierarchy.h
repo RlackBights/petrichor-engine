@@ -7,7 +7,7 @@ namespace PetrichorEngine::IO {
     struct MeshHierarchy
     {
         MeshHierarchy* parent;
-        std::unique_ptr<Rendering::Mesh> mesh;
+        std::shared_ptr<Rendering::Mesh> mesh;
         std::vector<MeshHierarchy> children;
     };
 }

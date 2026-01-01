@@ -1,13 +1,15 @@
 #pragma once
 
 #include "ECS/Component.h"
+#include "Rendering/Mesh.h"
+#include <memory>
 
 namespace PetrichorEngine::Rendering {
-    using MeshReference = uint32_t;
-
-    struct MeshFilter : public ECS::Component
+    class MeshFilter : public ECS::Component
     {
     public:
-        MeshReference mesh;
+        std::shared_ptr<Mesh> mesh;
+
+        MeshFilter();
     };
 }

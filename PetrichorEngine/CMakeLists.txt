@@ -13,19 +13,36 @@ set(ECS
     ECS/Object.cpp
 )
 
+# Input source files
+# None for now
+
+# IO source files
+set (IO
+    IO/FileProcessor.cpp
+    IO/MeshLoader.cpp
+    IO/OBJMeshLoader.cpp
+)
+
 # JSON source files
 set(JSON JSON/JSON.cpp)
 
 # Math source files
-# None for now
+set(MATH Math/Math.cpp)
 
 # Rendering source fiels
-# None for now
+set(RENDERING
+    Rendering/MeshRenderer.cpp
+    Rendering/MeshFilter.cpp
+)
 
 # Scene source files
 set(SCENE
     Scene/Camera.cpp
+    Scene/Transform.cpp
 )
+
+# Text source files
+# None for now
 
 # Time source files
 set(TIME Time/Time.cpp)
@@ -35,7 +52,10 @@ set(ENGINE_SOURCES
     ${CORE}
     ${DEBUG}
     ${ECS}
+    ${IO}
     ${JSON}
+    ${MATH}
+    ${RENDERING}
     ${SCENE}
     ${TIME}
 )

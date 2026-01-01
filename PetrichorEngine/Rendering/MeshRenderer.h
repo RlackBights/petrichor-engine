@@ -3,13 +3,19 @@
 #include "ECS/Component.h"
 #include "Rendering/Material.h"
 #include "Rendering/MeshFilter.h"
+#include <memory>
 
 namespace PetrichorEngine::Rendering {
-    struct MeshRenderer : public ECS::Component
+    class MeshRenderer : public ECS::Component
     {
+    private:
+        MeshFilter* meshFilter;
     public:
-        MeshReference mesh;
-        MaterialReference material;
+        std::shared_ptr<Material> material;
+
+        MeshRenderer();
+
+        void Start() override;
     };
 }
 

@@ -1,18 +1,21 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
+#include <vector>
 
 namespace PetrichorEngine::Rendering
 {
-	using TextureReference = uint32_t;
-
-	class Texture
+	struct Texture
 	{
 	public:
-		TextureReference handle;
 		int width;
 		int height;
+		int channels;
+		std::vector<uint8_t> pixels;
 
-		Texture(uint32_t handle = 0, int width = 0, int height = 0);
+		bool isSRGB;
+		bool generateMipMaps;
+		std::string source;
 	};
 }

@@ -2,12 +2,13 @@
 
 #include "Math/Math.h"
 #include "Rendering/Texture.h"
+#include <memory>
 #include <string>
 #include <map>
 
 namespace PetrichorEngine::Text {
     struct Character {
-        Rendering::TextureReference     TextureID;  // ID handle of the glyph texture
+        std::shared_ptr<Rendering::Texture>     TextureID;  // Reference to the character texture
         Math::Vector2i                  Size;       // Size of glyph
         Math::Vector2i                  Bearing;    // Offset from baseline to left/top of glyph
         unsigned int                    Advance;    // Offset to advance to next glyph

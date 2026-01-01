@@ -3,9 +3,12 @@
 #include "ECS/Object.h"
 #include "IO/MeshHierarchy.h"
 #include "IO/OBJMeshLoader.h"
+#include "Rendering/Material.h"
 #include "Rendering/MeshFilter.h"
+#include "Rendering/MeshRenderer.h"
 #include <filesystem>
 #include <functional>
+#include <memory>
 
 namespace PetrichorEngine::IO {
     ModelType MeshLoader::GetModelType(const std::string& path)
@@ -18,14 +21,20 @@ namespace PetrichorEngine::IO {
 
     ECS::Object* MeshLoader::ParseMeshHierarchy(const MeshHierarchy& hierarchy)
     {
-        Core::Log::Error("MESH HIERARCHY PARSING NOT IMPLEMENTED YET");
-
-        std::function<void(MeshHierarchy, ECS::Object*)> preorder = [&](MeshHierarchy sub, ECS::Object* parent) {
+        std::function<void(const MeshHierarchy&, ECS::Object*)> preorder = [&](const MeshHierarchy& sub, ECS::Object* parent) {
             ECS::Object obj = ECS::Object(sub.mesh->name);
-            obj.AddComponent<Rendering::MeshFilter>();
+            obj.transform->parent = (parent ? parent->transform.get() : nullptr);
 
+            auto filterRef = obj.AddComponent<Rendering::MeshFilter>();
+            filterRef->mesh = sub.mesh;
+
+            auto rendererRef = obj.AddComponent<Rendering::MeshRenderer>();
+            rendererRef->material = std::make_shared<Rendering::Material>();
+
+            for (auto& child : sub.children) preorder(child, &obj);
         };
 
+        preorder(hierarchy, nullptr);
         return ECS::Object::Find(hierarchy.mesh->name);
     }
 

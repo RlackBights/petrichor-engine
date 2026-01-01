@@ -5,7 +5,6 @@
 #include "Rendering/Mesh.h"
 #include "Rendering/Vertex.h"
 #include <filesystem>
-#include <locale>
 #include <memory>
 #include <variant>
 #include <map>

@@ -39,7 +39,7 @@ namespace PetrichorEngine::ECS {
 		{
 			auto component = std::make_unique<T>(std::forward<Args>(args)...);
 			component->SetParentObject(this);
-			component->transform = &this->transform;
+			component->transform = this->transform.get();
 			component->Awake();
 			components.push_back(std::move(component));
 

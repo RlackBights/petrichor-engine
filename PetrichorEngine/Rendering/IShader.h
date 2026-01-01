@@ -5,9 +5,7 @@
 #include <vector>
 
 namespace PetrichorEngine::Rendering
-{
-	using ShaderReference = uint32_t;
-	
+{	
     class IShader
     {
     public:
