@@ -23,7 +23,7 @@ namespace PetrichorEngine::JSON {
     > {
         using variant::variant;
 
-        friend std::ostream& operator<<(std::ostream& stream, const JSONValue value)
+        friend std::ostream& operator<<(std::ostream& stream, const JSONValue& value)
         {
             stream << "[JSONValue]";
             return stream;
@@ -50,7 +50,7 @@ namespace PetrichorEngine::JSON {
     {
         using pair::pair;
 
-        friend std::ostream& operator<<(std::ostream& stream, const JSONToken value)
+        friend std::ostream& operator<<(std::ostream& stream, const JSONToken& value)
         {
             stream << "[JSONToken]";
             return stream;

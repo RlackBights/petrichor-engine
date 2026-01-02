@@ -33,6 +33,8 @@ set(MATH Math/Math.cpp)
 set(RENDERING
     Rendering/MeshRenderer.cpp
     Rendering/MeshFilter.cpp
+    Rendering/Renderer.cpp
+    Rendering/NullRendererBackend.cpp
 )
 
 # Scene source files

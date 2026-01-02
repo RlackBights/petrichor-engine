@@ -9,6 +9,8 @@ namespace PetrichorEngine::Rendering
     class NullRendererBackend : public IRendererBackend
     {
     public:
+        bool showDebugMessages = false;
+
         ~NullRendererBackend() = default;
 
         void InitializeRenderer() override;

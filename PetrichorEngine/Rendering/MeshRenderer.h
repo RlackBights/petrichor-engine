@@ -4,6 +4,7 @@
 #include "Rendering/Material.h"
 #include "Rendering/MeshFilter.h"
 #include <memory>
+#include <ostream>
 
 namespace PetrichorEngine::Rendering {
     class MeshRenderer : public ECS::Component
@@ -16,6 +17,12 @@ namespace PetrichorEngine::Rendering {
         MeshRenderer();
 
         void Start() override;
+
+        friend std::ostream& operator<<(std::ostream& stream, const MeshRenderer& value)
+        {
+            stream << "[MeshRenderer]";
+            return stream;
+        }
     };
 }
 
