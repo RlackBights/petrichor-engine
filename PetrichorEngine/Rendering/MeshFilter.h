@@ -1,14 +1,15 @@
 #pragma once
 
 #include "ECS/Component.h"
-#include "Rendering/Mesh.h"
+#include "PetrichorRendererAPI/Mesh.h"
 #include <memory>
 
 namespace PetrichorEngine::Rendering {
     class MeshFilter : public ECS::Component
     {
     public:
-        std::shared_ptr<Mesh> mesh;
+        std::shared_ptr<
+        PetrichorRendererAPI::Mesh> mesh;
 
         MeshFilter();
     };

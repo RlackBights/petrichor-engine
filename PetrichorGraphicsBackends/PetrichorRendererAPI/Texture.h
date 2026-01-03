@@ -4,10 +4,12 @@
 #include <string>
 #include <vector>
 
-namespace PetrichorEngine::Rendering
+namespace PetrichorRendererAPI
 {
 	struct Texture
 	{
+	private:
+		void* backendHandle = nullptr;
 	public:
 		int width;
 		int height;

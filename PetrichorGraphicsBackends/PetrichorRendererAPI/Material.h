@@ -1,16 +1,15 @@
 #pragma once
 
-#include "Math/Math.h"
-#include "Rendering/IShader.h"
-#include "Rendering/Texture.h"
+#include "IShader.h"
+#include "Texture.h"
 #include <memory>
 
-namespace PetrichorEngine::Rendering {
+namespace PetrichorRendererAPI {
 
 	struct Material
 	{
 	public:
-		Math::Vector4 baseColor = {1, 1, 1, 1};
+		float baseColor[4] = {1, 1, 1, 1};
 
 		std::shared_ptr<Texture> diffuse;
 		std::shared_ptr<Texture> specular;

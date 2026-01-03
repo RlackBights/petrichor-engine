@@ -2,8 +2,9 @@
 #include "Core/Log.h"
 #include "IO/FileProcessor.h"
 #include "IO/MeshHierarchy.h"
-#include "Rendering/Mesh.h"
-#include "Rendering/Vertex.h"
+#include "Math/Math.h"
+#include "PetrichorRendererAPI/Mesh.h"
+#include "PetrichorRendererAPI/Vertex.h"
 #include <filesystem>
 #include <memory>
 #include <variant>
@@ -28,11 +29,11 @@ namespace PetrichorEngine::IO {
         std::string fileContent = FileProcessor::Read(path);
 
         std::string line = "";
-        std::map<std::string, Rendering::Mesh> meshes;
+        std::map<std::string, PetrichorRendererAPI::Mesh> meshes;
 
-        std::vector<glm::vec3> vertices;
-        std::vector<glm::vec3> normals;
-        std::vector<glm::vec2> texCoords;
+        std::vector<Math::Vector3> vertices;
+        std::vector<Math::Vector3> normals;
+        std::vector<Math::Vector2> texCoords;
 
         float x, y, z;
         std::istringstream stream;
@@ -48,15 +49,15 @@ namespace PetrichorEngine::IO {
                         switch (line[1]) {
                             case ' ':
                                 sscanf(line.c_str(), "v %f %f %f", &x, &y, &z);
-                                vertices.push_back(glm::vec3(x, y, z));
+                                vertices.push_back(Math::Vector3(x, y, z));
                                 break;
                             case 'n':
                                 sscanf(line.c_str(), "vn %f %f %f", &x, &y, &z);
-                                normals.push_back(glm::vec3(x, y, z));
+                                normals.push_back(Math::Vector3(x, y, z));
                                 break;
                             case 't':
                                 sscanf(line.c_str(), "vt %f %f", &x, &y);
-                                texCoords.push_back(glm::vec2(x, y));
+                                texCoords.push_back(Math::Vector2(x, y));
                                 break;
                             default:
                                 Core::Log::Error(std::string("Error parsing .obj character: ") + line[0] + line[1]);
@@ -68,7 +69,12 @@ namespace PetrichorEngine::IO {
                         indices = {};
                         while (stream >> token) {
                             OBJFaceToken ft = OBJFaceToken(token);
-                            Rendering::Vertex vert = Rendering::Vertex(vertices[ft.v - 1], texCoords[ft.vt - 1], normals[ft.vn - 1]);
+
+                            float vertPos[3] = {vertices[ft.v - 1].x, vertices[ft.v - 1].y, vertices[ft.v - 1].z};
+                            float vertTex[2] = {texCoords[ft.vt - 1].x, texCoords[ft.vt - 1].y};
+                            float vertNorm[3] = {normals[ft.vn - 1].x, normals[ft.vn - 1].y, normals[ft.vn - 1].z};
+
+                            PetrichorRendererAPI::Vertex vert = PetrichorRendererAPI::Vertex{vertPos, vertTex, vertNorm, nullptr};
                             meshes.rbegin()->second.vertices.push_back(vert);
                             indices.push_back(meshes.rbegin()->second.vertices.size() - 1);
                         }
@@ -88,7 +94,7 @@ namespace PetrichorEngine::IO {
                         }
                         break;
                     case 'o':   // object
-                        meshes.insert({line.substr(2), Rendering::Mesh{line.substr(2), {}, {}, 0}});
+                        meshes.insert({line.substr(2), PetrichorRendererAPI::Mesh{line.substr(2), {}, {}, 0}});
                         break;
                     case 'l':   // polylines? really?
                         break;
@@ -110,14 +116,14 @@ namespace PetrichorEngine::IO {
             }
         }
 
-        MeshHierarchy hierarchy{ nullptr, std::make_unique<Rendering::Mesh>(), {}};
+        MeshHierarchy hierarchy{ nullptr, std::make_unique<PetrichorRendererAPI::Mesh>(), {}};
         hierarchy.mesh->name = std::filesystem::path(path).stem();
 
         for (auto& [name, mesh] : meshes) {
             hierarchy.children.push_back(
                 {
                     &hierarchy,
-                    std::make_unique<Rendering::Mesh>(mesh),
+                    std::make_unique<PetrichorRendererAPI::Mesh>(mesh),
                     {}
                 }
             );

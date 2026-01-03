@@ -1,14 +1,15 @@
 #pragma once
 
-#include "Rendering/IRendererBackend.h"
-#include "Rendering/MeshRenderer.h"
-#include "Rendering/Quad.h"
-#include "Rendering/Triangle.h"
+#include "IRendererBackend.h"
+#include "PetrichorRendererAPI/Text/FontLoader.h"
+#include "Text/FontLoader.h"
 #include <memory>
-namespace PetrichorEngine::Rendering
+namespace PetrichorRendererAPI
 {
     class Renderer
     {
+    friend class Text::FontLoader;
+    friend class Text::Font;
     private:
         static std::unique_ptr<IRendererBackend> _backend;
         static IRendererBackend* Get();
@@ -19,7 +20,7 @@ namespace PetrichorEngine::Rendering
 
         static void DrawTriangle(const Triangle& triangle);
         static void DrawQuad(const Quad& quad);
-        static void DrawMesh(const MeshRenderer& meshRenderer);
+        static void DrawMesh(const Mesh& mesh);
 
         static void WrapFrame();
     };

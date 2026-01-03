@@ -1,16 +1,16 @@
-#include "Rendering/Renderer.h"
-#include "Core/Log.h"
-#include "Rendering/IRendererBackend.h"
-#include "Rendering/NullRendererBackend.h"
+#include "Renderer.h"
+#include "IRendererBackend.h"
+#include "NullRendererBackend.h"
+#include <iostream>
 #include <memory>
 
-namespace PetrichorEngine::Rendering
+namespace PetrichorRendererAPI
 {
     IRendererBackend* Renderer::Get()
     {
         if (!_backend) 
         {
-            Core::Log::Warn("No renderer backend connected, initializing renderless system");
+            std::cout << "No renderer backend connected, initializing renderless system";
             _backend = std::make_unique<NullRendererBackend>();
         }
         return _backend.get();
@@ -25,7 +25,7 @@ namespace PetrichorEngine::Rendering
     void Renderer::WrapFrame() { Get()->WrapFrame(); }
     void Renderer::DrawTriangle(const Triangle &triangle) { Get()->DrawTriangle(triangle); }
     void Renderer::DrawQuad(const Quad &quad) { Get()->DrawQuad(quad); }
-    void Renderer::DrawMesh(const MeshRenderer &meshRenderer) { Get()->DrawMesh(meshRenderer); }
+    void Renderer::DrawMesh(const Mesh &mesh) { Get()->DrawMesh(mesh); }
 
     std::unique_ptr<IRendererBackend> Renderer::_backend = nullptr;
 }

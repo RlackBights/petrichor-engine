@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 project(PetrichorEngine LANGUAGES CXX)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+add_subdirectory(PetrichorGraphicsBackends/PetrichorRendererAPI)
+add_subdirectory(PetrichorGraphicsBackends/OpenGLBackend)
 
 add_subdirectory(PetrichorEngine)
 

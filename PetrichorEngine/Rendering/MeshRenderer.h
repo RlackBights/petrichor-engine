@@ -1,9 +1,8 @@
 #pragma once
 
 #include "ECS/Component.h"
-#include "Rendering/Material.h"
+#include "PetrichorRendererAPI/Material.h"
 #include "Rendering/MeshFilter.h"
-#include <memory>
 #include <ostream>
 
 namespace PetrichorEngine::Rendering {
@@ -12,11 +11,9 @@ namespace PetrichorEngine::Rendering {
     private:
         MeshFilter* meshFilter;
     public:
-        std::shared_ptr<Material> material;
+        std::shared_ptr<PetrichorRendererAPI::Material> material;
 
         MeshRenderer();
-
-        void Start() override;
 
         friend std::ostream& operator<<(std::ostream& stream, const MeshRenderer& value)
         {

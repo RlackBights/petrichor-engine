@@ -3,7 +3,7 @@
 #include "ECS/Object.h"
 #include "IO/MeshHierarchy.h"
 #include "IO/OBJMeshLoader.h"
-#include "Rendering/Material.h"
+#include "PetrichorRendererAPI/Material.h"
 #include "Rendering/MeshFilter.h"
 #include "Rendering/MeshRenderer.h"
 #include <filesystem>
@@ -29,7 +29,7 @@ namespace PetrichorEngine::IO {
             filterRef->mesh = sub.mesh;
 
             auto rendererRef = obj.AddComponent<Rendering::MeshRenderer>();
-            rendererRef->material = std::make_shared<Rendering::Material>();
+            rendererRef->material = std::make_shared<PetrichorRendererAPI::Material>();
 
             for (auto& child : sub.children) preorder(child, &obj);
         };

@@ -1,6 +1,10 @@
-set (CUSTOM_LOGGER Logger/CustomLogger.cpp)
+set (GUI GUI/GUI.cpp)
 
-add_executable(PetrichorEditor main.cpp ${CUSTOM_LOGGER})
+set (EDITOR_SOURCES
+    ${GUI}
+)
+
+add_executable(PetrichorEditor main.cpp ${EDITOR_SOURCES})
 
 target_include_directories(PetrichorEditor
     PUBLIC

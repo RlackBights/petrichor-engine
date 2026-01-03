@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Math/Math.h"
-#include "Rendering/Vertex.h"
-namespace PetrichorEngine::Rendering
+#include "Vertex.h"
+
+namespace PetrichorRendererAPI
 {
     class Triangle
     {
     public:
-        Math::TVector3<Vertex> vertices;
+        Vertex vertices[3];
 
         friend std::ostream& operator<<(std::ostream& stream, const Triangle& value)
         {

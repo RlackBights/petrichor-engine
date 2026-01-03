@@ -1,15 +1,14 @@
 #pragma once
 
-#include "Math/Math.h"
-#include "Rendering/Vertex.h"
+#include "Vertex.h"
 #include <ostream>
 
-namespace PetrichorEngine::Rendering
+namespace PetrichorRendererAPI
 {
     struct Quad
     {
     public:
-        Math::TVector4<Vertex> vertices;
+        Vertex vertices[4];
 
         friend std::ostream& operator<<(std::ostream& stream, const Quad& value)
         {

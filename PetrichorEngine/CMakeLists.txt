@@ -33,8 +33,6 @@ set(MATH Math/Math.cpp)
 set(RENDERING
     Rendering/MeshRenderer.cpp
     Rendering/MeshFilter.cpp
-    Rendering/Renderer.cpp
-    Rendering/NullRendererBackend.cpp
 )
 
 # Scene source files
@@ -64,6 +62,8 @@ set(ENGINE_SOURCES
 
 # Create static library
 add_library(PetrichorEngineCore STATIC ${ENGINE_SOURCES})
+
+target_link_libraries(PetrichorEngineCore PUBLIC PetrichorRendererAPI)
 
 # Include directories for the library
 target_include_directories(PetrichorEngineCore
