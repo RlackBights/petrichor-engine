@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <ostream>
 
-namespace PetrichorRendererAPI {
+namespace PetrichorRendererAPI::Data {
     struct Vertex
     {
         float position[3];
@@ -11,21 +11,13 @@ namespace PetrichorRendererAPI {
         float normal[3];
         float color[4];
 
-        bool operator== (Vertex o)
-        {
-            return this->position == o.position &&
-            this->texCoord == o.texCoord &&
-            this->normal == o.normal &&
-            this->color == o.color;
-        }
-
         friend std::ostream& operator<<(std::ostream& stream, const Vertex& value)
         {
             stream << "{ X: " << value.position[0] << ", Y: " << value.position[1] << ", Z: " << value.position[2] << " }";
             return stream;
         }
 
-        Vertex(float position[3], float texCoord[2], float normal[3], float color[4])
+        Vertex(float position[3] = nullptr, float texCoord[2] = nullptr, float normal[3] = nullptr, float color[4] = nullptr)
         {
             if (!position) std::fill_n(position, 3, 0);
             if (!texCoord) std::fill_n(texCoord, 2, 0);

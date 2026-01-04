@@ -2,7 +2,7 @@
 
 #include "Vertex.h"
 
-namespace PetrichorRendererAPI
+namespace PetrichorRendererAPI::Data
 {
     class Triangle
     {

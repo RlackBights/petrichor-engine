@@ -1,7 +1,7 @@
 #pragma once
 
-namespace PetrichorRendererAPI {
-	enum LightType
+namespace PetrichorRendererAPI::Data {
+	enum class LightType
 	{
 		Point,
 		Directional,
@@ -14,18 +14,18 @@ namespace PetrichorRendererAPI {
 		float col[4];
 	};
 
-	typedef struct DirectionalLight
+	struct DirectionalLight
 	{
 		float dir[3];
 		float col[4];
-	} DirectionalLight;
+	};
 
-	typedef struct SpotLight
+	struct SpotLight
 	{
 		float pos[3];
 		float dir[3];
 		float col[4];
-	} SpotLight;
+	};
 
 	
 }

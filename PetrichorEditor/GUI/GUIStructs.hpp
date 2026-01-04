@@ -4,29 +4,24 @@
 #include <memory>
 #include <string>
 #include <variant>
+#include "PetrichorRendererAPI/Data/Rect.h"
 
 namespace PetrichorEditor::GUI {
     struct LayoutNode;
 
-    struct Rect {
-        int x = 0, y = 0, width = 0, height = 0;
-        Rect() = default;
-        Rect(int x, int y, int w, int h) : x(x), y(y), width(w), height(h) {}
-    };
-
     struct Panel {
         std::string name;
-        Rect rect;
+        PetrichorRendererAPI::Data::Rect rect;
         float scrollOffset;
         float currentHeight;
         PetrichorEngine::Math::Vector4 baseColor;
         bool visible;
 
-        Panel(std::string name, Rect rect, PetrichorEngine::Math::Vector4 baseColor = PetrichorEngine::Math::Vector4(-1.0f), bool visible = true)
+        Panel(std::string name, PetrichorRendererAPI::Data::Rect rect, PetrichorEngine::Math::Vector4 baseColor = PetrichorEngine::Math::Vector4(-1.0f), bool visible = true)
             : name(std::move(name)), rect(rect), baseColor(baseColor), visible(visible) {}
     };
 
-    enum SplitDirection { SPLIT_HORIZONTAL, SPLIT_VERTICAL };
+    enum class SplitDirection { SPLIT_HORIZONTAL, SPLIT_VERTICAL };
 
     typedef struct Split {
         SplitDirection direction;
@@ -53,17 +48,17 @@ namespace PetrichorEditor::GUI {
     struct TextDrawEntry {
         const std::string text;
         PetrichorEngine::Math::Vector2 position;
-        Rect clipRect;
+        PetrichorRendererAPI::Data::Rect clipRect;
         float scrollOffset;
-        TextDrawEntry(const std::string text, const PetrichorEngine::Math::Vector2 position, const Rect clipRect, float scrollOffset) : text(text), position(position), clipRect(clipRect), scrollOffset(scrollOffset) {}
+        TextDrawEntry(const std::string text, const PetrichorEngine::Math::Vector2 position, const PetrichorRendererAPI::Data::Rect clipRect, float scrollOffset) : text(text), position(position), clipRect(clipRect), scrollOffset(scrollOffset) {}
     };
 
     struct QuadDrawEntry {
-        const Rect quad;
-        Rect clipRect;
+        const PetrichorRendererAPI::Data::Rect quad;
+        PetrichorRendererAPI::Data::Rect clipRect;
         float z;
         const PetrichorEngine::Math::Vector4 color;
         float* scrollOffset;
-        QuadDrawEntry(const Rect quad, Rect clipRect, float z, const PetrichorEngine::Math::Vector4 color, float* scrollOffset) : quad(quad), clipRect(clipRect), z(z), color(color), scrollOffset(scrollOffset) {} 
+        QuadDrawEntry(const PetrichorRendererAPI::Data::Rect quad, PetrichorRendererAPI::Data::Rect clipRect, float z, const PetrichorEngine::Math::Vector4 color, float* scrollOffset) : quad(quad), clipRect(clipRect), z(z), color(color), scrollOffset(scrollOffset) {} 
     };
 }

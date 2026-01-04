@@ -2,7 +2,8 @@
 
 #include "GUI/GUIStructs.hpp"
 #include "Math/Math.h"
-#include "PetrichorRendererAPI/Vertex.h"
+#include "PetrichorRendererAPI/Data/Rect.h"
+#include "PetrichorRendererAPI/Data/Vertex.h"
 #include <map>
 #include <vector>
 
@@ -13,7 +14,7 @@ namespace PetrichorEditor::GUI {
     {
     private:
         static LayoutNode layout;
-        static std::vector<PetrichorRendererAPI::Vertex> batchedVertices;
+        static std::vector<PetrichorRendererAPI::Data::Vertex> batchedVertices;
         static std::vector<TextDrawEntry> batchedTextEntries;
         static std::vector<QuadDrawEntry> batchedQuadEntries;
 
@@ -25,11 +26,11 @@ namespace PetrichorEditor::GUI {
         static Text GUIText;
 
         static void SetColors();
-        static void DrawText(const std::string& text, const PetrichorEngine::Math::Vector2& position, const Rect* clipOverride = nullptr, const bool ignoreOffset = false);
-        static void CalculateRects(LayoutNode& node, Rect area);
+        static void DrawText(const std::string& text, const PetrichorEngine::Math::Vector2& position, const PetrichorRendererAPI::Data::Rect* clipOverride = nullptr, const bool ignoreOffset = false);
+        static void CalculateRects(LayoutNode& node, PetrichorRendererAPI::Data::Rect area);
         static std::shared_ptr<Panel> GetPanelFromLayout(const std::string& name, LayoutNode& node = GUI::layout);
         static void Scrollbar(const int width = 10);
-        static void GUISplitter(const Rect& splitter, const SplitDirection direction, float& ratio, const float splitSize);
+        static void GUISplitter(const PetrichorRendererAPI::Data::Rect& splitter, const SplitDirection direction, float& ratio, const float splitSize);
         static std::map<std::string, PetrichorEngine::Math::Vector4> colors;
     
     public:
@@ -42,7 +43,7 @@ namespace PetrichorEditor::GUI {
         static void Begin(const std::string& name, const bool scrollable = true, const bool hasHeader = true);
         static void End();
 
-        static bool isHovered(const Rect& rect);
+        static bool isHovered(const PetrichorRendererAPI::Data::Rect& rect);
         
         static void Divider();
         static void Label(const std::string& text, const bool centered = false);

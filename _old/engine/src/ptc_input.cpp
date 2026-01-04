@@ -1,8 +1,9 @@
 #include "SDL3/SDL_keyboard.h"
-#include "ptc_console.hpp"
-#include "ptc_renderer.hpp"
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_stdinc.h>
+#include "ptc_console.hpp"
+#include "ptc_renderer.hpp"
+
 #include <ptc_input.hpp>
 #include <string>
 
@@ -182,10 +183,6 @@ bool Input::getKey(unsigned int _keyCode, unsigned short* _keyMod)
 
 glm::vec2 Input::lastSceneMousePosition;
 bool Input::enabled;
-bool Input::heldKeys[SDL_SCANCODE_COUNT];
-bool Input::lastKeys[SDL_SCANCODE_COUNT];
-bool Input::heldMouseButtons[256];
-bool Input::lastMouseButtons[256];
 
 float Input::sensitivity;
 float Input::mouseXrel;

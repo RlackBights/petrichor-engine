@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace PetrichorRendererAPI
+namespace PetrichorRendererAPI::Data
 {	
     class IShader
     {

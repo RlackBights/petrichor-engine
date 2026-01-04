@@ -32,7 +32,7 @@ namespace PetrichorEngine::Math
     
     using Quaternion = glm::quat;
 
-    enum EasingFunction {
+    enum class EasingFunction {
         IN_SINE,
         OUT_SINE,
         IN_OUT_SINE,

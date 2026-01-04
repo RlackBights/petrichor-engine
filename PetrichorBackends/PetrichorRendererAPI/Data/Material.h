@@ -4,7 +4,7 @@
 #include "Texture.h"
 #include <memory>
 
-namespace PetrichorRendererAPI {
+namespace PetrichorRendererAPI::Data {
 
 	struct Material
 	{

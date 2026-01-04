@@ -1,12 +1,14 @@
 #pragma once
 
-#include "Mesh.h"
+#include "PetrichorRendererAPI/Data/Material.h"
+#include "PetrichorRendererAPI/Data/Mesh.h"
 #include "PetrichorRendererAPI/Text/Character.h"
 #include "PetrichorRendererAPI/Text/FontLoader.h"
 #include "PetrichorRendererAPI/Text/Font.h"
-#include "Quad.h"
+#include "PetrichorRendererAPI/Data/Quad.h"
 #include "PetrichorRendererAPI/Text/Font.h"
-#include "Triangle.h"
+#include "PetrichorRendererAPI/Data/Triangle.h"
+
 namespace PetrichorRendererAPI
 {
     class IRendererBackend
@@ -19,13 +21,15 @@ namespace PetrichorRendererAPI
     public:
         virtual ~IRendererBackend() = default;
 
+        virtual void InitializeWindow(const std::string& title, int width, int height) = 0;
+
         virtual void InitializeRenderer() = 0;
 
         virtual void InitializeFrame() = 0;
 
-        virtual void DrawTriangle(const Triangle& triangle) = 0;
-        virtual void DrawQuad(const Quad& quad) = 0;
-        virtual void DrawMesh(const Mesh& mesh) = 0;
+        virtual void DrawTriangle(const Data::Triangle& triangle, const Data::Material& material) = 0;
+        virtual void DrawQuad(const Data::Quad& quad, const Data::Material& material) = 0;
+        virtual void DrawMesh(const Data::Mesh& mesh, const Data::Material& material) = 0;
         
         virtual void WrapFrame() = 0;
     };

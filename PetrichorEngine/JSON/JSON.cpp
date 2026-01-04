@@ -1,5 +1,6 @@
 #include "JSON/JSON.h"
 #include "Core/Log.h"
+#include "JSON/JSONStructs.h"
 
 namespace PetrichorEngine::JSON {
     int JSON::ReadIntToken(std::string input)
@@ -43,23 +44,23 @@ namespace PetrichorEngine::JSON {
         auto [type, val] = tokens[index];
         
         switch (type) {
-            case JSON_LEFT_BRACE:
+            case JSONTokenType::JSON_LEFT_BRACE:
                 return ParseObject(tokens, ++index);
-            case LEFT_BRACKET:
+            case JSONTokenType::LEFT_BRACKET:
                 return ParseArray(tokens, ++index);
-            case JSON_STRING:
+            case JSONTokenType::JSON_STRING:
                 index++;
                 return std::any_cast<std::string>(val);
-            case JSON_INT:
+            case JSONTokenType::JSON_INT:
                 index++;
                 return std::any_cast<int>(val);
-            case JSON_FLOAT:
+            case JSONTokenType::JSON_FLOAT:
                 index++;
                 return std::any_cast<float>(val);
-            case JSON_BOOLEAN:
+            case JSONTokenType::JSON_BOOLEAN:
                 index++;
                 return std::any_cast<bool>(val);
-            case JSON_VOID:
+            case JSONTokenType::JSON_VOID:
                 index++;
                 return JSONValue{};
             default:
@@ -77,28 +78,28 @@ namespace PetrichorEngine::JSON {
         while (index < tokens.size()) {
             auto [keyType, keyVal] = tokens[index];
 
-            if (keyType == JSON_RIGHT_BRACE) {
+            if (keyType == JSONTokenType::JSON_RIGHT_BRACE) {
                 ++index;
                 break;
             }
 
-            if (keyType != JSON_STRING) {
+            if (keyType != JSONTokenType::JSON_STRING) {
                 Core::Log::Error("Expected string key in object");
             }
 
             std::string key = std::any_cast<std::string>(keyVal);
             index++;
 
-            if (tokens[index].first != JSON_COLON)
+            if (tokens[index].first != JSONTokenType::JSON_COLON)
                 Core::Log::Error("Expected ':' after key in object");
             index++;
 
             JSONValue value = ParseValue(tokens, index);
             obj[key] = value;
 
-            if (tokens[index].first == JSON_COMMA) {
+            if (tokens[index].first == JSONTokenType::JSON_COMMA) {
                 ++index;
-            } else if (tokens[index].first == JSON_RIGHT_BRACE) {
+            } else if (tokens[index].first == JSONTokenType::JSON_RIGHT_BRACE) {
                 ++index;
                 break;
             } else {
@@ -115,7 +116,7 @@ namespace PetrichorEngine::JSON {
         auto arr = JSONArray();
 
         while (index < tokens.size()) {
-            if (tokens[index].first == JSON_RIGHT_BRACKET) {
+            if (tokens[index].first == JSONTokenType::JSON_RIGHT_BRACKET) {
                 ++index;
                 break;
             }
@@ -123,9 +124,9 @@ namespace PetrichorEngine::JSON {
             JSONValue val = ParseValue(tokens, index);
             arr.push_back(val);
 
-            if (tokens[index].first == JSON_COMMA) {
+            if (tokens[index].first == JSONTokenType::JSON_COMMA) {
                 ++index;
-            } else if (tokens[index].first == JSON_RIGHT_BRACKET) {
+            } else if (tokens[index].first == JSONTokenType::JSON_RIGHT_BRACKET) {
                 ++index;
                 break;
             } else {
@@ -159,47 +160,47 @@ namespace PetrichorEngine::JSON {
             switch (c)
             {
                 case '{':
-                    tokens.push_back(JSONToken(JSON_LEFT_BRACE, NULL));
+                    tokens.push_back(JSONToken(JSONTokenType::JSON_LEFT_BRACE, NULL));
                     break;
                 case '}':
-                    tokens.push_back(JSONToken(JSON_RIGHT_BRACE, NULL));
+                    tokens.push_back(JSONToken(JSONTokenType::JSON_RIGHT_BRACE, NULL));
                     break;
                 case '[':
-                    tokens.push_back(JSONToken(LEFT_BRACKET, NULL));
+                    tokens.push_back(JSONToken(JSONTokenType::LEFT_BRACKET, NULL));
                     break;
                 case ']':
-                    tokens.push_back(JSONToken(JSON_RIGHT_BRACKET, NULL));
+                    tokens.push_back(JSONToken(JSONTokenType::JSON_RIGHT_BRACKET, NULL));
                     break;
                 case ',':
-                    tokens.push_back(JSONToken(JSON_COMMA, NULL));
+                    tokens.push_back(JSONToken(JSONTokenType::JSON_COMMA, NULL));
                     break;
                 case ':':
-                    tokens.push_back(JSONToken(JSON_COLON, NULL));
+                    tokens.push_back(JSONToken(JSONTokenType::JSON_COLON, NULL));
                     break;
                 case '\0':
-                    tokens.push_back(JSONToken(JSON_END, NULL));
+                    tokens.push_back(JSONToken(JSONTokenType::JSON_END, NULL));
                     break;
                 case '\"':
                     token = JSON::ReadStringToken(input.substr(i + 1));
-                    tokens.push_back(JSONToken(JSON_STRING, std::any_cast<std::string>(token)));
+                    tokens.push_back(JSONToken(JSONTokenType::JSON_STRING, std::any_cast<std::string>(token)));
                     i += std::any_cast<std::string>(token).size() + 1;
                     break;
                 default:
                     if ((c >= '0' && c <= '9') || c == '-') {
                         if (input.substr(i, input.substr(i).find(',')).find('.') != std::variant_npos) {
                             token = JSON::ReadFloatToken(input.substr(i));
-                            tokens.push_back(JSONToken(JSON_FLOAT, std::any_cast<float>(token)));
+                            tokens.push_back(JSONToken(JSONTokenType::JSON_FLOAT, std::any_cast<float>(token)));
                             i += input.substr(i, (input.substr(i).find(',') < input.substr(i).find('}')) ? input.substr(i).find(',') : input.substr(i).find('}')).size() - 1;
                         } else {
                             token = JSON::ReadIntToken(input.substr(i));
-                            tokens.push_back(JSONToken(JSON_INT, std::any_cast<int>(token)));
+                            tokens.push_back(JSONToken(JSONTokenType::JSON_INT, std::any_cast<int>(token)));
                             i += std::to_string(std::any_cast<int>(token)).size() - 1;
                         }
                     } else if (c == 't' || c == 'f') {
-                        tokens.push_back(JSONToken(JSON_BOOLEAN, std::any_cast<bool>(c == 't')));
+                        tokens.push_back(JSONToken(JSONTokenType::JSON_BOOLEAN, std::any_cast<bool>(c == 't')));
                         i += (c == 't') ? 3 : 4;
                     } else if (c == 'n') {
-                        tokens.push_back(JSONToken(JSON_VOID, NULL));
+                        tokens.push_back(JSONToken(JSONTokenType::JSON_VOID, NULL));
                         i += 3;
                     }
                     break;

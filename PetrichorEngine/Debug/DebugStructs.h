@@ -1,7 +1,7 @@
 #pragma once
 
 namespace PetrichorEngine::Debug {
-    enum LogType
+    enum class LogType
     {
         LOG_INFO,
         LOG_WARNING,

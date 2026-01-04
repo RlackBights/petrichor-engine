@@ -30,7 +30,7 @@ namespace PetrichorEngine::JSON {
         }
     };
 
-    enum JSONTokenType
+    enum class JSONTokenType
     {
         JSON_LEFT_BRACE,
         JSON_RIGHT_BRACE,

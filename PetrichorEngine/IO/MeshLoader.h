@@ -6,7 +6,7 @@
 
 namespace PetrichorEngine::IO
 {
-    enum ModelType {
+    enum class ModelType {
         OBJ,
         NONE
     };

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ECS/Component.h"
-#include "PetrichorRendererAPI/Mesh.h"
+#include "PetrichorRendererAPI/Data/Mesh.h"
 #include <memory>
 
 namespace PetrichorEngine::Rendering {
@@ -9,7 +9,7 @@ namespace PetrichorEngine::Rendering {
     {
     public:
         std::shared_ptr<
-        PetrichorRendererAPI::Mesh> mesh;
+        PetrichorRendererAPI::Data::Mesh> mesh;
 
         MeshFilter();
     };

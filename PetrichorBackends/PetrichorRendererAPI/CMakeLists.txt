@@ -14,5 +14,5 @@ add_library(PetrichorRendererAPI STATIC ${RENDERERAPI_SOURCES})
 # Include directories for the library
 target_include_directories(PetrichorRendererAPI
     PUBLIC
-        ${CMAKE_SOURCE_DIR}/PetrichorGraphicsBackends
+        ${CMAKE_SOURCE_DIR}/PetrichorBackends
 )

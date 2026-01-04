@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace PetrichorRendererAPI {
+namespace PetrichorRendererAPI::Data {
 	struct Mesh
 	{
 	public:

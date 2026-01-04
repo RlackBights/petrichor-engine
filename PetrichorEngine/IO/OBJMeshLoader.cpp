@@ -3,8 +3,8 @@
 #include "IO/FileProcessor.h"
 #include "IO/MeshHierarchy.h"
 #include "Math/Math.h"
-#include "PetrichorRendererAPI/Mesh.h"
-#include "PetrichorRendererAPI/Vertex.h"
+#include "PetrichorRendererAPI/Data/Mesh.h"
+#include "PetrichorRendererAPI/Data/Vertex.h"
 #include <filesystem>
 #include <memory>
 #include <variant>
@@ -29,7 +29,7 @@ namespace PetrichorEngine::IO {
         std::string fileContent = FileProcessor::Read(path);
 
         std::string line = "";
-        std::map<std::string, PetrichorRendererAPI::Mesh> meshes;
+        std::map<std::string, PetrichorRendererAPI::Data::Mesh> meshes;
 
         std::vector<Math::Vector3> vertices;
         std::vector<Math::Vector3> normals;
@@ -74,7 +74,7 @@ namespace PetrichorEngine::IO {
                             float vertTex[2] = {texCoords[ft.vt - 1].x, texCoords[ft.vt - 1].y};
                             float vertNorm[3] = {normals[ft.vn - 1].x, normals[ft.vn - 1].y, normals[ft.vn - 1].z};
 
-                            PetrichorRendererAPI::Vertex vert = PetrichorRendererAPI::Vertex{vertPos, vertTex, vertNorm, nullptr};
+                            PetrichorRendererAPI::Data::Vertex vert = PetrichorRendererAPI::Data::Vertex{vertPos, vertTex, vertNorm, nullptr};
                             meshes.rbegin()->second.vertices.push_back(vert);
                             indices.push_back(meshes.rbegin()->second.vertices.size() - 1);
                         }
@@ -94,7 +94,7 @@ namespace PetrichorEngine::IO {
                         }
                         break;
                     case 'o':   // object
-                        meshes.insert({line.substr(2), PetrichorRendererAPI::Mesh{line.substr(2), {}, {}, 0}});
+                        meshes.insert({line.substr(2), PetrichorRendererAPI::Data::Mesh{line.substr(2), {}, {}, 0}});
                         break;
                     case 'l':   // polylines? really?
                         break;
@@ -116,14 +116,14 @@ namespace PetrichorEngine::IO {
             }
         }
 
-        MeshHierarchy hierarchy{ nullptr, std::make_unique<PetrichorRendererAPI::Mesh>(), {}};
+        MeshHierarchy hierarchy{ nullptr, std::make_unique<PetrichorRendererAPI::Data::Mesh>(), {}};
         hierarchy.mesh->name = std::filesystem::path(path).stem();
 
         for (auto& [name, mesh] : meshes) {
             hierarchy.children.push_back(
                 {
                     &hierarchy,
-                    std::make_unique<PetrichorRendererAPI::Mesh>(mesh),
+                    std::make_unique<PetrichorRendererAPI::Data::Mesh>(mesh),
                     {}
                 }
             );

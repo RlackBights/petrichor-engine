@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ECS/Component.h"
-#include "PetrichorRendererAPI/Material.h"
+#include "PetrichorRendererAPI/Data/Material.h"
 #include "Rendering/MeshFilter.h"
 #include <ostream>
 
@@ -11,7 +11,7 @@ namespace PetrichorEngine::Rendering {
     private:
         MeshFilter* meshFilter;
     public:
-        std::shared_ptr<PetrichorRendererAPI::Material> material;
+        std::shared_ptr<PetrichorRendererAPI::Data::Material> material;
 
         MeshRenderer();
 

@@ -11,4 +11,4 @@ target_include_directories(PetrichorEditor
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(PetrichorEditor PRIVATE PetrichorEngineCore)
+target_link_libraries(PetrichorEditor PRIVATE PetrichorEngineCore SDL3_OpenGL_Backend)
