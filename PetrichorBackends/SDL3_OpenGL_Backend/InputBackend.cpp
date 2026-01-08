@@ -25,6 +25,21 @@ namespace RendererBackends::SDL3_OpenGL {
         return !heldKeys[c] && lastKeys[c];
     }
 
+    bool InputBackend::IsMouseButtonDown(uint32_t keyCode)
+    {
+        return heldMouseButtons[keyCode];
+    }
+
+    bool InputBackend::IsMouseButtonPressed(uint32_t keyCode)
+    {
+        return heldMouseButtons[keyCode] && !lastMouseButtons[keyCode];
+    }
+
+    bool InputBackend::IsMouseButtonReleased(uint32_t keyCode)
+    {
+        return !heldMouseButtons[keyCode] && !lastMouseButtons[keyCode];
+    }
+
     float* InputBackend::GetMousePosition() const
     {
         return new float[]{ mouseX, mouseY };
@@ -39,6 +54,14 @@ namespace RendererBackends::SDL3_OpenGL {
     {
         return mouseScroll;
     }
+
+    const char* InputBackend::GetLastCharacter()
+    {
+        return lastCharacter;
+    }
+
+    uint32_t InputBackend::GetLastKey() { return lastKey; }
+    uint32_t InputBackend::GetLastKeyDown() { return lastKeyDown; }
 
     void InputBackend::InitializeInput()
     {
@@ -163,7 +186,7 @@ namespace RendererBackends::SDL3_OpenGL {
 
             if (e.type == SDL_EVENT_WINDOW_RESIZED)
             {
-                std::cout << "[ERROR] Window resizing not implemented yet!";
+                std::cout << "[ERROR] Window resizing not implemented yet!\r\n";
                 //SDL_GetWindowSizeInPixels(SDL_GetWindowFromEvent(&e), screenWidth, screenHeight);
             }
 

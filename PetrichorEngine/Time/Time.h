@@ -6,7 +6,7 @@
 #include <functional>
 #include <vector>
 
-namespace PetrichorEngine::Time {
+namespace PetrichorEngine {
 	using Clock = std::chrono::steady_clock;
 	using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
 

@@ -11,6 +11,7 @@ namespace PetrichorRendererAPI::Text {
     public:
         std::string name;
         int fontSize;
+        int atlasSize;
 
         std::map<char32_t, Character> characters;
         std::vector<AtlasPage> fontAtlases;

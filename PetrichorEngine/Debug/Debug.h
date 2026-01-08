@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace PetrichorEngine::Debug {
+namespace PetrichorEngine {
     class Debug
     {
     private:

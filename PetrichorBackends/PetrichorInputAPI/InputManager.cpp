@@ -39,6 +39,19 @@ namespace PetrichorInputAPI {
         return Get()->IsKeyReleased(keyCode, keyModifier);
     }
 
+    bool InputManager::IsMouseButtonDown(uint32_t buttonCode)
+    {
+        return Get()->IsMouseButtonDown(buttonCode);
+    }
+    bool InputManager::IsMouseButtonPressed(uint32_t buttonCode)
+    {
+        return Get()->IsMouseButtonPressed(buttonCode);
+    }
+    bool InputManager::IsMouseButtonReleased(uint32_t buttonCode)
+    {
+        return Get()->IsMouseButtonReleased(buttonCode);
+    }
+
     float* InputManager::GetMousePosition()
     {
         return Get()->GetMousePosition();
@@ -70,6 +83,10 @@ namespace PetrichorInputAPI {
         if (!enabled) return;
         Get()->WrapInput();
     }
+
+    const char* InputManager::GetLastCharacter() { return Get()->GetLastCharacter(); }
+    uint32_t InputManager::GetLastKey() { return Get()->GetLastKey(); }
+    uint32_t InputManager::GetLastKeyDown() { return Get()->GetLastKeyDown(); }
 
     std::unique_ptr<IInputBackend> InputManager::_backend;
     bool InputManager::enabled = true;

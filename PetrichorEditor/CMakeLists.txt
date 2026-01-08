@@ -12,3 +12,10 @@ target_include_directories(PetrichorEditor
 )
 
 target_link_libraries(PetrichorEditor PRIVATE PetrichorEngineCore SDL3_OpenGL_Backend)
+
+add_custom_target(CopyResources ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/PetrichorEditor/Resources"
+            "$<TARGET_FILE_DIR:PetrichorEditor>/Resources"
+    COMMENT "Copying resources to build folder"
+)

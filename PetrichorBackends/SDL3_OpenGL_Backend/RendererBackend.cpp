@@ -1,36 +1,55 @@
+#include <glad/glad.h>
 #include "SDL3_OpenGL_Backend/RendererBackend.h"
+#include "PetrichorRendererAPI/Data/Material.h"
+#include "PetrichorRendererAPI/Data/Rect.h"
+#include "PetrichorRendererAPI/Data/Texture.h"
+#include "PetrichorRendererAPI/Text/AtlasPage.h"
 #include "PetrichorRendererAPI/Text/Character.h"
 #include "PetrichorRendererAPI/Text/Font.h"
 #include "PetrichorRendererAPI/Data/Triangle.h"
 #include "freetype/ftimage.h"
+#include "freetype/fttypes.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_init.h>
 #include <SDL3/SDL_video.h>
 #include <SDL3/SDL_opengl.h>
 #include <algorithm>
+#include <cstdint>
 #include <filesystem>
 #include <ft2build.h>
 #include <iostream>
+#include <memory>
+#include <vector>
 #include FT_FREETYPE_H
 
 namespace RendererBackends::SDL3_OpenGL {
-    Text::Font RendererBackend::LoadFont(const std::string& path, int fontSize, int atlasSize)
+    Text::Font* RendererBackend::LoadFont(const std::string& path, int fontSize, int atlasSize)
     {
-        Text::Font font;
+        auto font = std::make_shared<Text::Font>();
 
-        font.name = std::filesystem::path(path).stem().string();
-        font.fontAtlases.push_back({});
+        font->name = std::filesystem::path(path).stem().string();
+        font->fontSize = fontSize;
+        font->atlasSize = atlasSize;
+        font->fontAtlases = std::vector<Text::AtlasPage>();
+        font->fontAtlases.push_back({std::make_unique<Texture>(), 0, 0, 0});
+        font->fontAtlases[0].atlasTexture->width = atlasSize;
+        font->fontAtlases[0].atlasTexture->height = atlasSize;
+        font->fontAtlases[0].atlasTexture->pixels.resize(atlasSize * atlasSize);
 
-        FT_Library  ft;
+        FT_Library      ft;
         FT_Face     face;
 
-        FT_Init_FreeType(&ft);
-        FT_New_Face(ft, path.c_str(), 0, &face);
-        FT_Set_Char_Size(face, 0, fontSize << 6, 96, 96);
-
-        fontCache.insert({&font, face});
-        return font;
+        FT_Error e;
+        e = FT_Init_FreeType(&ft);
+        if (e != FT_Err_Ok) { std::cout << FT_Error_String(e) << "\r\n"; }
+        e = FT_New_Face(ft, path.c_str(), 0, &face);
+        if (e != FT_Err_Ok) { std::cout << "FT_New_Face failed with error code: " << e << "\r\n"; }
+        e = FT_Set_Char_Size(face, 0, fontSize << 6, 96, 96);
+        if (e != FT_Err_Ok) { std::cout << FT_Error_String(e) << "\r\n"; }
+        
+        fontCache.insert({font, std::make_unique<FT_Face>(face)});
+        return font.get();
     }
 
     Text::Character RendererBackend::LoadGlyph(char32_t character, Text::Font* font)
@@ -39,7 +58,14 @@ namespace RendererBackends::SDL3_OpenGL {
         if (characterIterator != font->characters.end())
             return characterIterator->second;
         
-        FT_Face face = fontCache[font];
+        FT_Face face;
+        for (auto& [_font, _face] : fontCache) {
+            if (font->name == _font->name && font->fontSize == _font->fontSize)
+            {
+                face = *_face.get();
+                break;
+            }
+        }
         FT_Load_Char(face, character, FT_LOAD_RENDER);
 
         return ProcessGlyph(character, font, face->glyph);
@@ -49,6 +75,13 @@ namespace RendererBackends::SDL3_OpenGL {
     {
         FT_Bitmap& bmp = glyph->bitmap;
         Text::AtlasPage& page = font->fontAtlases.back();
+        if (page.atlasTexture == nullptr)
+        {
+            page.atlasTexture = std::make_unique<Texture>();
+            page.atlasTexture->width = font->atlasSize;
+            page.atlasTexture->height = font->atlasSize;
+            page.atlasTexture->pixels.resize(font->atlasSize * font->atlasSize);
+        }
 
         if (page.penX + bmp.width >= page.atlasTexture->width) {
             page.penX = 0;
@@ -62,9 +95,12 @@ namespace RendererBackends::SDL3_OpenGL {
         }
 
         for (int y = 0; y < bmp.rows; ++y)
-            memcpy(&page.atlasTexture->pixels[(page.penY + y) * page.atlasTexture->width + page.penX],
-                &bmp.buffer[y * bmp.pitch],
-                bmp.width);
+        {
+            uint8_t* dst = &page.atlasTexture->pixels[(page.penY + y) * page.atlasTexture->width + page.penX];
+            uint8_t* src = &bmp.buffer[y * bmp.pitch];
+
+            memcpy(dst, src, bmp.width);
+        }
 
         Text::Character c;
         c.Size[0]    = bmp.width;
@@ -88,6 +124,7 @@ namespace RendererBackends::SDL3_OpenGL {
     }
 
     void RendererBackend::SetWindowFlags(SDL_WindowFlags flags) { this->flags = flags; }
+    void RendererBackend::SetCursorIcon(uint32_t cursorID) { SDL_SetCursor(SDL_CreateSystemCursor(SDL_SystemCursor(cursorID))); }
 
     void RendererBackend::InitializeWindow(const std::string& title, int width, int height)
     {
@@ -122,12 +159,25 @@ namespace RendererBackends::SDL3_OpenGL {
             return;
         }
 
+        screen = Rect(0, 0, width, height);
+
         SDL_GL_MakeCurrent(window, glContext);
         SDL_GL_SetSwapInterval(1); // VSync
         SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
         SDL_StartTextInput(window);
 
+        if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
+        {
+            std::cout << "[ERROR] Failed to initialize GLAD!\n";
+            return;
+        }
+
         SDL_ShowWindow(window);
+    }
+
+    Rect RendererBackend::GetScreenRect()
+    {
+        return screen;
     }
 
     void RendererBackend::InitializeRenderer()
@@ -137,7 +187,18 @@ namespace RendererBackends::SDL3_OpenGL {
 
     void RendererBackend::InitializeFrame()
     {
-        std::cout << "[ERROR] Frame initialization unimplemented!\r\n";
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    void RendererBackend::DrawText(const std::string text, Text::Font* font, const Data::Material& material)
+    {
+        std::cout << "[ERROR] Text drawing unimplemented!\r\n";
+    }
+
+    void RendererBackend::DrawRect(const Rect& rect, const Material& material)
+    {
+        std::cout << "[ERROR] Rect drawing unimplemented!\r\n";
     }
 
     void RendererBackend::DrawTriangle(const Triangle& triangle, const Material& material)
@@ -157,6 +218,6 @@ namespace RendererBackends::SDL3_OpenGL {
 
     void RendererBackend::WrapFrame()
     {
-        std::cout << "[ERROR] Frame wrapping unimplemented!\r\n";
+        SDL_GL_SwapWindow(window);
     }
 }

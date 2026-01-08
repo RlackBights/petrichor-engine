@@ -6,7 +6,7 @@
 #include <variant>
 #include "PetrichorRendererAPI/Data/Rect.h"
 
-namespace PetrichorEditor::GUI {
+namespace PetrichorEditor {
     struct LayoutNode;
 
     struct Panel {
@@ -53,12 +53,12 @@ namespace PetrichorEditor::GUI {
         TextDrawEntry(const std::string text, const PetrichorEngine::Math::Vector2 position, const PetrichorRendererAPI::Data::Rect clipRect, float scrollOffset) : text(text), position(position), clipRect(clipRect), scrollOffset(scrollOffset) {}
     };
 
-    struct QuadDrawEntry {
-        const PetrichorRendererAPI::Data::Rect quad;
+    struct RectDrawEntry {
+        const PetrichorRendererAPI::Data::Rect rect;
+        int z;
         PetrichorRendererAPI::Data::Rect clipRect;
-        float z;
         const PetrichorEngine::Math::Vector4 color;
         float* scrollOffset;
-        QuadDrawEntry(const PetrichorRendererAPI::Data::Rect quad, PetrichorRendererAPI::Data::Rect clipRect, float z, const PetrichorEngine::Math::Vector4 color, float* scrollOffset) : quad(quad), clipRect(clipRect), z(z), color(color), scrollOffset(scrollOffset) {} 
+        RectDrawEntry(const PetrichorRendererAPI::Data::Rect rect, int z, PetrichorRendererAPI::Data::Rect clipRect, const PetrichorEngine::Math::Vector4 color, float* scrollOffset) : rect(rect), clipRect(clipRect), z(z), color(color), scrollOffset(scrollOffset) {} 
     };
 }

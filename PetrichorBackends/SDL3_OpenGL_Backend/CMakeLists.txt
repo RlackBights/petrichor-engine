@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.16)
-project(SDL3_OpenGL_Backend LANGUAGES CXX)
+project(SDL3_OpenGL_Backend LANGUAGES C CXX)
 
 # Renderer API sources
 set(BACKEND_SOURCES
     RendererBackend.cpp
     InputBackend.cpp
+    Shader.cpp
+    ShaderProgram.cpp
 )
 
 include(FetchContent)
@@ -26,12 +28,14 @@ FetchContent_MakeAvailable(SDL3)
 # Create static library
 add_library(SDL3_OpenGL_Backend STATIC 
   ${BACKEND_SOURCES}
+  ${CMAKE_SOURCE_DIR}/vendor/glad/src/glad.c
 )
 
 target_link_libraries(SDL3_OpenGL_Backend PUBLIC freetype SDL3 PetrichorInputAPI PetrichorRendererAPI)
 
 # Include directories for the library
 target_include_directories(SDL3_OpenGL_Backend
-    PUBLIC
-        ${CMAKE_SOURCE_DIR}/PetrichorBackends
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/PetrichorBackends
+    ${CMAKE_SOURCE_DIR}/vendor/glad/include
 )

@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 
-namespace PetrichorEngine::Time {
+namespace PetrichorEngine {
 	void Time::SetTimeFunction(std::function<uint64_t ()> fn)
 	{
 		_getTime = fn;

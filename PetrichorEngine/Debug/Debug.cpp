@@ -4,7 +4,7 @@
 #include <utility>
 #include <vector>
 
-namespace PetrichorEngine::Debug {
+namespace PetrichorEngine {
     void Debug::SwitchLogGrouping()
     {
         Debug::groupLogs = !Debug::groupLogs;

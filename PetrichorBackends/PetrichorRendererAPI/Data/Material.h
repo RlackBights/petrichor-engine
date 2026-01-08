@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IShader.h"
+#include "IShaderProgram.h"
 #include "Texture.h"
 #include <memory>
 
@@ -15,7 +15,7 @@ namespace PetrichorRendererAPI::Data {
 		std::shared_ptr<Texture> specular;
 		std::shared_ptr<Texture> normal;
 
-		std::shared_ptr<IShader> shader;
+		std::shared_ptr<IShaderProgram> shader;
 		
 		float specularStrength;
 		int specularExponent;

@@ -6,6 +6,7 @@ set(RENDERERAPI_SOURCES
     NullRendererBackend.cpp
     Renderer.cpp
     Text/FontLoader.cpp
+    Text/Font.cpp
 )
 
 # Create static library

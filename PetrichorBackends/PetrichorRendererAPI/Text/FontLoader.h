@@ -8,6 +8,6 @@ namespace PetrichorRendererAPI::Text
     class FontLoader
     {
     public:
-        static Font LoadFont(const std::string& path, int fontSize, int atlasSize);
+        static Font* LoadFont(const std::string& path, int fontSize, int atlasSize = 1024);
     };
 }
