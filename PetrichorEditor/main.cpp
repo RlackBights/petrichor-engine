@@ -84,13 +84,13 @@ int main()
 
     while (1)
     {
-        RenderEditorGUI();
-
         PetrichorRendererAPI::Renderer::InitializeFrame();
         PetrichorInputAPI::InputManager::UpdateInput();
+        
+        RenderEditorGUI();
 
         PetrichorInputAPI::InputManager::WrapInput();
-        //PetrichorEditor::GUI::WrapGUI();
+        PetrichorEditor::GUI::WrapGUI();
         PetrichorRendererAPI::Renderer::WrapFrame();
     }
 

@@ -4,10 +4,12 @@
 #include <SDL3/SDL_mouse.h>
 #include <cstdlib>
 #include <iostream>
+#include <vector>
 #include "GUI/GUI.h"
 #include "Math/Math.h"
 #include "PetrichorInputAPI/InputManager.h"
 #include "PetrichorRendererAPI/Data/Material.h"
+#include "PetrichorRendererAPI/Data/Rect.h"
 #include "PetrichorRendererAPI/Renderer.h"
 #include "PetrichorRendererAPI/Text/Character.h"
 #include "PetrichorRendererAPI/Text/Font.h"
@@ -214,12 +216,13 @@ namespace PetrichorEditor {
         GLint polygonMode;
         glGetIntegerv(GL_POLYGON_MODE, &polygonMode);GL_CHECK_ERROR();
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);GL_CHECK_ERROR();
+        Rect screen = PetrichorRendererAPI::Renderer::GetScreenRect();
         for (RectDrawEntry entry : batchedRectEntries) {
             float offset = (entry.scrollOffset) ? -*entry.scrollOffset : 0;
             std::vector<float> batchedVertices = {};
 
             batchedVertices.push_back(entry.rect.x);
-            batchedVertices.push_back(PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.rect.y - entry.rect.height - offset);
+            batchedVertices.push_back(screen.height - entry.rect.y - entry.rect.height - offset);
             batchedVertices.push_back(entry.z);
             batchedVertices.push_back(entry.color.r);
             batchedVertices.push_back(entry.color.g);
@@ -227,7 +230,7 @@ namespace PetrichorEditor {
             batchedVertices.push_back(entry.color.a);
             
             batchedVertices.push_back(entry.rect.x + entry.rect.width);
-            batchedVertices.push_back(PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.rect.y - offset);
+            batchedVertices.push_back(screen.height - entry.rect.y - offset);
             batchedVertices.push_back(entry.z);
             batchedVertices.push_back(entry.color.r);
             batchedVertices.push_back(entry.color.g);
@@ -235,7 +238,7 @@ namespace PetrichorEditor {
             batchedVertices.push_back(entry.color.a);
             
             batchedVertices.push_back(entry.rect.x);
-            batchedVertices.push_back(PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.rect.y - offset);
+            batchedVertices.push_back(screen.height - entry.rect.y - offset);
             batchedVertices.push_back(entry.z);
             batchedVertices.push_back(entry.color.r);
             batchedVertices.push_back(entry.color.g);
@@ -243,7 +246,7 @@ namespace PetrichorEditor {
             batchedVertices.push_back(entry.color.a);
 
             batchedVertices.push_back(entry.rect.x);
-            batchedVertices.push_back(PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.rect.y - entry.rect.height - offset);
+            batchedVertices.push_back(screen.height - entry.rect.y - entry.rect.height - offset);
             batchedVertices.push_back(entry.z);
             batchedVertices.push_back(entry.color.r);
             batchedVertices.push_back(entry.color.g);
@@ -251,7 +254,7 @@ namespace PetrichorEditor {
             batchedVertices.push_back(entry.color.a);
             
             batchedVertices.push_back(entry.rect.x + entry.rect.width);
-            batchedVertices.push_back(PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.rect.y - entry.rect.height - offset);
+            batchedVertices.push_back(screen.height - entry.rect.y - entry.rect.height - offset);
             batchedVertices.push_back(entry.z);
             batchedVertices.push_back(entry.color.r);
             batchedVertices.push_back(entry.color.g);
@@ -259,7 +262,7 @@ namespace PetrichorEditor {
             batchedVertices.push_back(entry.color.a);
             
             batchedVertices.push_back(entry.rect.x + entry.rect.width);
-            batchedVertices.push_back(PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.rect.y - offset);
+            batchedVertices.push_back(screen.height - entry.rect.y - offset);
             batchedVertices.push_back(entry.z);
             batchedVertices.push_back(entry.color.r);
             batchedVertices.push_back(entry.color.g);
@@ -268,17 +271,17 @@ namespace PetrichorEditor {
             
             shaderProgram.Use();
             
-            shaderProgram.SetFloat2("screenSize", std::array<float, 2>{ (float)PetrichorRendererAPI::Renderer::GetScreenRect().width, (float)PetrichorRendererAPI::Renderer::GetScreenRect().height }.data());GL_CHECK_ERROR();
-            // shaderProgram.SetFloat2("border", new float[]{ 0, 0 });GL_CHECK_ERROR();
+            float size[] = {(float)screen.width, (float)screen.height};
+            shaderProgram.SetFloat2("screenSize", size); GL_CHECK_ERROR();
             // shaderProgram.SetFloat2("quadPos", new float[]{ (float)entry.rect.x, (float)PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.rect.y - entry.rect.height });GL_CHECK_ERROR();
             // shaderProgram.SetFloat2("quadSize", new float[]{ (float)entry.rect.width, (float)entry.rect.height });GL_CHECK_ERROR();
 
-            glDisable(GL_DEPTH_TEST);GL_CHECK_ERROR();
+            // glEnable(GL_DEPTH_TEST);GL_CHECK_ERROR();
             glBindVertexArray(VAO);GL_CHECK_ERROR();
             glBindBuffer(GL_ARRAY_BUFFER, VBO);GL_CHECK_ERROR();
-            glViewport(PetrichorRendererAPI::Renderer::GetScreenRect().x, PetrichorRendererAPI::Renderer::GetScreenRect().y, PetrichorRendererAPI::Renderer::GetScreenRect().width, PetrichorRendererAPI::Renderer::GetScreenRect().height);GL_CHECK_ERROR();
-            glScissor(entry.clipRect.x, PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.clipRect.y - entry.clipRect.height, entry.clipRect.width, entry.clipRect.height);GL_CHECK_ERROR();
-            glEnable(GL_SCISSOR_TEST);GL_CHECK_ERROR();
+            // glViewport(screen.x, screen.y, screen.width, screen.height);GL_CHECK_ERROR();
+            // glScissor(entry.clipRect.x, screen.height - entry.clipRect.y - entry.clipRect.height, entry.clipRect.width, entry.clipRect.height);GL_CHECK_ERROR();
+            // glEnable(GL_SCISSOR_TEST);GL_CHECK_ERROR();
 
             glBufferData(GL_ARRAY_BUFFER, batchedVertices.size() * sizeof(float), batchedVertices.data(), GL_DYNAMIC_DRAW);GL_CHECK_ERROR();
             glDrawArrays(GL_TRIANGLES, 0, batchedVertices.size() / 7);GL_CHECK_ERROR();
@@ -292,12 +295,12 @@ namespace PetrichorEditor {
 
         for (TextDrawEntry entry : batchedTextEntries) {
             //GUIText.SetText(entry.text, false);
-            entry.position.y += entry.scrollOffset;
-            PetrichorRendererAPI::Renderer::DrawText(entry.text, GUIFont, Material());
+            // entry.position.y += entry.scrollOffset;
+            // PetrichorRendererAPI::Renderer::DrawText(entry.text, GUIFont, Material());
             //GUIText.ForceDrawText(entry.position, entry.clipRect);
         }
         batchedTextEntries.clear();
-        glEnable(GL_DEPTH_TEST);
+        
         glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
     }
 
