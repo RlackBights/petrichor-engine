@@ -180,6 +180,11 @@ namespace RendererBackends::SDL3_OpenGL {
         return screen;
     }
 
+    void RendererBackend::ResizeWindow(int width, int height)
+    {
+        screen = Rect(screen.x, screen.y, width, height);
+    }
+
     void RendererBackend::InitializeRenderer()
     {
         std::cout << "[ERROR] Renderer initialization unimplemented!\r\n";

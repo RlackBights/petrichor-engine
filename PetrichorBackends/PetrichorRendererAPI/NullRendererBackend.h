@@ -25,6 +25,7 @@ namespace PetrichorRendererAPI
 
         void InitializeWindow(const std::string& title = "", int width = -1, int height = -1) override;
         Data::Rect GetScreenRect() override;
+        void ResizeWindow(int width, int height) override;
         void InitializeRenderer() override;
 
         void InitializeFrame() override;

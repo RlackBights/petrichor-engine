@@ -19,6 +19,7 @@ namespace PetrichorRendererAPI
         static IRendererBackend* Get();
     public:
         static Data::Rect GetScreenRect();
+        static void ResizeWindow(int width, int height);
         static void AssignBackend(std::unique_ptr<IRendererBackend> _backend);
         static void InitializeRenderer();
         static void InitializeWindow(const std::string& title = "PetrichorGame Window", int width = 800, int height = 600);

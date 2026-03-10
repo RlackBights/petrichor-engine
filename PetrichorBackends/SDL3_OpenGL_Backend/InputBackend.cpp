@@ -1,6 +1,7 @@
 #include "SDL3_OpenGL_Backend/InputBackend.h"
 #include "PetrichorInputAPI/InputManager.h"
 #include "PetrichorInputAPI/Keybinds.h"
+#include "PetrichorRendererAPI/Renderer.h"
 #include "SDL3/SDL_keyboard.h"
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_scancode.h>
@@ -186,8 +187,10 @@ namespace RendererBackends::SDL3_OpenGL {
 
             if (e.type == SDL_EVENT_WINDOW_RESIZED)
             {
-                std::cout << "[ERROR] Window resizing not implemented yet!\r\n";
-                //SDL_GetWindowSizeInPixels(SDL_GetWindowFromEvent(&e), screenWidth, screenHeight);
+                // std::cout << "[ERROR] Window resizing not implemented yet!\r\n";
+                int w, h;
+                SDL_GetWindowSizeInPixels(SDL_GetWindowFromEvent(&e), &w, &h);
+                PetrichorRendererAPI::Renderer::ResizeWindow(w, h);
             }
 
             if (!PetrichorInputAPI::InputManager::enabled) return;

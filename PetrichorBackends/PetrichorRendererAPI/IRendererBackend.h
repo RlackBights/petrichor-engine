@@ -24,6 +24,7 @@ namespace PetrichorRendererAPI
 
         virtual void InitializeWindow(const std::string& title, int width, int height) = 0;
         virtual Data::Rect GetScreenRect() = 0;
+        virtual void ResizeWindow(int width, int height) = 0;
         virtual void InitializeRenderer() = 0;
 
         virtual void InitializeFrame() = 0;

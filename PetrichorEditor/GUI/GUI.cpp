@@ -6,6 +6,8 @@
 #include <iostream>
 #include <vector>
 #include "GUI/GUI.h"
+#include "Core/ConsoleLogger.h"
+#include "Core/Log.h"
 #include "Math/Math.h"
 #include "PetrichorInputAPI/InputManager.h"
 #include "PetrichorRendererAPI/Data/Material.h"
@@ -38,7 +40,7 @@ namespace PetrichorEditor {
         GUI::SetColors();
         GUIFont = PetrichorRendererAPI::Text::FontLoader::LoadFont("Resources/Fonts/arial.ttf", 20);
         cursorPos = PetrichorEngine::Math::Vector2(5, 0);
-        shaderProgram = ShaderProgram(Shader("Resources/Shaders/vert.glsl", GL_VERTEX_SHADER), Shader("Resources/Shaders/frag.glsl", GL_FRAGMENT_SHADER));
+        shaderProgram = ShaderProgram(Shader("Resources/Shaders/gui_vert.glsl", GL_VERTEX_SHADER), Shader("Resources/Shaders/gui_frag.glsl", GL_FRAGMENT_SHADER));
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
 
@@ -269,25 +271,26 @@ namespace PetrichorEditor {
             batchedVertices.push_back(entry.color.b);
             batchedVertices.push_back(entry.color.a);
             
-            shaderProgram.Use();
-            
             float size[] = {(float)screen.width, (float)screen.height};
+
+            shaderProgram.Use();
+            shaderProgram.SetFloat2("border", new float[]{ 0, 0 });
             shaderProgram.SetFloat2("screenSize", size); GL_CHECK_ERROR();
-            // shaderProgram.SetFloat2("quadPos", new float[]{ (float)entry.rect.x, (float)PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.rect.y - entry.rect.height });GL_CHECK_ERROR();
-            // shaderProgram.SetFloat2("quadSize", new float[]{ (float)entry.rect.width, (float)entry.rect.height });GL_CHECK_ERROR();
+            shaderProgram.SetFloat2("quadPos", new float[]{ (float)entry.rect.x, (float)PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.rect.y - entry.rect.height });GL_CHECK_ERROR();
+            shaderProgram.SetFloat2("quadSize", new float[]{ (float)entry.rect.width, (float)entry.rect.height });GL_CHECK_ERROR();
 
-            // glEnable(GL_DEPTH_TEST);GL_CHECK_ERROR();
-            glBindVertexArray(VAO);GL_CHECK_ERROR();
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);GL_CHECK_ERROR();
-            // glViewport(screen.x, screen.y, screen.width, screen.height);GL_CHECK_ERROR();
-            // glScissor(entry.clipRect.x, screen.height - entry.clipRect.y - entry.clipRect.height, entry.clipRect.width, entry.clipRect.height);GL_CHECK_ERROR();
-            // glEnable(GL_SCISSOR_TEST);GL_CHECK_ERROR();
+            glDisable(GL_DEPTH_TEST);
+            glBindVertexArray(VAO);
+            glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            glViewport(screen.x, screen.y, screen.width,screen.height);
+            glScissor(entry.clipRect.x, screen.height - entry.clipRect.y - entry.clipRect.height, entry.clipRect.width, entry.clipRect.height);
+            glEnable(GL_SCISSOR_TEST);
 
-            glBufferData(GL_ARRAY_BUFFER, batchedVertices.size() * sizeof(float), batchedVertices.data(), GL_DYNAMIC_DRAW);GL_CHECK_ERROR();
-            glDrawArrays(GL_TRIANGLES, 0, batchedVertices.size() / 7);GL_CHECK_ERROR();
+            glBufferData(GL_ARRAY_BUFFER, batchedVertices.size() * sizeof(float), batchedVertices.data(), GL_DYNAMIC_DRAW);
+            glDrawArrays(GL_TRIANGLES, 0, batchedVertices.size() / 7);
 
-            glBindVertexArray(0);GL_CHECK_ERROR();
-            glDisable(GL_SCISSOR_TEST); GL_CHECK_ERROR();
+            glBindVertexArray(0);
+            glDisable(GL_SCISSOR_TEST);
             
             batchedVertices.clear();
         }
@@ -300,7 +303,7 @@ namespace PetrichorEditor {
             //GUIText.ForceDrawText(entry.position, entry.clipRect);
         }
         batchedTextEntries.clear();
-        
+        glEnable(GL_DEPTH_TEST);
         glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
     }
 
@@ -464,6 +467,8 @@ namespace PetrichorEditor {
     void GUI::GUISplitter(const Rect& splitter, const SplitDirection direction, float& ratio, const float splitSize)
     {
         std::size_t id = std::hash<std::string>{}(FormatString("SP%d%d", splitter.width, splitter.height));
+
+        PetrichorEngine::Core::Log::Info(splitter);
 
         bool hovered = GUI::isHovered(splitter);
         

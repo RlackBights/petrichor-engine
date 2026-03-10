@@ -11,6 +11,7 @@
 namespace PetrichorRendererAPI
 {
     Data::Rect NullRendererBackend::GetScreenRect() { return {}; }
+    void NullRendererBackend::ResizeWindow(int width, int height) { if (showDebugMessages) std::cout << "Resized window to [" << width << ". " << height << "]\r\n"; }
     void NullRendererBackend::InitializeWindow(const std::string& title, int width, int height) { std::cout << "Skipping window creation" << "\r\n"; }
     void NullRendererBackend::InitializeRenderer() { std::cout << "Initializing renderless backend..." << (showDebugMessages ? "\n[!] Showing debug messages from draw calls" : "") << "\r\n"; }
     void NullRendererBackend::InitializeFrame() { if (showDebugMessages) std::cout << "Initializing render frame"; }

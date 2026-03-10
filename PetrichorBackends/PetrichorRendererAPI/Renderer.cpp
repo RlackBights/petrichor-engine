@@ -25,6 +25,7 @@ namespace PetrichorRendererAPI
     }
 
     Data::Rect Renderer::GetScreenRect() { return Get()->GetScreenRect(); }
+    void Renderer::ResizeWindow(int width, int height) { Get()->ResizeWindow(width, height); }
     void Renderer::InitializeRenderer() { Get()->InitializeRenderer(); }
     void Renderer::SetCursorIcon(uint32_t cursorID) { Get()->SetCursorIcon(cursorID); }
     void Renderer::InitializeWindow(const std::string& title, int width, int height) { Get()->InitializeWindow(title, width, height); }

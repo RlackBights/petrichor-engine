@@ -46,6 +46,7 @@ namespace RendererBackends::SDL3_OpenGL {
         void InitializeWindow(const std::string& title, int width, int height) override;
         void InitializeRenderer() override;
         Rect GetScreenRect() override;
+        void ResizeWindow(int width, int height) override;
 
         void InitializeFrame() override;
         void SetCursorIcon(uint32_t cursorID) override;
