@@ -1,3 +1,4 @@
+#include <functional>
 #include <glad/glad.h>
 #include "SDL3_OpenGL_Backend/ShaderProgram.h"
 
@@ -12,11 +13,18 @@ namespace RendererBackends::SDL3_OpenGL {
         glAttachShader(programID, vertexShader.shaderID);
         glAttachShader(programID, fragmentShader.shaderID);
         glLinkProgram(programID);
+        uniformFunction = [](){};
     }
 
     void ShaderProgram::Use()
     {
         glUseProgram(programID);
+        uniformFunction();
+    }
+
+    void ShaderProgram::SetUniforms(const std::function<void()> uniformFunction)
+    {
+        this->uniformFunction = uniformFunction;
     }
 
     void ShaderProgram::SetBool(const std::string& name, bool value) const

@@ -7,6 +7,8 @@
 #include "PetrichorRendererAPI/Text/Character.h"
 #include "PetrichorRendererAPI/Text/Font.h"
 #include "PetrichorRendererAPI/Data/Triangle.h"
+#include "SDL3_OpenGL_Backend/Shader.h"
+#include "SDL3_OpenGL_Backend/ShaderProgram.h"
 #include "freetype/ftimage.h"
 #include "freetype/fttypes.h"
 #include <SDL3/SDL.h>
@@ -18,12 +20,37 @@
 #include <cstdint>
 #include <filesystem>
 #include <ft2build.h>
+#include <glm/glm.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/detail/qualifier.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_float4x4.hpp>
 #include <iostream>
 #include <memory>
 #include <vector>
 #include FT_FREETYPE_H
 
 namespace RendererBackends::SDL3_OpenGL {
+
+    void GLAPIENTRY MessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, 
+                                    GLsizei length, const GLchar* message, const void* userParam) {
+        
+        if (severity == GL_DEBUG_SEVERITY_NOTIFICATION) {
+            return; 
+        }
+
+        std::cerr << "[OpenGL] " << message << "\r\n";
+
+        if (type == GL_DEBUG_TYPE_ERROR) {
+            #if defined(_MSC_VER)
+                __debugbreak();
+            #elif defined(__GNUC__) || defined(__clang__)
+                __builtin_trap();
+            #endif
+        }
+    }
+
     Text::Font* RendererBackend::LoadFont(const std::string& path, int fontSize, int atlasSize)
     {
         auto font = std::make_shared<Text::Font>();
@@ -44,8 +71,8 @@ namespace RendererBackends::SDL3_OpenGL {
         e = FT_Init_FreeType(&ft);
         if (e != FT_Err_Ok) { std::cout << FT_Error_String(e) << "\r\n"; }
         e = FT_New_Face(ft, path.c_str(), 0, &face);
-        if (e != FT_Err_Ok) { std::cout << "FT_New_Face failed with error code: " << e << "\r\n"; }
-        e = FT_Set_Char_Size(face, 0, fontSize << 6, 96, 96);
+        if (e != FT_Err_Ok) { std::cout << "FT_New_Face failed with error code: " << FT_Error_String(e) << " while loading font " << path << "\r\n"; }
+        e = FT_Set_Pixel_Sizes(face, 0, fontSize);
         if (e != FT_Err_Ok) { std::cout << FT_Error_String(e) << "\r\n"; }
         
         fontCache.insert({font, std::make_unique<FT_Face>(face)});
@@ -58,7 +85,7 @@ namespace RendererBackends::SDL3_OpenGL {
         if (characterIterator != font->characters.end())
             return characterIterator->second;
         
-        FT_Face face;
+        FT_Face face = nullptr;
         for (auto& [_font, _face] : fontCache) {
             if (font->name == _font->name && font->fontSize == _font->fontSize)
             {
@@ -66,6 +93,12 @@ namespace RendererBackends::SDL3_OpenGL {
                 break;
             }
         }
+
+        if (!face) {
+            std::cerr << "[ERROR] Could not find FT_Face for font " << font->name << " at size " << font->fontSize << std::endl;
+            return Text::Character();
+        }
+
         FT_Load_Char(face, character, FT_LOAD_RENDER);
 
         return ProcessGlyph(character, font, face->glyph);
@@ -136,8 +169,10 @@ namespace RendererBackends::SDL3_OpenGL {
 
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -172,6 +207,17 @@ namespace RendererBackends::SDL3_OpenGL {
             return;
         }
 
+        if (GLAD_GL_VERSION_4_3) 
+        {
+            glEnable(GL_DEBUG_OUTPUT);
+            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); 
+            glDebugMessageCallback(MessageCallback, nullptr);
+            
+            // glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
+
+            std::cout << "OpenGL Debug Callback enabled successfully" << std::endl;
+        } else std::cerr << "OpenGL Debug not supported by current driver" << std::endl;
+
         SDL_ShowWindow(window);
     }
 
@@ -196,9 +242,92 @@ namespace RendererBackends::SDL3_OpenGL {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void RendererBackend::DrawText(const std::string text, Text::Font* font, const Data::Material& material)
+    void RendererBackend::DrawText(float x, float y, const Rect& clipRect, const std::string text, Text::Font* font, const Data::Material& material)
     {
-        std::cout << "[ERROR] Text drawing unimplemented!\r\n";
+        // glEnable(GL_SCISSOR_TEST);
+        int scissorX = clipRect.x;
+        int scissorY = screen.height - (clipRect.y + clipRect.height); 
+        
+        glScissor(scissorX, scissorY, clipRect.width, clipRect.height);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        unsigned int textures[font->fontAtlases.size()];
+        glGenTextures(font->fontAtlases.size(), textures);
+
+        for (int i = 0; i < font->fontAtlases.size(); i++)
+        {
+            glBindTexture(GL_TEXTURE_2D, textures[i]);
+
+            glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RED,
+                font->atlasSize,
+                font->atlasSize,
+                0,
+                GL_RED,
+                GL_UNSIGNED_BYTE,
+                font->fontAtlases[i].atlasTexture->pixels.data()
+            );
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        }
+
+        unsigned int VAO, VBO;
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+
+        ShaderProgram* sp = ((ShaderProgram*)material.shader.get());
+        sp->Use();
+        sp->SetMatrix4x4("projection", glm::value_ptr(glm::ortho(0.0f, (float)screen.width, (float)screen.height, 0.0f, -100.0f, 100.0f)));
+        sp->SetFloat3("textColor", new float[]{1.0f, 1.0f, 1.0f});
+        glActiveTexture(GL_TEXTURE0);
+        glBindVertexArray(VAO);
+
+        int baselineY = screen.height - y;
+
+        for (char c : text)
+        {
+            Text::Character ch = font->GetCharacter(c);
+            float xpos = x + ch.Bearing[0];
+            float ypos = baselineY - ch.Bearing[1];
+
+            float w = ch.Size[0];
+            float h = ch.Size[1];
+            
+            float vertices[6][4] = {
+                { xpos,     ypos + h,       ch.UV[0], ch.UV[3] },
+                { xpos,     ypos,   ch.UV[0], ch.UV[1] },
+                { xpos + w, ypos + h,       ch.UV[2], ch.UV[3] },
+
+                { xpos,     ypos,   ch.UV[0], ch.UV[1] },
+                { xpos + w, ypos,   ch.UV[2], ch.UV[1] },
+                { xpos + w, ypos + h,       ch.UV[2], ch.UV[3] }
+            };
+
+            glBindTexture(GL_TEXTURE_2D, textures[ch.atlasPageIndex]);
+            glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+
+            x += ch.Advance;
+        }
+
+        glDeleteBuffers(1, &VBO);
+        glDeleteVertexArrays(1, &VAO);
+        glDeleteTextures(font->fontAtlases.size(), textures);
+        glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     void RendererBackend::DrawRect(const Rect& rect, const Material& material)

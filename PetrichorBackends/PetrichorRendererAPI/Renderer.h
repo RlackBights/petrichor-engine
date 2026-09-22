@@ -27,7 +27,7 @@ namespace PetrichorRendererAPI
         static void InitializeFrame();
         static void SetCursorIcon(uint32_t cursorID);
 
-        static void DrawText(const std::string text, Text::Font* font, const Data::Material& material);
+        static void DrawText(float x, float y, const Data::Rect &rect, const std::string text, Text::Font* font, const Data::Material& material);
         static void DrawRect(const Data::Rect& rect, const Data::Material& material);
         static void DrawTriangle(const Data::Triangle& triangle, const Data::Material& material);
         static void DrawQuad(const Data::Quad& quad, const Data::Material& material);

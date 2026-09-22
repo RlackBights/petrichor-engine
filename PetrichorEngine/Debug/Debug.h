@@ -2,6 +2,7 @@
 
 #include "Debug/DebugStructs.h"
 #include <sstream>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -19,19 +20,22 @@ namespace PetrichorEngine {
         static void Log(const T& value)
         {
             std::ostringstream oss;
-            logs.push_back({LogType::LOG_INFO, (oss << value).str()});
+            oss << value;
+            logs.push_back({LogType::LOG_INFO, oss.str()});
         }
         template <typename T>
         static void Warn(const T& value)
         {
             std::ostringstream oss;
-            logs.push_back({LogType::LOG_WARNING, (oss << value).str()});
+            oss << value;
+            logs.push_back({LogType::LOG_WARNING, oss.str()});
         }
         template <typename T>
         static void Error(const T& value)
         {
             std::ostringstream oss;
-            logs.push_back({LogType::LOG_ERROR, (oss << value).str()});
+            oss << value;
+            logs.push_back({LogType::LOG_ERROR, oss.str()});
         }
 
         static void Clear();

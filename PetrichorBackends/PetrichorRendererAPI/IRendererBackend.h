@@ -30,7 +30,7 @@ namespace PetrichorRendererAPI
         virtual void InitializeFrame() = 0;
         virtual void SetCursorIcon(uint32_t cursorID) = 0;
 
-        virtual void DrawText(const std::string text, Text::Font* font, const Data::Material& material) = 0;
+        virtual void DrawText(float x, float y, const Data::Rect& clipRect, const std::string text, Text::Font* font, const Data::Material& material) = 0;
         virtual void DrawRect(const Data::Rect& rect, const Data::Material& material) = 0;
         virtual void DrawTriangle(const Data::Triangle& triangle, const Data::Material& material) = 0;
         virtual void DrawQuad(const Data::Quad& quad, const Data::Material& material) = 0;

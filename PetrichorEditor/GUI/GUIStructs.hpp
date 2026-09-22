@@ -55,10 +55,9 @@ namespace PetrichorEditor {
 
     struct RectDrawEntry {
         const PetrichorRendererAPI::Data::Rect rect;
-        int z;
+        float z;
         PetrichorRendererAPI::Data::Rect clipRect;
         const PetrichorEngine::Math::Vector4 color;
-        float* scrollOffset;
-        RectDrawEntry(const PetrichorRendererAPI::Data::Rect rect, int z, PetrichorRendererAPI::Data::Rect clipRect, const PetrichorEngine::Math::Vector4 color, float* scrollOffset) : rect(rect), clipRect(clipRect), z(z), color(color), scrollOffset(scrollOffset) {} 
+        RectDrawEntry(const PetrichorRendererAPI::Data::Rect rect, int z, PetrichorRendererAPI::Data::Rect clipRect, const PetrichorEngine::Math::Vector4 color) : rect(rect), clipRect(clipRect), z(z), color(color) {} 
     };
 }

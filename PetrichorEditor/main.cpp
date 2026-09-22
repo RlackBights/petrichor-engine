@@ -1,3 +1,5 @@
+#include <fstream>
+#include <glad/glad.h>
 #include "Debug/Debug.h"
 #include "Debug/DebugStructs.h"
 #include "GUI/GUI.h"
@@ -5,6 +7,9 @@
 #include "PetrichorRendererAPI/Data/Material.h"
 #include "PetrichorRendererAPI/Data/Rect.h"
 #include "PetrichorRendererAPI/Renderer.h"
+#include "PetrichorRendererAPI/Text/Character.h"
+#include "PetrichorRendererAPI/Text/Font.h"
+#include "PetrichorRendererAPI/Text/FontLoader.h"
 #include "SDL3_OpenGL_Backend/InputBackend.h"
 #include "SDL3_OpenGL_Backend/RendererBackend.h"
 #include "Time/Time.h"
@@ -13,6 +18,8 @@
 #include <string>
 #include <unistd.h>
 #include <utility>
+#include <vector>
+#include <iostream>
 
 void RenderEditorGUI()
 {
@@ -74,13 +81,25 @@ int main()
     auto inputBackend = std::make_unique<RendererBackends::SDL3_OpenGL::InputBackend>();
     PetrichorInputAPI::InputManager::AssignInputManager(std::move(inputBackend));
 
-    PetrichorRendererAPI::Renderer::InitializeWindow("Game!!!!");
+    PetrichorRendererAPI::Renderer::InitializeWindow("Petrichor Editor");
     PetrichorInputAPI::InputManager::InitializeInput();
 
     PetrichorRendererAPI::Data::Rect r;
     PetrichorRendererAPI::Data::Material m;
 
     PetrichorEditor::GUI::InitializeGUI();
+
+    PetrichorEngine::Debug::Log("HELLOOOO");
+    PetrichorEngine::Debug::Log("HELLOOOO");
+    PetrichorEngine::Debug::Log("HELLOOOO");
+    PetrichorEngine::Debug::Log("HELLOOOO");
+    PetrichorEngine::Debug::Log("HELLOOOO");
+    PetrichorEngine::Debug::Log("HELLOOOO");
+    PetrichorEngine::Debug::Log("HELLOOOO");
+    PetrichorEngine::Debug::Log("HELLOOOO");
+
+    PetrichorEngine::Debug::Log("TESTTTTT");
+    PetrichorEngine::Debug::Log("YELLOOOO");
 
     while (1)
     {

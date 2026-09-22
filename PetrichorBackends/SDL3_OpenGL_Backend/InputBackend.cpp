@@ -106,7 +106,6 @@ namespace RendererBackends::SDL3_OpenGL {
 
         while (SDL_PollEvent(&e))
         {
-            
             if (e.type == SDL_EVENT_MOUSE_MOTION) {
                 mouseX = e.motion.x;
                 mouseY = e.motion.y;
@@ -150,6 +149,16 @@ namespace RendererBackends::SDL3_OpenGL {
             if (e.type == SDL_EVENT_DROP_FILE) {
                 std::cout << e.drop.data;
             }
+            
+            if (e.type == SDL_EVENT_QUIT) exit(0);
+
+            if (e.type == SDL_EVENT_WINDOW_RESIZED)
+            {
+                // std::cout << "[ERROR] Window resizing not implemented yet!\r\n";
+                int w, h;
+                SDL_GetWindowSizeInPixels(SDL_GetWindowFromEvent(&e), &w, &h);
+                PetrichorRendererAPI::Renderer::ResizeWindow(w, h);
+            }
 
             // Process forced key bindings
             for (int i = 0; i < PetrichorInputAPI::KeyBindings::forcedKeyBindings.size(); i++) {
@@ -183,15 +192,6 @@ namespace RendererBackends::SDL3_OpenGL {
                 }
             }
 
-            if (e.type == SDL_EVENT_QUIT) exit(0);
-
-            if (e.type == SDL_EVENT_WINDOW_RESIZED)
-            {
-                // std::cout << "[ERROR] Window resizing not implemented yet!\r\n";
-                int w, h;
-                SDL_GetWindowSizeInPixels(SDL_GetWindowFromEvent(&e), &w, &h);
-                PetrichorRendererAPI::Renderer::ResizeWindow(w, h);
-            }
 
             if (!PetrichorInputAPI::InputManager::enabled) return;
 

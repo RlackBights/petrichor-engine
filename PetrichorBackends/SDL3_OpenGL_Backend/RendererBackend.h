@@ -17,12 +17,6 @@
 
 namespace RendererBackends::SDL3_OpenGL {
 
-    #define GL_CHECK_ERROR() do { \
-        for (GLenum err = glGetError(); err != GL_NO_ERROR; err = glGetError()) \
-            std::cout << "[ERROR] 0x" << std::hex << err << std::dec \
-                    << " at " << __FILE__ << ":" << __LINE__ << "\n"; \
-    } while (0)
-
     using namespace PetrichorRendererAPI;
     using namespace PetrichorRendererAPI::Data;
 
@@ -51,7 +45,7 @@ namespace RendererBackends::SDL3_OpenGL {
         void InitializeFrame() override;
         void SetCursorIcon(uint32_t cursorID) override;
 
-        void DrawText(const std::string text, Text::Font* font, const Data::Material& material) override;
+        void DrawText(float x, float y, const Rect& clipRect, const std::string text, Text::Font* font, const Data::Material& material) override;
         void DrawRect(const Rect& rect, const Material& material) override;
         void DrawTriangle(const Triangle& triangle, const Material& material) override;
         void DrawQuad(const Quad& quad, const Material& material) override;

@@ -3,6 +3,20 @@
 #include <glm/detail/qualifier.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <iostream>
+
+template <glm::length_t L, typename T>
+std::ostream& operator<<(std::ostream& os, const glm::vec<L, T, glm::packed_highp>& vec) {
+    os << "Vector" << L << " { ";
+    for (glm::length_t i = 0; i < L; ++i) {
+        os << vec[i];
+        if (i < L - 1) {
+            os << ", ";
+        }
+    }
+    os << " }";
+    return os;
+}
 
 namespace PetrichorEngine::Math
 {
@@ -28,7 +42,6 @@ namespace PetrichorEngine::Math
     using TMatrix = glm::mat<C, R, T>;
 
     using Matrix4x4 = TMatrix<4, 4, float>;
-
     
     using Quaternion = glm::quat;
 

@@ -2,6 +2,7 @@
 
 #include "GUI/GUIStructs.hpp"
 #include "Math/Math.h"
+#include "PetrichorRendererAPI/Data/Material.h"
 #include "PetrichorRendererAPI/Data/Rect.h"
 #include "PetrichorRendererAPI/Data/Vertex.h"
 #include "PetrichorRendererAPI/Text/Font.h"
@@ -31,6 +32,7 @@ namespace PetrichorEditor {
         static Panel* activePanel;
 
         static PetrichorRendererAPI::Text::Font* GUIFont;
+        static PetrichorRendererAPI::Data::Material GUIMaterial;
 
         template<typename ... Args>
         static std::string FormatString( const std::string& format, Args ... args)
@@ -45,13 +47,15 @@ namespace PetrichorEditor {
 
         static void SetColors();
         static void DrawText(const std::string& text, const PetrichorEngine::Math::Vector2& position, const PetrichorRendererAPI::Data::Rect* clipOverride = nullptr, const bool ignoreOffset = false);
-        static void DrawRect(const Rect& rect, int z, PetrichorEngine::Math::Vector4 _color, const bool ignoreOffset = false);
+        static void DrawRect(const Rect& rect, float z, PetrichorEngine::Math::Vector4 _color, const bool ignoreOffset = false);
         static void CalculateRects(LayoutNode& node, PetrichorRendererAPI::Data::Rect area);
         static int CalculateTextPixelWidth(const std::string& text, PetrichorRendererAPI::Text::Font* font);
         static std::shared_ptr<Panel> GetPanelFromLayout(const std::string& name, LayoutNode& node = GUI::layout);
         static void Scrollbar(const int width = 10);
         static void GUISplitter(const PetrichorRendererAPI::Data::Rect& splitter, const SplitDirection direction, float& ratio, const float splitSize);
         static std::map<std::string, PetrichorEngine::Math::Vector4> colors;
+
+        static bool SentWarning;
     
     public:
         static void ApplyLayout();

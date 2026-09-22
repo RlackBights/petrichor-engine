@@ -32,7 +32,7 @@ namespace PetrichorRendererAPI
     void Renderer::InitializeFrame() { Get()->InitializeFrame(); }
     void Renderer::WrapFrame() { Get()->WrapFrame(); }
 
-    void Renderer::DrawText(const std::string text, Text::Font* font, const Data::Material& material) { Get()->DrawText(text, font, material); }
+    void Renderer::DrawText(float x, float y, const Data::Rect &rect, const std::string text, Text::Font* font, const Data::Material& material) { Get()->DrawText(x, y, rect, text, font, material); }
     void Renderer::DrawRect(const Data::Rect &rect, const Data::Material &material) { Get()->DrawRect(rect, material); }
     void Renderer::DrawTriangle(const Data::Triangle &triangle, const Data::Material& material) { Get()->DrawTriangle(triangle, material); }
     void Renderer::DrawQuad(const Data::Quad &quad, const Data::Material& material) { Get()->DrawQuad(quad, material); }

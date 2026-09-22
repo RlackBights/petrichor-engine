@@ -1,13 +1,12 @@
-#include <array>
 #include <glad/glad.h>
 #include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_mouse.h>
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 #include <vector>
 #include "GUI/GUI.h"
-#include "Core/ConsoleLogger.h"
-#include "Core/Log.h"
+#include "GUI/GUIStructs.hpp"
 #include "Math/Math.h"
 #include "PetrichorInputAPI/InputManager.h"
 #include "PetrichorRendererAPI/Data/Material.h"
@@ -39,6 +38,7 @@ namespace PetrichorEditor {
     {
         GUI::SetColors();
         GUIFont = PetrichorRendererAPI::Text::FontLoader::LoadFont("Resources/Fonts/arial.ttf", 20);
+        GUIMaterial = PetrichorRendererAPI::Data::Material({1.0f, 1.0f, 1.0f, 1.0f}, std::make_shared<ShaderProgram>(Shader("Resources/Shaders/text_vert.glsl", GL_VERTEX_SHADER), Shader("Resources/Shaders/text_frag.glsl", GL_FRAGMENT_SHADER)));
         cursorPos = PetrichorEngine::Math::Vector2(5, 0);
         shaderProgram = ShaderProgram(Shader("Resources/Shaders/gui_vert.glsl", GL_VERTEX_SHADER), Shader("Resources/Shaders/gui_frag.glsl", GL_FRAGMENT_SHADER));
         glGenVertexArrays(1, &VAO);
@@ -57,8 +57,6 @@ namespace PetrichorEditor {
         glBindVertexArray(0);
 
         shaderProgram.Use();
-
-        GL_CHECK_ERROR();
         
         GUI::layout = LayoutNode (
             std::make_unique<Split>(
@@ -147,17 +145,19 @@ namespace PetrichorEditor {
     {
         GUI::CalculateRects(layout, PetrichorRendererAPI::Renderer::GetScreenRect());
     }
-
+    
     void GUI::CalculateRects(LayoutNode& node, Rect area) {
+         
         if (std::holds_alternative<std::shared_ptr<Panel>>(node)) {
             auto panel = std::get<std::shared_ptr<Panel>>(node);
             panel->rect = area;
-            if (panel->name == "Scene") 
+            if (panel->name == "Scene" && !SentWarning) 
             {
                 std::cout << "[ERROR] Rendering Viewport not implemented yet!\r\n";
+                SentWarning = true;
                 // Renderer::viewport = panel->rect;
             } else {
-                GUI::DrawRect(Rect(panel->rect.x, panel->rect.y, panel->rect.width, panel->rect.height), 1, (panel->baseColor.w == -1.0f) ? GUI::colors["background"] : panel->baseColor, true);
+                GUI::DrawRect(Rect(panel->rect.x, panel->rect.y, panel->rect.width, panel->rect.height), -0.1f, (panel->baseColor.w == -1.0f) ? GUI::colors["background"] : panel->baseColor, true);
             }
             return;
         }
@@ -169,27 +169,28 @@ namespace PetrichorEditor {
         if (!a || !b) return;
 
         Rect rectA, rectB;
-
+        
+        int heightA, heightB, widthA, widthB;
+        
         if (split.direction == SplitDirection::SPLIT_HORIZONTAL) {
-            int heightA = static_cast<int>(area.height * split.ratio);
-            int heightB = area.height - heightA;
-
+            heightA = static_cast<int>(area.height * split.ratio);
+            heightB = area.height - heightA;
+            
             rectA = Rect(area.x, area.y, area.width, heightA);
             rectB = Rect(area.x, area.y + heightA, area.width, heightB);
-
-            GUI::GUISplitter(Rect(area.x, area.y + heightA - 1, area.width, 2), SplitDirection::SPLIT_HORIZONTAL, split.ratio, area.height);
         } else {
-            int widthA = static_cast<int>(area.width * split.ratio);
-            int widthB = area.width - widthA;
-
+            widthA = static_cast<int>(area.width * split.ratio);
+            widthB = area.width - widthA;
+            
             rectA = Rect(area.x, area.y, widthA, area.height);
             rectB = Rect(area.x + widthA, area.y, widthB, area.height);
-
-            GUI::GUISplitter(Rect(area.x + widthA - 1, area.y, 2, area.height), SplitDirection::SPLIT_VERTICAL, split.ratio, area.width);
         }
 
         CalculateRects(*a, rectA);
         CalculateRects(*b, rectB);
+
+        if (split.direction == SplitDirection::SPLIT_HORIZONTAL) GUI::GUISplitter(Rect(area.x, area.y + heightA - 1, area.width, 2), SplitDirection::SPLIT_HORIZONTAL, split.ratio, area.height);
+        else GUI::GUISplitter(Rect(area.x + widthA - 1, area.y, 2, area.height), SplitDirection::SPLIT_VERTICAL, split.ratio, area.width);
     }
 
     void GUI::DrawText(const std::string& text, const glm::vec2& position, const Rect* clipOverride, const bool ignoreOffset)
@@ -203,28 +204,27 @@ namespace PetrichorEditor {
         batchedTextEntries.push_back(TextDrawEntry(text, position, (clipOverride) ? *clipOverride : ((activePanel) ? activePanel->rect : screenRect), ((!ignoreOffset) ? activePanel->scrollOffset : 0)));
     }
 
-    void GUI::DrawRect(const Rect& rect, int z, PetrichorEngine::Math::Vector4 _color, const bool ignoreOffset)
+    void GUI::DrawRect(const Rect& rect, float z, PetrichorEngine::Math::Vector4 _color, const bool ignoreOffset)
     {
         Rect screenRect = PetrichorRendererAPI::Renderer::GetScreenRect();
         // Skip offscreen elements
         if ((!ignoreOffset && (rect.y + activePanel->scrollOffset < 0 || rect.y + activePanel->scrollOffset > screenRect.height))
             || (ignoreOffset && (rect.y < 0 || rect.y > screenRect.height))
             || rect.x < 0 || rect.x > screenRect.width) return;
-        batchedRectEntries.push_back(RectDrawEntry(Rect(rect.x, rect.y, rect.width, rect.height), z, (activePanel) ? activePanel->rect : screenRect, _color, (!ignoreOffset) ? &activePanel->scrollOffset : nullptr));
+        batchedRectEntries.push_back(RectDrawEntry(Rect(rect.x, rect.y - ((ignoreOffset) ? 0 : activePanel->scrollOffset), rect.width, rect.height), z, (activePanel) ? activePanel->rect : screenRect, _color));
     }
 
     void GUI::RenderGUI()
     {
         GLint polygonMode;
-        glGetIntegerv(GL_POLYGON_MODE, &polygonMode);GL_CHECK_ERROR();
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);GL_CHECK_ERROR();
+        glGetIntegerv(GL_POLYGON_MODE, &polygonMode);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         Rect screen = PetrichorRendererAPI::Renderer::GetScreenRect();
         for (RectDrawEntry entry : batchedRectEntries) {
-            float offset = (entry.scrollOffset) ? -*entry.scrollOffset : 0;
             std::vector<float> batchedVertices = {};
 
             batchedVertices.push_back(entry.rect.x);
-            batchedVertices.push_back(screen.height - entry.rect.y - entry.rect.height - offset);
+            batchedVertices.push_back(screen.height - entry.rect.y - entry.rect.height);
             batchedVertices.push_back(entry.z);
             batchedVertices.push_back(entry.color.r);
             batchedVertices.push_back(entry.color.g);
@@ -232,7 +232,7 @@ namespace PetrichorEditor {
             batchedVertices.push_back(entry.color.a);
             
             batchedVertices.push_back(entry.rect.x + entry.rect.width);
-            batchedVertices.push_back(screen.height - entry.rect.y - offset);
+            batchedVertices.push_back(screen.height - entry.rect.y);
             batchedVertices.push_back(entry.z);
             batchedVertices.push_back(entry.color.r);
             batchedVertices.push_back(entry.color.g);
@@ -240,7 +240,7 @@ namespace PetrichorEditor {
             batchedVertices.push_back(entry.color.a);
             
             batchedVertices.push_back(entry.rect.x);
-            batchedVertices.push_back(screen.height - entry.rect.y - offset);
+            batchedVertices.push_back(screen.height - entry.rect.y);
             batchedVertices.push_back(entry.z);
             batchedVertices.push_back(entry.color.r);
             batchedVertices.push_back(entry.color.g);
@@ -248,7 +248,7 @@ namespace PetrichorEditor {
             batchedVertices.push_back(entry.color.a);
 
             batchedVertices.push_back(entry.rect.x);
-            batchedVertices.push_back(screen.height - entry.rect.y - entry.rect.height - offset);
+            batchedVertices.push_back(screen.height - entry.rect.y - entry.rect.height);
             batchedVertices.push_back(entry.z);
             batchedVertices.push_back(entry.color.r);
             batchedVertices.push_back(entry.color.g);
@@ -256,7 +256,7 @@ namespace PetrichorEditor {
             batchedVertices.push_back(entry.color.a);
             
             batchedVertices.push_back(entry.rect.x + entry.rect.width);
-            batchedVertices.push_back(screen.height - entry.rect.y - entry.rect.height - offset);
+            batchedVertices.push_back(screen.height - entry.rect.y - entry.rect.height);
             batchedVertices.push_back(entry.z);
             batchedVertices.push_back(entry.color.r);
             batchedVertices.push_back(entry.color.g);
@@ -264,7 +264,7 @@ namespace PetrichorEditor {
             batchedVertices.push_back(entry.color.a);
             
             batchedVertices.push_back(entry.rect.x + entry.rect.width);
-            batchedVertices.push_back(screen.height - entry.rect.y - offset);
+            batchedVertices.push_back(screen.height - entry.rect.y);
             batchedVertices.push_back(entry.z);
             batchedVertices.push_back(entry.color.r);
             batchedVertices.push_back(entry.color.g);
@@ -273,13 +273,17 @@ namespace PetrichorEditor {
             
             float size[] = {(float)screen.width, (float)screen.height};
 
+            
+
             shaderProgram.Use();
             shaderProgram.SetFloat2("border", new float[]{ 0, 0 });
-            shaderProgram.SetFloat2("screenSize", size); GL_CHECK_ERROR();
-            shaderProgram.SetFloat2("quadPos", new float[]{ (float)entry.rect.x, (float)PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.rect.y - entry.rect.height });GL_CHECK_ERROR();
-            shaderProgram.SetFloat2("quadSize", new float[]{ (float)entry.rect.width, (float)entry.rect.height });GL_CHECK_ERROR();
+            shaderProgram.SetFloat2("screenSize", size); 
+            shaderProgram.SetFloat2("quadPos", new float[]{ (float)entry.rect.x, (float)PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.rect.y - entry.rect.height });
+            shaderProgram.SetFloat2("quadSize", new float[]{ (float)entry.rect.width, (float)entry.rect.height });
 
-            glDisable(GL_DEPTH_TEST);
+            glDisable(GL_DEPTH_TEST); // Doesn't seem to work???
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
             glBindVertexArray(VAO);
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
             glViewport(screen.x, screen.y, screen.width,screen.height);
@@ -297,15 +301,39 @@ namespace PetrichorEditor {
         batchedRectEntries.clear();
 
         for (TextDrawEntry entry : batchedTextEntries) {
-            //GUIText.SetText(entry.text, false);
-            // entry.position.y += entry.scrollOffset;
-            // PetrichorRendererAPI::Renderer::DrawText(entry.text, GUIFont, Material());
-            //GUIText.ForceDrawText(entry.position, entry.clipRect);
+            PetrichorRendererAPI::Renderer::DrawText(entry.position.x, entry.position.y, entry.clipRect, entry.text, GUIFont, GUIMaterial);
         }
         batchedTextEntries.clear();
         glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
         glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
     }
+
+    // void GUI::RenderGUI()
+    // {
+    //     GLint polygonMode;
+    //     glGetIntegerv(GL_POLYGON_MODE, &polygonMode);
+    //     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    //     Rect screen = PetrichorRendererAPI::Renderer::GetScreenRect();
+    //     for (RectDrawEntry entry : batchedRectEntries) {
+    //         glDisable(GL_DEPTH_TEST); // Doesn't seem to work???
+    //         glBindVertexArray(VAO);
+    //         glViewport(screen.x, screen.y, screen.width,screen.height);
+    //         glScissor(entry.clipRect.x, screen.height - entry.clipRect.y - entry.clipRect.height, entry.clipRect.width, entry.clipRect.height);
+    //         glEnable(GL_SCISSOR_TEST);
+    //         float size[] = {(float)screen.width, (float)screen.height};
+            
+    //         shaderProgram.SetUniforms([&](){
+    //             shaderProgram.SetFloat2("border", new float[]{ 0, 0 });
+    //             shaderProgram.SetFloat2("screenSize", size); 
+    //             shaderProgram.SetFloat2("quadPos", new float[]{ (float)entry.rect.x, (float)PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.rect.y - entry.rect.height });
+    //             shaderProgram.SetFloat2("quadSize", new float[]{ (float)entry.rect.width, (float)entry.rect.height });
+    //         });
+    //         Renderer::DrawRect(entry.rect, Material(std::array<float,4>({entry.color.r, entry.color.g, entry.color.b, entry.color.a}), std::make_shared<ShaderProgram>(shaderProgram)));
+    //         glBindVertexArray(0);
+    //         glDisable(GL_SCISSOR_TEST);
+    //     }
+    // }
 
     void GUI::WrapGUI()
     {
@@ -328,7 +356,7 @@ namespace PetrichorEditor {
             GUI::Title(name);
             GUI::Divider();
         }
-        if (scrollable || panel->rect.height < panel->currentHeight) GUI::Scrollbar();
+        if (scrollable && panel->rect.height < panel->currentHeight) GUI::Scrollbar();
     }
     void GUI::End()
     {
@@ -347,7 +375,7 @@ namespace PetrichorEditor {
     }
     void GUI::Divider()
     {
-        DrawRect(Rect(activePanel->rect.x, cursorPos.y - ((activePanel) ? activePanel->scrollOffset : 0), activePanel->rect.width, 2), 0, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), true);
+        DrawRect(Rect(activePanel->rect.x, cursorPos.y - ((activePanel) ? activePanel->scrollOffset : 0), activePanel->rect.width, 2), 0.9f, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), true);
         cursorPos.y += 7;
     }
 
@@ -388,7 +416,7 @@ namespace PetrichorEditor {
 
         if (hovered) PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_POINTER);
 
-        if (!invisible) DrawRect(Rect(cursorPos.x, cursorPos.y - activePanel->scrollOffset, size.x, size.y), 0, quadCol, true);
+        if (!invisible) DrawRect(Rect(cursorPos.x, cursorPos.y - activePanel->scrollOffset, size.x, size.y), 0.1f, quadCol, true);
         DrawText(text, {cursorPos.x + (size.x - CalculateTextPixelWidth(text, GUIFont)) / 2.0f, PetrichorRendererAPI::Renderer::GetScreenRect().height - cursorPos.y - (GUIFont->fontSize + size.y) / 2.0f});
 
         cursorPos.y += size.y + 5;
@@ -423,8 +451,8 @@ namespace PetrichorEditor {
 
         if (hovered) PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_POINTER);
 
-        DrawRect(Rect(activePanel->rect.x + activePanel->rect.width - width, activePanel->rect.y, width, activePanel->rect.height), -1, glm::vec4(0.1f, 0.1f, 0.1f, 1.0f), true);
-        DrawRect(Rect(activePanel->rect.x + activePanel->rect.width - width * 0.75f, activePanel->rect.y + (activePanel->rect.height - activePanel->rect.height * activePanel->rect.height / activePanel->currentHeight) * (activePanel->scrollOffset / std::max(0.1f, activePanel->currentHeight - activePanel->rect.height)), width * 0.75f, activePanel->rect.height * activePanel->rect.height / activePanel->currentHeight), -2, quadCol, true);
+        DrawRect(Rect(activePanel->rect.x + activePanel->rect.width - width, activePanel->rect.y, width, activePanel->rect.height), 0.1f, glm::vec4(0.1f, 0.1f, 0.1f, 1.0f), true);
+        DrawRect(Rect(activePanel->rect.x + activePanel->rect.width - width * 0.75f, activePanel->rect.y + (activePanel->rect.height - activePanel->rect.height * activePanel->rect.height / activePanel->currentHeight) * (activePanel->scrollOffset / std::max(0.1f, activePanel->currentHeight - activePanel->rect.height)), width * 0.75f, activePanel->rect.height * activePanel->rect.height / activePanel->currentHeight), -0.05f, quadCol, true);
     }
 
     void GUI::TextInput(const glm::vec2 &size, std::string &text)
@@ -459,7 +487,7 @@ namespace PetrichorEditor {
 
         if (hovered) PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_POINTER);
 
-        DrawRect(Rect(cursorPos.x, cursorPos.y, std::max(size.x, (float)CalculateTextPixelWidth(text, GUIFont)) + 10, size.y), 0, quadCol);
+        DrawRect(Rect(cursorPos.x, cursorPos.y, std::max(size.x, (float)CalculateTextPixelWidth(text, GUIFont)) + 10, size.y), 0.9f, quadCol);
         DrawText(text, {cursorPos.x + 5, PetrichorRendererAPI::Renderer::GetScreenRect().height - cursorPos.y - (GUIFont->fontSize + size.y) / 2.0f});
         cursorPos.y += size.y + 5;
     }
@@ -467,8 +495,6 @@ namespace PetrichorEditor {
     void GUI::GUISplitter(const Rect& splitter, const SplitDirection direction, float& ratio, const float splitSize)
     {
         std::size_t id = std::hash<std::string>{}(FormatString("SP%d%d", splitter.width, splitter.height));
-
-        PetrichorEngine::Core::Log::Info(splitter);
 
         bool hovered = GUI::isHovered(splitter);
         
@@ -491,7 +517,7 @@ namespace PetrichorEditor {
         if (hovered && direction == SplitDirection::SPLIT_HORIZONTAL) PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_NS_RESIZE);
         else if (hovered) PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_EW_RESIZE);
         
-        DrawRect(Rect(splitter.x, splitter.y, splitter.width, splitter.height), -2, colors["splitter"], true);
+        DrawRect(Rect(splitter.x, splitter.y, splitter.width, splitter.height), -0.05f, colors["splitter"], true);
     }
 
     std::vector<PetrichorRendererAPI::Data::Vertex> GUI::batchedVertices;
@@ -505,5 +531,7 @@ namespace PetrichorEditor {
     Panel* GUI::activePanel;
     std::map<std::string, glm::vec4> GUI::colors;
     PetrichorRendererAPI::Text::Font* GUI::GUIFont;
+    PetrichorRendererAPI::Data::Material GUI::GUIMaterial;
+    bool GUI::SentWarning = false;
 }
 

@@ -3,17 +3,20 @@
 #include "PetrichorRendererAPI/Data/IShaderProgram.h"
 #include "SDL3_OpenGL_Backend/Shader.h"
 #include <SDL3/SDL_opengl.h>
+#include <functional>
 
 namespace RendererBackends::SDL3_OpenGL {
     class ShaderProgram : public PetrichorRendererAPI::Data::IShaderProgram
     {
 	private:
 		GLuint programID = -1;
+		std::function<void()> uniformFunction;
     public:
 		ShaderProgram();
         ShaderProgram(const Shader& vertexShader, const Shader& fragmentShader);
 
         void Use();
+		void SetUniforms(const std::function<void()> uniformFunction);
 		void SetBool(const std::string& name, bool value) const;
 		void SetInt(const std::string& name, int value) const;
 		void SetUInt(const std::string& name, unsigned int value) const;

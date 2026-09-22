@@ -31,7 +31,7 @@ namespace PetrichorRendererAPI
         void InitializeFrame() override;
         void SetCursorIcon(uint32_t cursorID) override;
 
-        void DrawText(const std::string text, Text::Font* font, const Data::Material& material) override;
+        void DrawText(float x, float y, const Data::Rect& clipRect, const std::string text, Text::Font* font, const Data::Material& material) override;
         void DrawRect(const Data::Rect& rect, const Data::Material& material) override;
         void DrawTriangle(const Data::Triangle& triangle, const Data::Material& material) override;
         void DrawQuad(const Data::Quad& quad, const Data::Material& material) override;
