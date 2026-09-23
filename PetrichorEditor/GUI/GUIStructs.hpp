@@ -58,6 +58,6 @@ namespace PetrichorEditor {
         float z;
         PetrichorRendererAPI::Data::Rect clipRect;
         const PetrichorEngine::Math::Vector4 color;
-        RectDrawEntry(const PetrichorRendererAPI::Data::Rect rect, int z, PetrichorRendererAPI::Data::Rect clipRect, const PetrichorEngine::Math::Vector4 color) : rect(rect), clipRect(clipRect), z(z), color(color) {} 
+        RectDrawEntry(const PetrichorRendererAPI::Data::Rect rect, float z, PetrichorRendererAPI::Data::Rect clipRect, const PetrichorEngine::Math::Vector4 color) : rect(rect), clipRect(clipRect), z(z), color(color) {} 
     };
 }

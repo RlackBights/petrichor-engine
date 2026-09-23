@@ -28,6 +28,7 @@ namespace PetrichorEditor {
             {"buttonNormal", glm::vec4(0.3f, 0.3f, 0.3f, 1.0f)},
             {"buttonHovered", glm::vec4(0.35f, 0.35f, 0.35f, 1.0f)},
             {"buttonPressed", glm::vec4(0.25f, 0.25f, 0.25f, 1.0f)},
+            {"scrollbarBackground", glm::vec4(0.1f, 0.1f, 0.1f, 1.0f)},
             {"scrollbarNormal", glm::vec4(0.6f, 0.6f, 0.6f, 1.0f)},
             {"scrollbarHovered", glm::vec4(0.55f, 0.55f, 0.55f, 1.0f)},
             {"scrollbarPressed", glm::vec4(0.3f, 0.3f, 0.3f, 1.0f)},
@@ -104,6 +105,7 @@ namespace PetrichorEditor {
             return (childA) ? childA : childB; 
         }
     }
+
     int GUI::CalculateTextPixelWidth(const std::string& text, PetrichorRendererAPI::Text::Font* font)
     {
         int width = 0;
@@ -141,6 +143,7 @@ namespace PetrichorEditor {
 
         return width;
     }
+
     void GUI::ApplyLayout()
     {
         GUI::CalculateRects(layout, PetrichorRendererAPI::Renderer::GetScreenRect());
@@ -157,7 +160,7 @@ namespace PetrichorEditor {
                 SentWarning = true;
                 // Renderer::viewport = panel->rect;
             } else {
-                GUI::DrawRect(Rect(panel->rect.x, panel->rect.y, panel->rect.width, panel->rect.height), -0.1f, (panel->baseColor.w == -1.0f) ? GUI::colors["background"] : panel->baseColor, true);
+                GUI::DrawRect(Rect(panel->rect.x, panel->rect.y, panel->rect.width, panel->rect.height), 0.999f, (panel->baseColor.w == -1.0f) ? GUI::colors["background"] : panel->baseColor, true);
             }
             return;
         }
@@ -211,6 +214,7 @@ namespace PetrichorEditor {
         if ((!ignoreOffset && (rect.y + activePanel->scrollOffset < 0 || rect.y + activePanel->scrollOffset > screenRect.height))
             || (ignoreOffset && (rect.y < 0 || rect.y > screenRect.height))
             || rect.x < 0 || rect.x > screenRect.width) return;
+
         batchedRectEntries.push_back(RectDrawEntry(Rect(rect.x, rect.y - ((ignoreOffset) ? 0 : activePanel->scrollOffset), rect.width, rect.height), z, (activePanel) ? activePanel->rect : screenRect, _color));
     }
 
@@ -273,20 +277,19 @@ namespace PetrichorEditor {
             
             float size[] = {(float)screen.width, (float)screen.height};
 
-            
-
             shaderProgram.Use();
             shaderProgram.SetFloat2("border", new float[]{ 0, 0 });
             shaderProgram.SetFloat2("screenSize", size); 
             shaderProgram.SetFloat2("quadPos", new float[]{ (float)entry.rect.x, (float)PetrichorRendererAPI::Renderer::GetScreenRect().height - entry.rect.y - entry.rect.height });
             shaderProgram.SetFloat2("quadSize", new float[]{ (float)entry.rect.width, (float)entry.rect.height });
 
-            glDisable(GL_DEPTH_TEST); // Doesn't seem to work???
+            glEnable(GL_DEPTH_TEST); // Doesn't seem to work???
+            glDepthFunc(GL_LESS);
             glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             glBindVertexArray(VAO);
             glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            glViewport(screen.x, screen.y, screen.width,screen.height);
+            glViewport(screen.x, screen.y, screen.width, screen.height);
             glScissor(entry.clipRect.x, screen.height - entry.clipRect.y - entry.clipRect.height, entry.clipRect.width, entry.clipRect.height);
             glEnable(GL_SCISSOR_TEST);
 
@@ -295,6 +298,7 @@ namespace PetrichorEditor {
 
             glBindVertexArray(0);
             glDisable(GL_SCISSOR_TEST);
+            glDisable(GL_DEPTH_TEST);
             
             batchedVertices.clear();
         }
@@ -337,7 +341,7 @@ namespace PetrichorEditor {
 
     void GUI::WrapGUI()
     {
-        if (GUI::Hovered == 0) PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_DEFAULT);
+        if (GUI::Hovered == 0&& GUI::Active == 0) PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_DEFAULT);
         GUI::Hovered = 0;
         cursorPos = glm::vec2(100, 0);
     }
@@ -375,7 +379,7 @@ namespace PetrichorEditor {
     }
     void GUI::Divider()
     {
-        DrawRect(Rect(activePanel->rect.x, cursorPos.y - ((activePanel) ? activePanel->scrollOffset : 0), activePanel->rect.width, 2), 0.9f, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), true);
+        DrawRect(Rect(activePanel->rect.x, cursorPos.y - ((activePanel) ? activePanel->scrollOffset : 0), activePanel->rect.width, 2), 0.4f, glm::vec4(0.5f, 0.5f, 0.5f, 1.0f), true);
         cursorPos.y += 7;
     }
 
@@ -410,13 +414,13 @@ namespace PetrichorEditor {
             } else if (GUI::Active == id) {
                 quadCol = colors["buttonPressed"];
             }
+
+            PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_POINTER);
         } else if (GUI::Active == id) {
             GUI::Active = 0;
         }
 
-        if (hovered) PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_POINTER);
-
-        if (!invisible) DrawRect(Rect(cursorPos.x, cursorPos.y - activePanel->scrollOffset, size.x, size.y), 0.1f, quadCol, true);
+        if (!invisible) DrawRect(Rect(cursorPos.x, cursorPos.y - activePanel->scrollOffset, size.x, size.y), 0.5f, quadCol, true);
         DrawText(text, {cursorPos.x + (size.x - CalculateTextPixelWidth(text, GUIFont)) / 2.0f, PetrichorRendererAPI::Renderer::GetScreenRect().height - cursorPos.y - (GUIFont->fontSize + size.y) / 2.0f});
 
         cursorPos.y += size.y + 5;
@@ -430,7 +434,7 @@ namespace PetrichorEditor {
 
         if (hovered)
         {
-            quadCol = colors["buttonHovered"];
+            quadCol = colors["scrollbarHovered"];
             GUI::Hovered = id;
             if (GUI::Active == 0 && PetrichorInputAPI::InputManager::IsMouseButtonDown(SDL_BUTTON_LEFT)) {
                 GUI::Active = id;
@@ -451,8 +455,8 @@ namespace PetrichorEditor {
 
         if (hovered) PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_POINTER);
 
-        DrawRect(Rect(activePanel->rect.x + activePanel->rect.width - width, activePanel->rect.y, width, activePanel->rect.height), 0.1f, glm::vec4(0.1f, 0.1f, 0.1f, 1.0f), true);
-        DrawRect(Rect(activePanel->rect.x + activePanel->rect.width - width * 0.75f, activePanel->rect.y + (activePanel->rect.height - activePanel->rect.height * activePanel->rect.height / activePanel->currentHeight) * (activePanel->scrollOffset / std::max(0.1f, activePanel->currentHeight - activePanel->rect.height)), width * 0.75f, activePanel->rect.height * activePanel->rect.height / activePanel->currentHeight), -0.05f, quadCol, true);
+        DrawRect(Rect(activePanel->rect.x + activePanel->rect.width - width, activePanel->rect.y, width, activePanel->rect.height), -0.9f, colors["scrollbarBackground"], true);
+        DrawRect(Rect(activePanel->rect.x + activePanel->rect.width - width * 0.75f, activePanel->rect.y + (activePanel->rect.height - activePanel->rect.height * activePanel->rect.height / activePanel->currentHeight) * (activePanel->scrollOffset / std::max(0.1f, activePanel->currentHeight - activePanel->rect.height)), width * 0.75f, activePanel->rect.height * activePanel->rect.height / activePanel->currentHeight), -0.91f, quadCol, true);
     }
 
     void GUI::TextInput(const glm::vec2 &size, std::string &text)
@@ -487,7 +491,7 @@ namespace PetrichorEditor {
 
         if (hovered) PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_POINTER);
 
-        DrawRect(Rect(cursorPos.x, cursorPos.y, std::max(size.x, (float)CalculateTextPixelWidth(text, GUIFont)) + 10, size.y), 0.9f, quadCol);
+        DrawRect(Rect(cursorPos.x, cursorPos.y, std::max(size.x, (float)CalculateTextPixelWidth(text, GUIFont)) + 10, size.y), 0.5f, quadCol);
         DrawText(text, {cursorPos.x + 5, PetrichorRendererAPI::Renderer::GetScreenRect().height - cursorPos.y - (GUIFont->fontSize + size.y) / 2.0f});
         cursorPos.y += size.y + 5;
     }
@@ -496,28 +500,39 @@ namespace PetrichorEditor {
     {
         std::size_t id = std::hash<std::string>{}(FormatString("SP%d%d", splitter.width, splitter.height));
 
-        bool hovered = GUI::isHovered(splitter);
+        bool hovered = GUI::isHovered({ splitter.x - ((direction == SplitDirection::SPLIT_VERTICAL) ? 5 : 0), 
+                                        splitter.y - ((direction == SplitDirection::SPLIT_HORIZONTAL) ? 5 : 0), 
+                                        splitter.width + ((direction == SplitDirection::SPLIT_VERTICAL) ? 10 : 0), 
+                                        splitter.height + ((direction == SplitDirection::SPLIT_HORIZONTAL) ? 10 : 0) });
         
-        if (hovered || (GUI::Active == id && PetrichorInputAPI::InputManager::IsMouseButtonDown(SDL_BUTTON_LEFT))) {
+        if (hovered) {
             GUI::Hovered = id;
             if (GUI::Active == 0 && PetrichorInputAPI::InputManager::IsMouseButtonDown(SDL_BUTTON_LEFT)) {
                 GUI::Active = id;
+            } else if (GUI::Active == id && !PetrichorInputAPI::InputManager::IsMouseButtonDown(SDL_BUTTON_LEFT))
+            {
+                GUI::Active = 0;
             }
-            if (GUI::Active == id) {
-                if (direction == SplitDirection::SPLIT_HORIZONTAL) {
-                    ratio = std::clamp((PetrichorInputAPI::InputManager::GetMousePosition()[1] / splitSize), 0.1f, 0.9f);
-                } else {
-                    ratio = std::clamp((PetrichorInputAPI::InputManager::GetMousePosition()[0] / splitSize), 0.1f, 0.9f);
-                }
-            }
+
+            if (direction == SplitDirection::SPLIT_HORIZONTAL) PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_NS_RESIZE);
+            else PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_EW_RESIZE);
+
         } else if (GUI::Active == id && !PetrichorInputAPI::InputManager::IsMouseButtonDown(SDL_BUTTON_LEFT)) {
             GUI::Active = 0;
         }
 
-        if (hovered && direction == SplitDirection::SPLIT_HORIZONTAL) PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_NS_RESIZE);
-        else if (hovered) PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_EW_RESIZE);
+        if (GUI::Active == id && PetrichorInputAPI::InputManager::IsMouseButtonDown(SDL_BUTTON_LEFT)) {
+            if (direction == SplitDirection::SPLIT_HORIZONTAL) {
+                ratio = std::clamp((PetrichorInputAPI::InputManager::GetMousePosition()[1] / splitSize), 0.1f, 0.9f);
+                PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_NS_RESIZE);
+            } else {
+                ratio = std::clamp((PetrichorInputAPI::InputManager::GetMousePosition()[0] / splitSize), 0.1f, 0.9f);
+                PetrichorRendererAPI::Renderer::SetCursorIcon(SDL_SYSTEM_CURSOR_EW_RESIZE);
+            }
+        }
+
         
-        DrawRect(Rect(splitter.x, splitter.y, splitter.width, splitter.height), -0.05f, colors["splitter"], true);
+        DrawRect(Rect(splitter.x, splitter.y, splitter.width, splitter.height), -0.999f, colors["splitter"], true);
     }
 
     std::vector<PetrichorRendererAPI::Data::Vertex> GUI::batchedVertices;

@@ -238,13 +238,17 @@ namespace RendererBackends::SDL3_OpenGL {
 
     void RendererBackend::InitializeFrame()
     {
+        glDisable(GL_SCISSOR_TEST);
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        glDepthMask(GL_TRUE);
+
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     void RendererBackend::DrawText(float x, float y, const Rect& clipRect, const std::string text, Text::Font* font, const Data::Material& material)
     {
-        // glEnable(GL_SCISSOR_TEST);
+        glEnable(GL_SCISSOR_TEST);
         int scissorX = clipRect.x;
         int scissorY = screen.height - (clipRect.y + clipRect.height); 
         
@@ -253,7 +257,7 @@ namespace RendererBackends::SDL3_OpenGL {
         unsigned int textures[font->fontAtlases.size()];
         glGenTextures(font->fontAtlases.size(), textures);
 
-        for (int i = 0; i < font->fontAtlases.size(); i++)
+        for (int i = 0; i < font->fontAtlases.size(); i++) // TODO: move this awful awful font atlas generation code out of the text drawing method like why tf is it here
         {
             glBindTexture(GL_TEXTURE_2D, textures[i]);
 
@@ -286,7 +290,7 @@ namespace RendererBackends::SDL3_OpenGL {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
 
-        ShaderProgram* sp = ((ShaderProgram*)material.shader.get());
+        auto* sp = static_cast<ShaderProgram*>(material.shader.get());
         sp->Use();
         sp->SetMatrix4x4("projection", glm::value_ptr(glm::ortho(0.0f, (float)screen.width, (float)screen.height, 0.0f, -100.0f, 100.0f)));
         sp->SetFloat3("textColor", new float[]{1.0f, 1.0f, 1.0f});
@@ -328,6 +332,7 @@ namespace RendererBackends::SDL3_OpenGL {
         glDeleteTextures(font->fontAtlases.size(), textures);
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
+        glDisable(GL_SCISSOR_TEST);
     }
 
     void RendererBackend::DrawRect(const Rect& rect, const Material& material)
